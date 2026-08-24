@@ -41,12 +41,12 @@ commit しない（衝突マーカーごと push するのを防ぐため）。
 
 ## statusline の表示
 
-`statusline.sh` の1行目に、放置すると事故につながる2つの状態を出す。
+`statusline.sh` の1行目の末尾に、このリポジトリの同期状態を出す。
 
-- **権限モード** — `⚡ YOLO`（`bypassPermissions`。すべての確認プロンプトを飛ばす）、
-  `⏸ PLAN`、`✎ AUTO-EDIT`、`◈ AUTO`、`● NORMAL`
-- **同期状態** — `.claude ⇡N`（push できていないコミットが N 件）、
-  `⚠ .claude CONFLICT`（未解決の衝突）。正常時は何も出ない
+- `.claude ⇡N` — push できていないコミットが N 件ある
+- `⚠ .claude CONFLICT` — 未解決の衝突がある
+
+正常時は何も表示しない。
 
 `⇡N` が消えないときは push が失敗している。SSH エージェントがロックされている、
 ネットワークが繋がっていない、リモートが先に進んでいる、のいずれか。

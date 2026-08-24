@@ -4,10 +4,6 @@ input=$(cat)
 MODEL=$(echo "$input" | jq -r '.model.display_name')
 DIR=$(echo "$input" | jq -r '.workspace.current_dir')
 PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
-MODE=$(echo "$input" | jq -r '.permission_mode // empty')
-# Older Claude Code releases do not send permission_mode; a PreToolUse hook
-# mirrors it to /tmp/claude-mode as a fallback.
-[ -z "$MODE" ] && MODE=$(cat /tmp/claude-mode 2>/dev/null)
 
 # Colors — Catppuccin Mocha
 C_BLUE='\033[38;2;137;180;250m'      # blue
@@ -63,20 +59,10 @@ format_reset_time() {
     echo "${result:-now}"
 }
 
-# --- Line 1: Mode | Model | Dir | Git | ~/.claude sync ---
+# --- Line 1: Model | Dir | Git | ~/.claude sync ---
 sep="${C_OVERLAY}|${R}"
 model_s="${C_BLUE}${MODEL}${R}"
 dir_s="${C_YELLOW}${DIR}${R}"
-
-# Permission mode. bypassPermissions skips every confirmation prompt, so it
-# must stay visible at all times.
-case "$MODE" in
-    plan)               mode_s="${BOLD}${C_MAUVE}⏸ PLAN${R}" ;;
-    bypassPermissions)  mode_s="${BOLD}${C_RED}⚡ YOLO${R}" ;;
-    acceptEdits)        mode_s="${BOLD}${C_YELLOW}✎ AUTO-EDIT${R}" ;;
-    auto)               mode_s="${C_GREEN}◈ AUTO${R}" ;;
-    *)                  mode_s="${C_OVERLAY}● NORMAL${R}" ;;
-esac
 
 # ~/.claude is a git repository synced across machines by the SessionStart and
 # SessionEnd hooks. Surface the two states a hook cannot resolve on its own:
@@ -103,7 +89,7 @@ if git -C "$DIR" rev-parse --git-dir > /dev/null 2>&1; then
     GIT_INFO=" ${sep} ${C_BLUE}${BRANCH}${R} ${git_detail}"
 fi
 
-printf '%b\n' "${mode_s} ${sep} ${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
+printf '%b\n' "${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
 
 # --- Line 2: Context bar ---
 ctx_bar=$(build_bar "$PCT" 25)
