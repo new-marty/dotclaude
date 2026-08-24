@@ -1,0 +1,37 @@
+# ~/.claude には設定とランタイム状態が同居する。
+# 既定ですべて無視し、設定ファイルだけを明示的に許可する。
+# この方式なら、Claude Code が新しいランタイムファイルを作っても
+# 追跡対象に紛れ込まない。
+
+*
+
+# --- 追跡する設定 ---
+!.gitignore
+!README.md
+!CLAUDE.md
+!settings.json
+!statusline.sh
+!keybindings.json
+
+!skills/
+!scripts/
+!rules/
+!commands/
+!agents/
+!workflows/
+!themes/
+
+!skills/**
+!scripts/**
+!rules/**
+!commands/**
+!agents/**
+!workflows/**
+!themes/**
+
+# --- 保険 ---
+# 上の許可指定を将来書き足したときに、認証情報を巻き込まないための最終防衛線。
+*-oauth-token
+*.pem
+*.key
+.DS_Store
