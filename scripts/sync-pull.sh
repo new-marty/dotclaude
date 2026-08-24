@@ -24,5 +24,16 @@ if ! out=$(git -C "$DIR" pull --rebase --autostash 2>&1); then
     echo "[claude-sync] pull failed:" >&2
     echo "$out" >&2
     echo "[claude-sync] inspect with: git -C ~/.claude status" >&2
+    exit 0
+fi
+
+# git pull exits 0 even when restoring the autostash conflicts: the rebase
+# itself succeeded and only the replay of the local edits failed. Check the
+# index directly rather than trusting the exit status.
+if [ -n "$(git -C "$DIR" ls-files --unmerged 2>/dev/null | head -1)" ]; then
+    echo "[claude-sync] ~/.claude changed on another machine and the local edits" >&2
+    echo "[claude-sync] could not be replayed on top. Resolve the conflict:" >&2
+    git -C "$DIR" diff --name-only --diff-filter=U | sed 's/^/[claude-sync]   /' >&2
+    echo "[claude-sync] Your pre-pull state is also kept in 'git -C ~/.claude stash list'." >&2
 fi
 exit 0
