@@ -1,0 +1,93 @@
+# dotclaude
+
+Claude Code のユーザーレベル設定（`~/.claude`）を、複数のマシン間で同期するための
+リポジトリ。
+
+Claude Code はグローバルな指示・スキル・出力スタイル・設定をホームディレクトリの
+`~/.claude` に置く。同じディレクトリには会話ログ、キャッシュ、認証トークンといった
+実行時の状態も溜まる。このリポジトリは前者だけを追跡し、後者は一切含めない。
+
+## 追跡しているもの
+
+| パス | 内容 |
+| --- | --- |
+| `CLAUDE.md` | 全プロジェクトに適用されるグローバル指示 |
+| `settings.json` | モデル、権限、フック、statusline、有効プラグイン |
+| `statusline.sh` | statusline の描画スクリプト（`settings.json` から呼ばれる） |
+| `skills/` | `/名前` で呼び出す自作スキル |
+| `output-styles/` | 応答の書き方を上書きする出力スタイル |
+| `scripts/` | フックから呼ばれるスクリプト |
+
+`.gitignore` は**既定ですべてを無視し、上記だけを明示的に許可する**方式で書いてある。
+Claude Code が新しい実行時ファイルを作っても追跡対象に紛れ込まない。認証トークン
+（`personal-oauth-token` など）、会話ログ（`history.jsonl`、`sessions/`、`projects/`）、
+キャッシュはすべて除外される。
+
+追跡対象を増やすときは `.gitignore` に許可行を足す。ディレクトリは2行必要
+（`!name/` と `!name/**`）。
+
+## 同期の仕組み
+
+`settings.json` に登録された2つのフックが自動で動く。手動の pull / push は要らない。
+
+| タイミング | 実行されるもの | 動作 |
+| --- | --- | --- |
+| セッション開始 | `scripts/sync-pull.sh` | `git pull --rebase --autostash` |
+| セッション終了 | `scripts/sync-push.sh` | 変更があれば commit して push |
+
+`--autostash` により、ローカルの編集は pull の前に退避され、あとで戻される。
+`sync-push.sh` は複数セッションの同時実行をロックで直列化し、未解決の衝突がある間は
+commit しない（衝突マーカーごと push するのを防ぐため）。
+
+## statusline の表示
+
+`statusline.sh` の1行目に、放置すると事故につながる2つの状態を出す。
+
+- **権限モード** — `⚡ YOLO`（`bypassPermissions`。すべての確認プロンプトを飛ばす）、
+  `⏸ PLAN`、`✎ AUTO-EDIT`、`◈ AUTO`、`● NORMAL`
+- **同期状態** — `.claude ⇡N`（push できていないコミットが N 件）、
+  `⚠ .claude CONFLICT`（未解決の衝突）。正常時は何も出ない
+
+`⇡N` が消えないときは push が失敗している。SSH エージェントがロックされている、
+ネットワークが繋がっていない、リモートが先に進んでいる、のいずれか。
+
+## 衝突が起きたとき
+
+`⚠ .claude CONFLICT` が出たら、2台のマシンが同じファイルを変更している。
+フックは衝突を検出すると何もせずに終了するので、自分で解決する。
+
+```bash
+git -C ~/.claude status          # 衝突しているファイルを確認
+git -C ~/.claude diff            # 衝突箇所を見る
+# ファイルを編集して衝突マーカーを取り除く
+git -C ~/.claude add <file>
+git -C ~/.claude rebase --continue
+```
+
+pull 前の状態は stash にも残っている（`git -C ~/.claude stash list`）。
+
+## 新しいマシンでの初期化
+
+dotfiles リポジトリ（`github.com:<you>/dotfiles`）の
+`run_once_before_bootstrap-dotclaude.sh` が自動で実行する。手順は
+`chezmoi init --apply git@github.com:<you>/dotfiles.git` だけ。
+
+このスクリプトは `~/.claude` をその場で git リポジトリ化する。clone は使えない。
+Claude Code のインストーラが `~/.claude/downloads/` などを先に作るため、
+`git clone` が「ディレクトリが空でない」として失敗するからである。
+
+既にそのマシンに存在するファイルは上書きされない。リモートと内容が違う場合は
+ローカル版が残り、`git status` に変更として現れる。どちらを採るかは手で決める。
+
+手動で実行する場合:
+
+```bash
+mkdir -p ~/.claude && cd ~/.claude
+git init -b main
+git remote add origin git@github.com:new-marty/dotclaude.git
+git fetch origin main
+git branch -f main origin/main && git symbolic-ref HEAD refs/heads/main
+git branch -u origin/main main
+git reset origin/main
+git checkout-index -a          # 存在しないファイルだけ書き出す
+```
