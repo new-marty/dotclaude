@@ -59,10 +59,21 @@ format_reset_time() {
     echo "${result:-now}"
 }
 
-# --- Line 1: Model | Dir | Git | ~/.claude sync ---
+# --- Line 1: Account | Model | Dir | Git | ~/.claude sync ---
 sep="${C_OVERLAY}|${R}"
 model_s="${C_BLUE}${MODEL}${R}"
 dir_s="${C_YELLOW}${DIR}${R}"
+
+# Which account this session is signed in as. Work directories select a
+# non-default account through CLAUDE_SECURESTORAGE_CONFIG_DIR; name it after
+# that directory (~/.claude-work reads as "work"). The default account
+# needs no label, so the marker only appears where it carries information.
+ACCOUNT_S=""
+if [ -n "${CLAUDE_SECURESTORAGE_CONFIG_DIR:-}" ]; then
+    account_name="${CLAUDE_SECURESTORAGE_CONFIG_DIR##*/}"
+    account_name="${account_name#.claude-}"
+    ACCOUNT_S="${BOLD}${C_MAUVE}${account_name}${R} ${sep} "
+fi
 
 # ~/.claude is a git repository synced across machines by the SessionStart and
 # SessionEnd hooks. Surface the two states a hook cannot resolve on its own:
@@ -89,16 +100,31 @@ if git -C "$DIR" rev-parse --git-dir > /dev/null 2>&1; then
     GIT_INFO=" ${sep} ${C_BLUE}${BRANCH}${R} ${git_detail}"
 fi
 
-printf '%b\n' "${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
+printf '%b\n' "${ACCOUNT_S}${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
 
 # --- Line 2: Context bar ---
 ctx_bar=$(build_bar "$PCT" 25)
 printf '%b\n' "${C_SUBTEXT}ctx${R}  ${C_BLUE}${ctx_bar}${R}  ${C_BLUE}${PCT}%${R}"
 
 # --- Lines 3-4: Usage limits (Anthropic API) ---
-CACHE_FILE="/tmp/claude-usage-cache.json"
+# Claude Code keeps one credential per account in the login Keychain. The
+# default account uses the service name "Claude Code-credentials"; setting
+# CLAUDE_SECURESTORAGE_CONFIG_DIR selects a second account whose service name
+# carries the first eight hex digits of the SHA-256 of that directory's
+# absolute path. Read the credential belonging to the account this session is
+# actually signed in as, and cache its usage separately, so the two accounts do
+# not report each other's limits.
+KEYCHAIN_SERVICE="Claude Code-credentials"
+ACCOUNT_TAG=""
+if [ -n "${CLAUDE_SECURESTORAGE_CONFIG_DIR:-}" ]; then
+    ACCOUNT_TAG=$(printf '%s' "$CLAUDE_SECURESTORAGE_CONFIG_DIR" |
+        openssl dgst -sha256 2>/dev/null | awk '{print substr($NF, 1, 8)}')
+    [ -n "$ACCOUNT_TAG" ] && KEYCHAIN_SERVICE="${KEYCHAIN_SERVICE}-${ACCOUNT_TAG}"
+fi
+
+CACHE_FILE="/tmp/claude-usage-cache${ACCOUNT_TAG:+-$ACCOUNT_TAG}.json"
 CACHE_TTL=300
-FETCH_LOCK="/tmp/claude-usage-fetch.lock"
+FETCH_LOCK="/tmp/claude-usage-fetch${ACCOUNT_TAG:+-$ACCOUNT_TAG}.lock"
 
 # Background fetch: retries with backoff, writes to cache file
 bg_fetch_usage() {
@@ -114,7 +140,7 @@ bg_fetch_usage() {
     date "+%s" > "$FETCH_LOCK"
 
     (
-        token=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null || true)
+        token=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -w 2>/dev/null || true)
         if [ -z "$token" ]; then rm -f "$FETCH_LOCK"; exit 1; fi
         access_token=$(echo "$token" | jq -r '.claudeAiOauth.accessToken // .accessToken // .access_token // empty' 2>/dev/null || true)
         if [ -z "$access_token" ]; then rm -f "$FETCH_LOCK"; exit 1; fi
