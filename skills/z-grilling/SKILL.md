@@ -1,6 +1,6 @@
 ---
 name: z-grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. 日本語でも同じく使う - 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
 ---
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
@@ -33,6 +33,12 @@ The session is done when the frontier is empty: every branch of the design tree 
 
 矛盾したら、以下を採る。
 
+### 0. 言語
+
+ユーザーが書いている言語で訊く。この節が日本語で書かれているのは指示だからで
+あって、出力の見本だからではない。下の形式の見出しやラベルも訳す(英語なら
+`残り <n> 問` は `<n> questions left`)。
+
 ### 1. 質問は1つずつ出す
 
 上の本文は frontier をまとめて1ラウンドで訊けと書いているが、そうしない。
@@ -60,7 +66,7 @@ frontier の計算はそのまま行い、**訊く順に並べたうえで、1�
 - 専門用語・略語・社内用語をいきなり使わない。使うなら、その場で一行の言い換えを添える
 - 結論から書き、根拠を後ろに置く
 - 識別子や記号(`foo.bar()`、`['a', 'b']`)を並べただけで説明を終えない。
-  それが何を意味し、ユーザーから見て何が変わるのかを普通の日本語で書く
+  それが何を意味し、ユーザーから見て何が変わるのかを普通の言葉で書く
 - 表や箇条書きに細分化する前に、まず散文で言い切る
 - 1問の分量は、前提と選択肢と推奨を合わせて画面1つに収まる程度にする
 

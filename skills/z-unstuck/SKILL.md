@@ -1,11 +1,12 @@
 ---
-name: z-oi-owarasero
-description: 書籍「おい、とりあえず終わらせろ」の5ステップをもとに、仕事・学習・家事・個人制作などで止まった場面を責めずに省察し、見えていなかった前提と次の一歩を見つける対話型Skill。先延ばし、完璧主義、着手や提出への怖さ、試した後の停滞を整理したいときに使う。単純な実行、説明、軽微な修正、網羅的な計画づくりには使わない。
+name: z-unstuck
+description: 止まっているタスクを責めずに省察し、見えていなかった前提と、次に試す小さな一歩を一緒に見つける対話型スキル。先延ばし、完璧主義、着手や提出への怖さ、試したあとの停滞を扱う。「進まない」「止まっている」「先延ばししてしまう」"I am stuck", "I keep putting this off", "I cannot get started", "help me get unstuck" などで呼ぶ。書籍『おい、とりあえず終わらせろ』の5ステップに基づく。単純な実行、説明、軽微な修正、網羅的な計画づくりには使わない。
 ---
 
 <!-- Vendored from https://github.com/nwiizo/oi-owarasero (MIT License,
-     Copyright (c) 2026 nwiizo). Only the `name` field is changed, to match
-     this repository's `z-` skill namespace. -->
+     Copyright (c) 2026 nwiizo). The body is upstream's, unchanged. The `name`
+     field is renamed to `z-unstuck`, and the section below the final rule is a
+     local addition; everything between them is upstream. -->
 
 # おい、とりあえず終わらせろ
 
@@ -306,3 +307,39 @@ Q2. <Q1の回答に依存しない問い>
 安全性、セキュリティ、個人情報、アクセシビリティ、データ消失防止、必要な事実確認は、速く動くために省かない。公開、送金、削除、本番反映など後戻りしにくい行為で、実行の依頼や必要な許可がない場合は、下書き、プレビュー、検証など、許可された準備まで進める。実行前に新たな許可が必要なら、判断できる具体的な内容を揃えてから確認する。
 
 実行まで明示的に依頼され、必要な許可が揃っている場合は、その範囲と実行環境の制約に従う。60点を理由に安全上必要な確認を省かず、このSkillを理由に許可済みの作業を一律に止めない。
+
+---
+
+## この環境での上書き(上の本文に優先する)
+
+矛盾したら、以下を採る。
+
+### 対話の言語
+
+ユーザーが書いている言語で進める。上の本文が日本語で書かれているのは、それが
+このスキルの指示だからであって、出力の見本だからではない。
+
+### テンプレートの見出し
+
+上に出てくる Markdown ブロックの見出しとラベルは、対話している言語に訳して使う。
+英語なら次のように置き換える。
+
+| 日本語 | English |
+| --- | --- |
+| 今回の省察 | What I noticed |
+| 何が起きたか | What happened |
+| 自分は何を前提にしていたか | What I assumed |
+| 実際にはどうだったか | What actually happened |
+| 次は何を変えるか | What I change next |
+| 次の一歩 | The next step |
+| 最初の一動作 | The first action |
+| 始めるきっかけ | What triggers the start |
+| 一周したとわかる印 | The sign that one loop is done |
+| 誰に何を確かめるか | Who to ask, and what |
+
+### 5ステップの呼び方
+
+「決めろ→分けろ→始めろ→出せ→回せ」は、元になった書名に由来する日本語の見出しで
+ある。英語で進めるときは訳語を固定せず、その段階で何をするのかを普通の言葉で言う
+(decide where it ends / break it into moves / start / put it in front of someone /
+go round again)。段階の名前を覚えてもらうことが目的ではない。
