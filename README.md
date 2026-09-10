@@ -14,7 +14,7 @@ Claude Code はグローバルな指示・スキル・出力スタイル・設�
 | `CLAUDE.md` | 全プロジェクトに適用されるグローバル指示 |
 | `settings.json` | モデル、権限、フック、statusline、有効プラグイン |
 | `statusline.sh` | statusline の描画スクリプト（`settings.json` から呼ばれる） |
-| `skills/` | `/名前` で呼び出す自作スキル |
+| `skills/` | `/名前` で呼び出すスキル（すべて `z-` で始まる） |
 | `output-styles/` | 応答の書き方を上書きする出力スタイル |
 | `scripts/` | フックから呼ばれるスクリプト |
 
@@ -26,14 +26,23 @@ Claude Code が新しい実行時ファイルを作っても追跡対象に紛�
 追跡対象を増やすときは `.gitignore` に許可行を足す。ディレクトリは2行必要
 （`!name/` と `!name/**`）。
 
+`skills/` には自作のものと、外部リポジトリから取り込んだものが混在する。取り込んだ
+スキルは本文の先頭に出典とライセンスをコメントで記し、`name` 以外は上流のまま置く。
+`name` を書き換えるのは、このリポジトリのスキルがすべて `z-` で始まる規約に合わせる
+ためである。
+
 ## 同期の仕組み
 
-`settings.json` に登録された2つのフックが自動で動く。手動の pull / push は要らない。
+`settings.json` に登録されたフックが自動で動く。手動の pull / push は要らない。
 
 | タイミング | 実行されるもの | 動作 |
 | --- | --- | --- |
 | セッション開始 | `scripts/sync-pull.sh` | `git pull --rebase --autostash` |
 | セッション終了 | `scripts/sync-push.sh` | 変更があれば commit して push |
+| `EnterWorktree` の直後 | `scripts/sync-worktree-env.sh` | 新しい worktree へ `.env` を複製する |
+
+`sync-worktree-env.sh` は同期とは無関係で、`example-app` リポジトリだけを対象に
+決め打ちしている。それ以外のリポジトリでは何もせずに終了する。
 
 `--autostash` により、ローカルの編集は pull の前に退避され、あとで戻される。
 `sync-push.sh` は複数セッションの同時実行をロックで直列化し、未解決の衝突がある間は
