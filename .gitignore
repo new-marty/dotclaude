@@ -11,25 +11,14 @@
 !CLAUDE.md
 !settings.json
 !statusline.sh
-!keybindings.json
 
 !skills/
 !scripts/
 !output-styles/
-!rules/
-!commands/
-!agents/
-!workflows/
-!themes/
 
 !skills/**
 !scripts/**
 !output-styles/**
-!rules/**
-!commands/**
-!agents/**
-!workflows/**
-!themes/**
 
 # --- 保険 ---
 # 上の許可指定を将来書き足したときに、認証情報を巻き込まないための最終防衛線。

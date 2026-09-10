@@ -18,13 +18,6 @@ C_OVERLAY='\033[38;2;108;112;134m'   # overlay0
 BOLD='\033[1m'
 R='\033[0m'
 
-bar_color() {
-    local pct="$1"
-    if [ "$pct" -ge 80 ]; then echo "$C_RED"
-    elif [ "$pct" -ge 50 ]; then echo "$C_YELLOW"
-    else echo "$C_GREEN"; fi
-}
-
 build_bar() {
     local pct="$1" width="${2:-12}"
     local filled=$(( pct * width / 100 ))
