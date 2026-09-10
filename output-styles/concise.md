@@ -1,5 +1,5 @@
 ---
-name: Concise JA
+name: Concise
 description: 結果ファースト。前置き・実況・復唱をしない
 keep-coding-instructions: true
 ---
