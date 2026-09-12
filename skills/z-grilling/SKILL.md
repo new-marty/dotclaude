@@ -3,6 +3,12 @@ name: z-grilling
 description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. 日本語でも同じく使う - 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
 ---
 
+<!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md
+     (MIT License, Copyright (c) 2026 Matt Pocock). The English body is
+     upstream's, unchanged. The Japanese section below it is a local addition
+     and overrides upstream where the two conflict. The `name` field is renamed
+     to `z-grilling`. -->
+
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
 
 Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
@@ -83,3 +89,24 @@ frontier の計算はそのまま行い、**訊く順に並べたうえで、1�
 
 残り <n> 問
 ```
+
+### 5. 答えが返ってこないときの分岐
+
+ユーザーが「分からない」と答えたら、その問いを取り下げず、**答えられない理由を分類する**。
+分類を一行で言葉にして確認を取ってから分岐する。
+
+| 答えられない理由 | 分岐先 | 持ち帰るもの |
+| --- | --- | --- |
+| 判断の前提になる仕組み・用語を知らない | `z-teach` | 学んだ内容の記録 |
+| 自分の管掌外、または他人しか持っていない情報が要る | `z-to-questionnaire` | 回答済みの質問票 |
+| 作って動かしてみないと分からない | `z-prototype` | 試した結果と結論 |
+
+分岐は別セッションで行う。この grilling セッションでは、その問いを未決のまま開いておき、
+依存していない他の問いを先に進める。分岐先から戻ったら、持ち帰った証拠を前提として提示し、
+同じ問いを訊き直す。
+
+推測で埋めない。「たぶんこうだろう」で進めると、その推測が仕様になり、チケットになり、
+実装になる。分類して分岐するのは、推測が下流へ流れるのを止めるためである。
+
+ユーザーが「そこは任せる」と明示した場合は分岐しない。推奨を採って進み、何を仮定したかを
+その場で記録する。
