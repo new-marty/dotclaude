@@ -17,7 +17,7 @@
 | `z-teach` | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT | 教材を作るディレクトリを確認する節を追加 |
 | `z-to-questionnaire` | 同上 | MIT | 日本語トリガーのみ |
 | `z-prototype` | 同上 | MIT | 日本語トリガーのみ |
-| `z-grilling` | 同上 | MIT | 質問を1問ずつ・[SOCCR](https://jacobian.org/2021/jan/30/soccr/) 形式・答えられないときの分岐 |
+| `z-grilling` | 同上 | MIT | 日本語で全面的に書き直し。1問ずつ訊く・[SOCCR](https://jacobian.org/2021/jan/30/soccr/) 形式・答えられないときの分岐 |
 | `z-wait-what` | 同上 | MIT | 日本語に書き直し |
 | `z-unstuck` | [oi-owarasero](https://github.com/nwiizo/oi-owarasero) | MIT | 末尾に独自の節 |
 | `z-review-finding` | [p3bot/library](https://github.com/p3bot/library) の Per-item Template | MPL-2.0 | 日本語で全面的に書き直し |
