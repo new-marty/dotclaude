@@ -53,6 +53,28 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 
 ## 採用したもの
 
+### 出力スタイルと CLAUDE.md の作り直し — 2026-09-13
+
+- **出典**: https://github.com/ayghri/i-have-adhd (MIT)、
+  https://www.aihero.dev/skills-code-review、
+  https://uhyeon.dev/blog/ai-agent-assumption-prevention、
+  公式ドキュメント https://code.claude.com/docs/en/output-styles と
+  https://code.claude.com/docs/en/memory
+- **形態**: `output-styles/concise.md` の全面書き直し、`CLAUDE.md` の縮小、
+  `skills/z-writing-for-readers/` の新設
+- **内容**: 判定できる規則だけを書く方針に切り替えた。禁止する言い回しの名指し、
+  行数と項目数の上限、送信前に消すもののチェックリスト、指摘の件数上限と nit の定義、
+  着手前の前提確認の手順、変動する数字の禁止。「簡潔に」「本質を」のような、守ったか
+  自分で判定できない規範は全部捨てた。
+  `CLAUDE.md` は公式の分類（プロジェクトの規約とコードベースの文脈）に合わせ、言語の
+  規約とスキルを読む場面だけを残した。応答の書き方と作業の進め方は output style 側へ
+  移した。「読者のために書く」は文書を書くときだけ要るので、スキルに切り出した。
+- **採用理由**: 抽象的な規範をいくら足しても守られないことが、この設計を決めた日の
+  会話自体で確認できた。調べた既存の解法（i-have-adhd、code-review スキルの severity
+  ラベル、assumption を構造で止める手法）は例外なく判定できる形をしていた。
+- **未検証**: i-have-adhd の効果測定は英語で行われたもので、日本語に書き直した本文で
+  同じ効果が出るかは確かめていない。
+
 ### z-show-me — 2026-09-13
 
 - **出典**: https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md
@@ -90,7 +112,7 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 - **採用理由**: 改変前の `z-grilling` は、答えが返ってこないとき黙って止まるだけで、その先の
   規定がなかった。推測で埋めた前提が仕様・チケット・実装へ流れるのを止める。
 
-### concise.md への i-have-adhd の取り込み — 2026-09-13
+### concise.md への i-have-adhd の取り込み（第1版・上のエントリで置き換え済み） — 2026-09-13
 
 - **出典**: https://github.com/ayghri/i-have-adhd （記事:
   https://qiita.com/suwa_nobu/items/cec37ce5a6141bb3eefc）
@@ -190,6 +212,7 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 - `z-japanese-proofreading` — 日本語を人に出す前の推敲規範
 - `z-cognitive-rhythm-writing` — 日本語の説明文に緩急を設計する規範
 - `z-create-pr` — PR 作成
+- `z-writing-for-readers` — セッションの外の読者が読む文章の規範
 - `z-start-task` — タスク選定から実装・セルフレビューまで
 
 `skills/` 直下のシンボリックリンク（`computer-use`, `find-skills`, `orca-cli`,

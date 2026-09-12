@@ -1,6 +1,6 @@
 ---
 name: z-teach
-description: Teach the user a new skill or concept, within this workspace.
+description: Teach the user a new skill or concept, within this workspace. 日本語でも同じく使う - 「一から教えて」「学びたい」「前提から分かっていない」など。
 disable-model-invocation: true
 argument-hint: "What would you like to learn about?"
 ---
