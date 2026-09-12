@@ -21,6 +21,13 @@
 !scripts/**
 !output-styles/**
 
+# Orca がマシンごとに作るシンボリックリンク。追跡すると、Orca のない環境で
+# リンク切れになる。
+skills/computer-use
+skills/find-skills
+skills/orca-cli
+skills/orchestration
+
 # --- 保険 ---
 # 上の許可指定を将来書き足したときに、認証情報を巻き込まないための最終防衛線。
 *-oauth-token

@@ -12,17 +12,21 @@ Claude Code はグローバルな指示・スキル・出力スタイル・設�
 | パス | 内容 |
 | --- | --- |
 | `CLAUDE.md` | 全プロジェクトに適用されるグローバル指示 |
-| `settings.json` | モデル、権限、フック、statusline、有効プラグイン |
+| `settings.json` | 出力スタイル、権限、フック、statusline、有効プラグイン、MCP の拒否設定 |
 | `statusline.sh` | statusline の描画スクリプト（`settings.json` から呼ばれる） |
-| `skills/` | `/名前` で呼び出すスキル（すべて `z-` で始まる） |
+| `skills/` | スキル。自作と取り込みのどちらも `z-` で始まる |
 | `output-styles/` | 応答の書き方を上書きする出力スタイル |
 | `scripts/` | フックから呼ばれるスクリプト |
 | `ADOPTIONS.md` | 外部から取り込んだもの・検討して見送ったものの記録 |
 
-`.gitignore` は**既定ですべてを無視し、上記だけを明示的に許可する**方式で書いてある。
+`.gitignore` は**既定ですべてを無視し、追跡するものだけを明示的に許可する**方式で書いてある。
 Claude Code が新しい実行時ファイルを作っても追跡対象に紛れ込まない。認証トークン
 （`personal-oauth-token` など）、会話ログ（`history.jsonl`、`sessions/`、`projects/`）、
-キャッシュはすべて除外される。
+キャッシュはすべて除外される。許可しているのは上の表のほかに `.gitignore` 自身と `README.md`。
+
+`skills/` 直下には Orca がマシンごとに作るシンボリックリンク（`computer-use`、`find-skills`、
+`orca-cli`、`orchestration`）が置かれる。許可行のあとに再度の無視指定を書いて追跡対象から外して
+ある。追跡すると Orca のない環境でリンク切れになるため。
 
 追跡対象を増やすときは `.gitignore` に許可行を足す。ディレクトリは2行必要
 （`!name/` と `!name/**`）。
@@ -48,17 +52,20 @@ Claude Code が新しい実行時ファイルを作っても追跡対象に紛�
 | セッション終了 | `scripts/sync-push.sh` | 変更があれば commit して push |
 | `EnterWorktree` の直後 | `scripts/sync-worktree-env.sh` | 新しい worktree へ `.env` を複製する |
 
-`sync-worktree-env.sh` は同期とは無関係で、`example-app` リポジトリだけを対象に
-決め打ちしている。それ以外のリポジトリでは何もせずに終了する。
+`sync-worktree-env.sh` は同期とは無関係で、`example-app` リポジトリだけを対象に決め打ちしている。
+複製するのは `backend/.env`、`backend/workers/.env`、`frontend/.env` の3本で、複製先に同名の
+ファイルが既にあれば上書きしない。それ以外のリポジトリでは何もせずに終了する。
 
 `--autostash` により、ローカルの編集は pull の前に退避され、あとで戻される。
-`sync-push.sh` は複数セッションの同時実行をロックで直列化し、未解決の衝突がある間は
-commit しない（衝突マーカーごと push するのを防ぐため）。
+`sync-push.sh` はロックを非ブロッキングで取る。他のセッションが先に走っていれば、後から来た
+セッションは何もせずに終わる。待って順番に実行するわけではないので、そのセッションの変更は次に
+push が走るまで残る。未解決の衝突がある間は commit しない（衝突マーカーごと push するのを防ぐため）。
 
 ## statusline の表示
 
-`statusline.sh` は4行を描画する。1行目がアカウント・モデル・ディレクトリ・git、
-2行目がコンテキスト使用率、3〜4行目が利用量リミット（5時間枠と7日枠）。
+`statusline.sh` は最大4行を描画する。1行目がアカウント・モデル・ディレクトリ・git、
+2行目がコンテキスト使用率、3〜4行目が利用量リミット（5時間枠と7日枠）。利用量を取得できないとき
+（初回起動、キーチェーン未取得、API 失敗）は3〜4行目が出ず、2行になる。
 
 1行目の先頭には、既定以外のアカウントを使っているときだけその名前を出す。
 `~/work` 配下では `CLAUDE_SECURESTORAGE_CONFIG_DIR=~/.claude-work` が
