@@ -1,13 +1,14 @@
 ---
 name: z-show-me
-description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. 日本語でも同じく使う - 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。
+description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. いま会話している対象の構造・変更点・流れを、応答本文の中の図で示す。日本語でも同じく使う - 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。話題そのものを知らない相手に一から教えるなら z-eli5 を使う。
 ---
 
 <!-- Vendored from https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md
      (MIT License, Copyright (c) 2026 HumanLayer). The body is upstream's except
      for the final bullet on HTML output, which is rewritten for this
      environment, and the "この環境での出し方" section, which is a local
-     addition. The `name` field is renamed to `z-show-me`. -->
+     addition. In the frontmatter, `name` is renamed to `z-show-me` and Japanese
+     trigger phrases are appended to `description`. -->
 
 Help the user understand the current topic of conversation visually. Skip the preamble and keep prose brief. Pick the smallest view that makes the key point clear.
 

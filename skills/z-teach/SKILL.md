@@ -8,8 +8,9 @@ argument-hint: "What would you like to learn about?"
 <!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/productivity/teach/
      (MIT License, Copyright (c) 2026 Matt Pocock). SKILL.md and the four
      *-FORMAT.md files are upstream's except for the "作業ディレクトリ" section
-     below, which is a local addition. The `name` field is renamed to
-     `z-teach`. -->
+     below, which is a local addition. In the frontmatter, `name` is renamed to
+     `z-teach`, Japanese trigger phrases are appended to `description`, and
+     `disable-model-invocation: true` and `argument-hint` are added. -->
 
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
 
@@ -72,7 +73,8 @@ A lesson should be **beautiful**, with clean, readable typography and layout, si
 
 The lesson should be short, and completable very quickly. Learners' working memory is very small, and we need to stay within it. But each lesson should give the user a single tangible win that they can build on. It should be directly tied to the mission, and should be in the user's zone of proximal development.
 
-If possible, open the lesson file for the user by running a CLI command.
+Hand the lesson to the user with the Artifact tool (a shareable URL they can return to) or
+SendUserFile with `display: "render"`. Do not open it with the `open` command.
 
 Each lesson should link via HTML anchors to other lessons and reference documents.
 

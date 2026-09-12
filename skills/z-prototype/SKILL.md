@@ -1,12 +1,15 @@
 ---
 name: z-prototype
+disable-model-invocation: true
 description: Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like. 日本語でも同じく使う - 「作ってみないと分からない」「試しに動かしたい」「UI の案を並べて見たい」など。
 ---
 
 <!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/engineering/prototype/
      (MIT License, Copyright (c) 2026 Matt Pocock). SKILL.md, LOGIC.md and UI.md
-     are upstream's, unchanged. Only the `name` field is renamed to
-     `z-prototype`. -->
+     are upstream's, unchanged. Local changes are in the frontmatter only:
+     `name` renamed to `z-prototype`, Japanese trigger phrases appended to
+     `description`, and `disable-model-invocation: true` added so this stays a
+     user-invoked skill (see `z-grilling`). -->
 
 # Prototype
 

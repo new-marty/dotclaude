@@ -5,8 +5,17 @@ disable-model-invocation: true
 ---
 
 <!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/productivity/to-questionnaire/SKILL.md
-     (MIT License, Copyright (c) 2026 Matt Pocock). The body is upstream's,
-     unchanged. Only the `name` field is renamed to `z-to-questionnaire`. -->
+     (MIT License, Copyright (c) 2026 Matt Pocock). The body is upstream's except
+     for the "書き出し先" section below, which is a local addition. In the
+     frontmatter, `name` is renamed to `z-to-questionnaire`, Japanese trigger
+     phrases are appended to `description`, and `disable-model-invocation: true`
+     is added. -->
+
+## 書き出し先（上流への追記）
+
+上流は質問票を「現在のディレクトリ」に書く。`z-grilling` から呼ばれる想定なので、その
+まま従うと作業中のリポジトリに成果物が混ざる。書き出す前に置き場所をユーザーに確認し、
+リポジトリの作業ツリー内には作らない。
 
 Turn something the user can't answer alone into a **questionnaire**: a Markdown document they hand to one person to fill in async, or fill out together over a meeting. The recipient holds knowledge the user lacks; the questionnaire pulls it out of them.
 
