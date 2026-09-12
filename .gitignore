@@ -8,6 +8,7 @@
 # --- 追跡する設定 ---
 !.gitignore
 !README.md
+!ADOPTIONS.md
 !CLAUDE.md
 !settings.json
 !statusline.sh
