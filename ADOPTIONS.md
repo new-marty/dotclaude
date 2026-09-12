@@ -53,6 +53,56 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 
 ## 採用したもの
 
+### z-show-me — 2026-09-13
+
+- **出典**: https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md
+- **ライセンス**: MIT (Copyright (c) 2026 HumanLayer)
+- **形態**: ベンダリング（`skills/z-show-me/SKILL.md`）
+- **上流との差分**: `name` を `z-show-me` に改名。`description` に日本語のトリガー語を追記。
+  HTML 出力の項を書き換え、`Bash(open *.html)` の代わりに Artifact / SendUserFile を使う
+  「この環境での出し方」節を追加した。
+- **採用理由**: 作業中の話題を最小の図で示す型。擬似コード・呼び出し木・ファイル木・
+  mermaid・diff の使い分けが具体的に書かれている。前提知識ゼロの相手向けの `z-eli5` とは
+  用途が分かれる。
+
+### z-teach / z-to-questionnaire / z-prototype — 2026-09-13
+
+- **出典**: https://github.com/mattpocock/skills （`skills/productivity/teach`,
+  `skills/productivity/to-questionnaire`, `skills/engineering/prototype`）。
+  組み合わせ方を知った記事: https://tech.algomatic.jp/entry/2026/08/31/185832
+- **ライセンス**: MIT (Copyright (c) 2026 Matt Pocock)
+- **形態**: ベンダリング（参照される `LOGIC.md` / `UI.md` / `*-FORMAT.md` も一緒に取り込み）
+- **上流との差分**: `name` をそれぞれ `z-` 付きに改名。`z-to-questionnaire` の
+  `description` に日本語のトリガー語を追記。`z-teach` に「作業ディレクトリ」節を追加した
+  （上流は現在のディレクトリに `MISSION.md`・`lessons/`・`learning-records/` を作るため、
+  作業中のリポジトリで呼ぶと教材が散る）。`z-prototype` は上流のまま。
+- **採用理由**: `z-grilling` の分岐先として使う。下の「z-grilling の分岐」を参照。
+
+### z-grilling の分岐 — 2026-09-13
+
+- **出典**: https://tech.algomatic.jp/entry/2026/08/31/185832 （記事は mattpocock/skills の
+  スキル群の組み合わせ方を述べたもので、上流の `grilling/SKILL.md` にこの節は無い）
+- **形態**: 既存スキルへの統合（`skills/z-grilling/SKILL.md` の日本語節に「5. 答えが返って
+  こないときの分岐」を追加）
+- **内容**: ユーザーが答えられない問いを、理由で3つに分類する。概念の欠落なら `z-teach`、
+  権限・情報の欠落なら `z-to-questionnaire`、経験の欠落なら `z-prototype` へ分岐し、証拠を
+  持ち帰ってから同じ問いを訊き直す。
+- **採用理由**: 改変前の `z-grilling` は、答えが返ってこないとき黙って止まるだけで、その先の
+  規定がなかった。推測で埋めた前提が仕様・チケット・実装へ流れるのを止める。
+
+### concise.md への i-have-adhd の取り込み — 2026-09-13
+
+- **出典**: https://github.com/ayghri/i-have-adhd （記事:
+  https://qiita.com/suwa_nobu/items/cec37ce5a6141bb3eefc）
+- **ライセンス**: MIT
+- **形態**: 部分引用（`output-styles/concise.md` に3節を追加）
+- **取り込んだもの**: 手順は番号付きで1手順1動作 / 所要時間は具体的な単位で / 完了は
+  「何が動くようになったか」で示す / エラー時は淡々と原因と直し方を書く / 最後に2分以内で
+  始められる次の一手を1つだけ書く。
+- **スキルとして入れなかった理由**: 目的が `concise.md` と完全に重なる。`concise.md` は常時
+  有効で、i-have-adhd は `/i-have-adhd` の明示起動。二重に持つと、どちらが効いているのかが
+  応答から判別できなくなる。
+
 ### z-unstuck — 2026-09-10
 
 - **出典**: https://github.com/nwiizo/oi-owarasero （書籍『おい、とりあえず終わらせろ』に基づく）
@@ -71,6 +121,27 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 - **上流との差分**: 全面的に書き直した日本語版。MPL-2.0 の派生物として同ライセンスが及ぶ。
 - **採用理由**: レビュー指摘を「コードを開いていない読者」向けに書く規範が必要だった。
 
+### z-wait-what — 2026-09-10
+
+- **出典**: https://github.com/mattpocock/skills/blob/main/skills/productivity/wait-what/SKILL.md
+- **ライセンス**: MIT (Copyright (c) 2026 Matt Pocock)
+- **形態**: ベンダリング（日本語への書き直し）
+- **上流との差分**: `name` を `z-wait-what` に改名。本文は上流の一文の日本語訳で、
+  「日本語なら `z-japanese-proofreading` の規範に沿う」の条件を足した。上流は
+  ASD-STE100 Simplified Technical English のみを指定している。
+- **採用理由**: 説明が伝わらなかったときに言い直しを求める一手。
+
+### z-grilling — 2026-08-24 以前（2026-08-27 に日本語節を追加、2026-09-13 に分岐を追加）
+
+- **出典**: https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md
+- **ライセンス**: MIT (Copyright (c) 2026 Matt Pocock)
+- **形態**: ベンダリング＋日本語の上書き節
+- **上流との差分**: 英語本文は上流のまま。末尾に「進め方（上の英語本文に優先する）」節を
+  追加し、**質問を1問ずつ出す**、**質問の前に前提を説明する**、**平易に書く**、出力形式、
+  **答えが返ってこないときの分岐**、の5点で上流の挙動を上書きしている。上流は frontier を
+  まとめて1ラウンドで訊く設計。
+- **採用理由**: 計画・設計の壁打ち相手として `z-start-task` から呼ぶ。
+
 ### z-eli5 — 2026-08-24 以前
 
 - **出典**: https://github.com/anthropics/claude-plugins-community の `eli5` スキル
@@ -79,20 +150,6 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 - **上流との差分**: `name` を `z-eli5` に改名。`description` に日本語のトリガー語を追記。
   本文に「ユーザーが書いている言語で artifact を書く」の一文を追記。
 - **採用理由**: 前提知識ゼロの相手への説明を HTML artifact で行う型として使える。
-- **未処理**: `SKILL.md` に出典コメントが入っていない。
-
-### z-grilling — 2026-08-24 以前（2026-08-27 に大幅改変）
-
-- **出典**: 未確定。`grill-me` / `grilling` の名前で多数のリポジトリの `.agents/skills/`,
-  `.claude/skills/` に同一本文が流通している（例: `nrwl/nx`, `bestofjs/bestofjs`,
-  `dmmulroy/.dotfiles`）。手元の本文はそれらより古い版に一致する。
-- **ライセンス**: 未確認
-- **形態**: ベンダリング＋日本語の上書き節
-- **上流との差分**: 英語本文はほぼ上流のまま。末尾に「進め方（上の英語本文に優先する）」節を
-  追加し、**質問を1問ずつ出す**、**質問の前に前提を説明する**、**平易に書く**、出力形式、の
-  4点で上流の挙動を上書きしている。上流は frontier をまとめて1ラウンドで訊く設計。
-- **採用理由**: 計画・設計の壁打ち相手として `z-start-task` から呼ぶ。
-- **未処理**: 出典とライセンスが未確認。`SKILL.md` に出典コメントも入っていない。
 
 ### frontend-design プラグイン — 時期不明
 
@@ -106,7 +163,23 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 
 ## 検討して採用しなかったもの
 
-（まだない）
+### coji/natural-japanese — 2026-09-13
+
+- **出典**: https://github.com/coji/natural-japanese
+- **ライセンス**: MIT
+- **内容**: 12条の文体憲法、`sudachipy` による形態素解析 lint、0〜100 のスコア。
+  `SKILL.md` 20KB、`references/` 計 160KB、`scripts/lint.py` 119KB。
+- **判定理由**: 規範部分が `z-japanese-proofreading` と `z-cognitive-rhythm-writing` に
+  正面から競合する。両方を置くと、どちらに従うのかが応答ごとに揺れる。検査層（lint と
+  スコア）は自作規範にない要素だが、検出対象は翻訳調・禁止語・文長で、実際に困っている
+  「長さと抽象度」には効かない。設定同期リポジトリに 280KB を持ち込む理由が立たなかった。
+- **再検討の条件**: 翻訳調や文長の機械検出が必要になったとき。その場合も `~/.claude` には
+  置かず、別リポジトリに置いて `z-japanese-proofreading` から参照する。
+
+### ayghri/i-have-adhd（スキルとして） — 2026-09-13
+
+`concise.md` への部分取り込みとして採用済み。スキルそのものを入れなかった理由は
+「採用したもの」側のエントリに書いた。
 
 ---
 
@@ -118,7 +191,6 @@ git の履歴はこの用途には使えない。同期フック（`scripts/sync
 - `z-cognitive-rhythm-writing` — 日本語の説明文に緩急を設計する規範
 - `z-create-pr` — PR 作成
 - `z-start-task` — タスク選定から実装・セルフレビューまで
-- `z-wait-what` — 説明の言い直しを求める
 
 `skills/` 直下のシンボリックリンク（`computer-use`, `find-skills`, `orca-cli`,
 `orchestration`）は Orca が注入するもので、このリポジトリの管理対象ではない。
