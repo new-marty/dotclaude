@@ -34,3 +34,5 @@
 - このセッションの外の読者が読むもの（ドキュメント、README、設計書、PR 本文、コミットメッセージ、
   issue）を書くときは `z-writing-for-readers` を読む。
 - 日本語の文章を人に出す前は `z-japanese-proofreading` を読む。英語の文章には使わない。
+
+@~/.claude/CLAUDE.machine.md
