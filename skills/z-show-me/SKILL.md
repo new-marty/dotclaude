@@ -132,8 +132,27 @@ HTML を書いたら、`open` コマンドで開かない。次のどちらか�
   `artifact-diagramming` も読む。
 - **SendUserFile ツール** — その場で見せて終わりの図。`display: "render"` を指定する。
 
-擬似コード・呼び出し木・ファイル木・mermaid・diff は、HTML にせず応答本文に直接書く。
-mermaid は Artifact でもそのまま描画される。
+擬似コード、呼び出し木、ファイル木、diff は、HTML にせず応答本文に直接書く。
+
+mermaid は、Claude Code の TUI が図にしないため、応答本文に出すときは ASCII に変換する。
+
+```sh
+node ~/.claude/scripts/mermaid-term/render.mjs <<'EOF'
+flowchart LR
+    A[Start] --> B[Done]
+EOF
+```
+
+その出力を `text` のコードブロックに入れる。読者が読むのは図のほうなので、mermaid の
+ソースは併記しない。flowchart（subgraph を含む）、sequenceDiagram、stateDiagram、
+classDiagram、erDiagram を描ける。ノードのラベルに全角文字を使うと枠の幅がわずかに
+ずれるため、英数字で書けるならそのほうが揃う。
+
+ただし、段数の違う subgraph を横に並べると枠線が重なって読めなくなる。並べるなら各
+subgraph の段数を揃えるか、図を分ける。出力は貼る前に必ず目で見て、崩れていたら図の
+ほうを書き直す。
+
+一方、Artifact に載せる図は変換しない。mermaid のまま書けばブラウザ側で描画される。
 
 ### guidance
 

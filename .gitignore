@@ -34,3 +34,6 @@ skills/orchestration
 *.pem
 *.key
 .DS_Store
+
+# mermaid-term がローカルに解決する依存。package.json と lock から再現できる。
+scripts/mermaid-term/node_modules/
