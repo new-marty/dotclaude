@@ -145,8 +145,8 @@ EOF
 
 その出力を `text` のコードブロックに入れる。読者が読むのは図のほうなので、mermaid の
 ソースは併記しない。flowchart（subgraph を含む）、sequenceDiagram、stateDiagram、
-classDiagram、erDiagram を描ける。ノードのラベルに全角文字を使うと枠の幅がわずかに
-ずれるため、英数字で書けるならそのほうが揃う。
+classDiagram、erDiagram を描ける。日本語のラベルも枠が揃うが、そのために表示幅 0 の
+文字を混ぜているため、出力をコードとして再利用する用途には向かない。
 
 ただし、段数の違う subgraph を横に並べると枠線が重なって読めなくなる。並べるなら各
 subgraph の段数を揃えるか、図を分ける。出力は貼る前に必ず目で見て、崩れていたら図の

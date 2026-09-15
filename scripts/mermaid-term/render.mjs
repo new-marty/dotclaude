@@ -10,8 +10,23 @@
 
 import { readFileSync } from 'node:fs'
 import { renderMermaidASCII } from 'beautiful-mermaid'
+import stringWidth from 'string-width'
 
 const FENCE = /^[ \t]*```+[ \t]*mermaid[^\n]*\n([\s\S]*?)^[ \t]*```+[ \t]*$/gm
+const ZERO_WIDTH = '​'
+
+// beautiful-mermaid は枠の幅を文字数で決めるため、全角文字のラベルは枠からはみ出す。
+// 「検証」は 2 文字だが端末では 4 桁を占める。そこで、はみ出す桁数と同じ数だけ
+// 表示幅 0 の文字をラベルの前後に足し、ライブラリに正しい桁数を数えさせる。
+// 端末では足した文字が見えないので、枠と中身の両方が揃う。
+function padWideChars(code) {
+  return code.replace(/[^\x00-\x7F]+/gu, (run) => {
+    const shortfall = stringWidth(run) - [...run].length
+    if (shortfall <= 0) return run
+    const left = Math.floor(shortfall / 2)
+    return ZERO_WIDTH.repeat(left) + run + ZERO_WIDTH.repeat(shortfall - left)
+  })
+}
 
 const src = process.argv[2]
   ? readFileSync(process.argv[2], 'utf8')
@@ -26,7 +41,7 @@ const rendered = diagrams.map((code) => {
   const trimmed = code.trim()
   if (!trimmed) return ''
   try {
-    return renderMermaidASCII(trimmed)
+    return renderMermaidASCII(padWideChars(trimmed))
   } catch (err) {
     failed = true
     process.stderr.write(`render.mjs: ${err.message}\n`)
