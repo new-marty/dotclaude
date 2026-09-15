@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "mermaid を ASCII 図に変換して端末に出す",
+  "description": "Convert mermaid into an ASCII diagram for the terminal",
   "dependencies": {
     "beautiful-mermaid": "^1.1.3",
     "string-width": "^8.2.2"

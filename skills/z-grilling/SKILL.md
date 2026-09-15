@@ -1,67 +1,75 @@
 ---
 name: z-grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. 日本語でも同じく使う - 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
+description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. Also triggers on Japanese: 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
 ---
 
-<!-- 設計は https://github.com/mattpocock/skills の grilling (MIT, Copyright (c) 2026
-     Matt Pocock)、質問の形式は https://jacobian.org/2021/jan/30/soccr/ の SOCCR。
-     上流は frontier をまとめて1ラウンドで訊く設計だが、ここでは1問ずつ訊く。矛盾を
-     避けるため上流の英語本文は置かず、日本語で書き直してある。 -->
+<!-- The design comes from grilling in https://github.com/mattpocock/skills (MIT,
+     Copyright (c) 2026 Matt Pocock); the question format is SOCCR from
+     https://jacobian.org/2021/jan/30/soccr/. Upstream asks the whole frontier in one
+     round; this version asks one question at a time. Upstream's body is not carried over,
+     so the two cannot contradict each other. -->
 
-合意に達するまで訊き続ける。決定を木として持つ。ある決定が決まると、その下にぶら下がる
-決定が訊けるようになる。前提が決まっている決定だけを訊く。
+Keep asking until you reach agreement. Hold the decisions as a tree: settling one decision
+opens up the decisions hanging below it. Only ask decisions whose premises are already
+settled.
 
-## 訊き方
+## How to ask
 
-1問ずつ出す。答えが返ったら次を出す。並べない。答えが他の問いの前提になるものを先に。
-各問の末尾に `残り <n> 問` を置く。
+One question at a time. Send the next one after the answer comes back. Never list them
+together. Put the ones whose answers become premises for other questions first.
+End each question with `<n> questions left`.
 
-1問出す前に、その問いの調査を終える。質問のあとに調べて前提が変わると、同じ問いに二度
-答えさせることになる。調査が要る問いは後のラウンドに回し、要らない問いを先に出す。
+Finish researching a question before you send it. Researching after asking, and changing
+the premises, makes the user answer the same question twice. Push questions that need
+research into a later round and send the ones that do not first.
 
-決めるのはユーザー、事実を集めるのはこちら。答えが返らなかったらそこで止める。自分で
-答えを埋めない。
+The user decides; you gather the facts. If no answer comes back, stop there. Do not fill in
+the answer yourself.
 
-## 形式
+## Format
 
 ```
-❓ **<タイトル>**
+❓ **<title>**
 
-<Situation: 調べて分かった事実。ここではまだ主張しない。読み手はこちらの調査も思考も
-知らないので、そこへ至った道筋を省かない>
+<Situation: the facts your research established. Do not argue yet. The reader knows
+neither your research nor your reasoning, so do not skip the path that led there>
 
-<Criteria: 何を基準に選ぶのか。選択肢より先に出す>
+<Criteria: what the choice will be judged on. Comes before the options>
 
-<Options: 現状維持を含めて5つ以下。本気で推せる案だけ出し、当て馬を置かない。
-選んだ結果どこがどう変わるかを書く>
+<Options: at most five, including the status quo. Only options you would genuinely back —
+no straw men. Say what changes if each one is chosen>
 
-➡️ **推奨**: <言い切る。「たぶん〜がいいと思います」と書かない>
+➡️ **Recommendation**: <state it outright. Do not write "I think maybe X would be good">
 
-残り <n> 問
+<n> questions left
 ```
 
-出す前に確かめる。1つでも当てはまるなら書き直す。
+Check before sending. Rewrite if any of these hold.
 
-- 推奨が最後まで読まないと分からない
-- 背景の説明が分析より長い
-- 「どちらも一長一短です」で終わっている
-- 何を決めてほしいのかが書かれていない
-- 推せない当て馬が混じっている
+- The recommendation cannot be found without reading to the end
+- The background runs longer than the analysis
+- It ends on "both have their pros and cons"
+- It does not say what you want decided
+- A straw man you would not back is mixed in
 
-## 答えられないとき
+## When the user cannot answer
 
-問いを取り下げず、答えられない理由を分類する。分類を伝えたうえで、打つコマンドを名指しで
-伝える。3つともユーザーが起動するスキルなので、こちらからは呼ばない。
+Do not withdraw the question. Classify why it cannot be answered, tell the user the
+classification, and name the command to type. All three are user-invoked skills, so never
+invoke them yourself.
 
-| 理由 | 渡す先 | 持ち帰るもの |
+| Reason | Hand off to | What comes back |
 | --- | --- | --- |
-| 前提になる仕組み・用語を知らない | `/z-teach` | 学んだ内容 |
-| 管掌外、または他人しか持っていない情報が要る | `/z-to-questionnaire` | 回答済みの質問票 |
-| 作って動かさないと分からない | `/z-prototype` | 試した結果 |
+| Does not know an underlying mechanism or term | `/z-teach` | What was learned |
+| Outside their remit, or needs information only someone else holds | `/z-to-questionnaire` | The filled-in questionnaire |
+| Cannot be known without building and running it | `/z-prototype` | The result of the experiment |
 
-その問いは未決のまま開いておき、依存していない問いを先に進める。戻ってきたら、持ち帰った
-証拠を前提として示し、同じ問いを訊き直す。
+Leave that question open and move ahead with the questions that do not depend on it. When
+the user returns, present the evidence they brought back as the premise and ask the same
+question again.
 
-推測で埋めない。推測は仕様になり、チケットになり、実装になる。
+Do not fill gaps with guesses. A guess becomes a specification, then a ticket, then an
+implementation.
 
-「そこは任せる」と言われたときは分岐しない。推奨を採って進み、何を仮定したかを書く。
+When the user says "your call", do not branch. Take your recommendation, proceed, and write
+down what you assumed.

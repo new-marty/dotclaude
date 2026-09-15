@@ -1,45 +1,50 @@
-# 取り込みの記録
+# Adoption log
 
-外部から取り込んだもの、検討して見送ったものを1行ずつ記録する。git の履歴は同期フックの
-自動コミットで埋まっていて、一件ごとの意図が残らないため。
+One line per item adopted from elsewhere, and per item considered and declined. Git history
+is filled with automatic commits from the sync hooks, so the intent behind any single
+change does not survive there.
 
-各 `SKILL.md` の冒頭には出典とライセンスをコメントで書く。ファイル単体を渡しても帰属が
-失われないようにするため。このファイルはその索引で、見送ったものも載せる。
+Each `SKILL.md` carries its source and license in a comment at the top, so attribution
+survives even when the file is passed around on its own. This file is the index over those,
+and it also lists what was declined.
 
-新しい行を表の上に足す。
+Add new rows above the existing ones.
 
-## 採用
-2026-09-13 に全体を監査し、実害のあるバグ（`allowed-tools` の不足、内部参照の誤り、呼ぶスキルの
-取り違え、上流の `open` コマンド前提）を潰した。同じ規則が複数ファイルにあったものは、出力言語を
-`CLAUDE.md`、日本語の文章規則を `z-japanese-proofreading`、判定テストを `z-writing-for-readers`、
-応答の長さを `output-styles/concise.md` に寄せた。
+## Adopted
+An audit of the whole set on 2026-09-13 fixed the bugs that actually caused harm: missing
+`allowed-tools`, wrong internal references, skills that called the wrong other skill, and
+an upstream assumption that the `open` command exists. Where the same rule appeared in
+several files, it was consolidated: output language into `CLAUDE.md`, rules for Japanese
+prose into `z-japanese-proofreading`, the check test into `z-writing-for-readers`, and
+response length into `output-styles/concise.md`.
 
 
-| 名前 | 出典 | ライセンス | 手を入れたところ |
+| Name | Source | License | What was changed |
 | --- | --- | --- | --- |
-| `output-styles/concise.md` | [i-have-adhd](https://github.com/ayghri/i-have-adhd) | MIT | 規則を3つに絞って日本語化。同時に守れる制約は3つ程度という研究に合わせた |
-| `z-show-me` | [humanlayer/skills](https://github.com/humanlayer/skills) | MIT | HTML の出し方を Artifact / SendUserFile に差し替え。日本語トリガー |
-| `z-teach` | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT | 教材を作るディレクトリを確認する節、HTML の渡し方を追加。日本語トリガー、`disable-model-invocation`、`argument-hint` |
-| `z-to-questionnaire` | 同上 | MIT | 質問票の書き出し先を確認する節を追加。日本語トリガー、`disable-model-invocation` |
-| `z-prototype` | 同上 | MIT | 本文は上流のまま。日本語トリガー、`disable-model-invocation` |
-| `z-grilling` | 同上 | MIT | 日本語で全面的に書き直し。1問ずつ訊く・[SOCCR](https://jacobian.org/2021/jan/30/soccr/) 形式・答えられないときの分岐 |
-| `z-wait-what` | 同上 | MIT | 日本語に書き直し。`z-japanese-proofreading` の条件を追加、`disable-model-invocation` |
-| `z-unstuck` | [oi-owarasero](https://github.com/nwiizo/oi-owarasero) | MIT | 末尾に独自の節 |
-| `z-review-finding` | [p3bot/library](https://github.com/p3bot/library) の Per-item Template | MPL-2.0 | 日本語で全面的に書き直し |
-| `z-eli5` | [claude-plugins-community](https://github.com/anthropics/claude-plugins-community) | Apache-2.0 | 出力言語の指定を追加。日本語トリガー、`argument-hint` |
-| `frontend-design` | claude-plugins-official | 上流 | プラグイン。本体は同期されない |
+| `output-styles/concise.md` | [i-have-adhd](https://github.com/ayghri/i-have-adhd) | MIT | Cut down to three rules and rewritten, matching the research that people can hold about three constraints at once |
+| `z-show-me` | [humanlayer/skills](https://github.com/humanlayer/skills) | MIT | HTML delivery swapped for Artifact / SendUserFile. Japanese triggers |
+| `z-teach` | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT | Added a section that confirms the directory for teaching material, and how to hand over HTML. Japanese triggers, `disable-model-invocation`, `argument-hint` |
+| `z-to-questionnaire` | same as above | MIT | Added a section that confirms where the questionnaire is written. Japanese triggers, `disable-model-invocation` |
+| `z-prototype` | same as above | MIT | Body is upstream's. Japanese triggers, `disable-model-invocation` |
+| `z-grilling` | same as above | MIT | Rewritten from scratch: one question at a time, the [SOCCR](https://jacobian.org/2021/jan/30/soccr/) format, and a branch for when the user cannot answer |
+| `z-wait-what` | same as above | MIT | Rewritten. Added the `z-japanese-proofreading` condition, `disable-model-invocation` |
+| `z-unstuck` | [oi-owarasero](https://github.com/nwiizo/oi-owarasero) | MIT | A local section at the end |
+| `z-review-finding` | the Per-item Template from [p3bot/library](https://github.com/p3bot/library) | MPL-2.0 | Rewritten from scratch |
+| `z-eli5` | [claude-plugins-community](https://github.com/anthropics/claude-plugins-community) | Apache-2.0 | Added the output-language rule. Japanese triggers, `argument-hint` |
+| `frontend-design` | claude-plugins-official | upstream | A plugin. Its body is not synced |
 
-## 見送り
+## Declined
 
-| 名前 | 出典 | 理由 |
+| Name | Source | Reason |
 | --- | --- | --- |
-| natural-japanese | [coji/natural-japanese](https://github.com/coji/natural-japanese) | 規範が `z-japanese-proofreading` と競合する。lint が検出するのは翻訳調と文長で、困っている長さと抽象度には効かない |
-| i-have-adhd（スキルとして） | 同上 | output style と目的が重なる。二重に持つとどちらが効いているか分からない |
+| natural-japanese | [coji/natural-japanese](https://github.com/coji/natural-japanese) | Its norms conflict with `z-japanese-proofreading`. Its lint catches translationese and sentence length, which does not help with the length and level of abstraction that actually cause trouble |
+| i-have-adhd (as a skill) | same as above | Overlaps in purpose with the output style. Holding both makes it unclear which one is in effect |
 
-## 自作
+## Hand-written
 
 `z-japanese-proofreading` / `z-cognitive-rhythm-writing` / `z-create-pr` / `z-start-task` /
 `z-writing-for-readers`
 
-`skills/` 直下のシンボリックリンク（`computer-use`、`find-skills`、`orca-cli`、`orchestration`）は
-Orca がマシンごとに作るもので、`.gitignore` で追跡対象から外してある。
+The symlinks directly under `skills/` (`computer-use`, `find-skills`, `orca-cli`,
+`orchestration`) are created per machine by Orca and are excluded from tracking in
+`.gitignore`.

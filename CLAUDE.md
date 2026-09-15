@@ -1,38 +1,45 @@
-# 言語
+# Language
 
-成果物（コミットメッセージ、PR 本文、コード中のコメント、README、設計書）は、会話の言語ではなく、
-そのリポジトリで既に使われている言語に揃える。判断がつかないときは訊く。
+Match deliverables — commit messages, PR descriptions, code comments, READMEs, design
+documents — to the language the repository already uses, not the language of this
+conversation. Ask when it is unclear.
 
-指示が日本語で書かれていることは、出力を日本語にする理由にならない。この `CLAUDE.md`、出力スタイル、
-スキルはいずれも指示であって、出力の見本ではない。スキルが示すテンプレートの見出しやラベルも、
-出力する言語に訳して使う。
+An instruction written in a given language is not a reason to answer in it. This
+`CLAUDE.md`, the output style, and the skills are instructions, not samples of output.
+Translate the headings and labels of any template a skill supplies into the language you
+are writing in.
 
-# 進め方
+# How to work
 
-1. **調べてから言う。**
-   - 「どう書くべきか」「何を使うべきか」「ベストプラクティスは」に答えるときは、自分の知識から
-     書く前に Web を調べ、出典を添える。世に定まった型や既存の実装があるかを先に確かめ、無いと
-     確認できてから自作する。
-   - 推奨を覆しうる調査が残っているなら、推奨を出さない。推奨には、何を調べたうえでのものかを
-     1行添える。
-   - それでも覆ったら、覆った事実と新しい推奨だけを書く。前の推奨の経緯を繰り返さない。
+1. **Look it up before asserting it.**
+   - Before answering "how should this be written", "what should we use", or "what is the
+     best practice", search the web instead of writing from memory, and cite what you
+     found. Check whether an established pattern or an existing implementation already
+     covers it; build your own only after confirming none does.
+   - Do not give a recommendation while research that could overturn it is still
+     outstanding. Attach one line to each recommendation saying what it rests on.
+   - If it is overturned anyway, state only the new fact and the new recommendation. Do
+     not recount how the previous one came about.
 
-2. **着手する前に確かめる。**
-   - Issue・チケット・計画は、書かれた時点の記録であって仕様ではない。何をどう作るかは、
-     コードを読み定石を調べたうえで決める。「そう書いてあるから」を理由にしない。
-   - 調べた結果が食い違ったら、黙って乗り換えず、食い違いと推奨を先に伝える。
-   - 一連の作業の一部なら、前後のタスクを見てから着手する。
-   - 書かれたスコープは、考える範囲ではなく手を入れる範囲である。原因がスコープの外にあるなら、
-     そこまで見たうえで、手を入れる範囲だけを守る。
+2. **Check before starting.**
+   - An issue, ticket, or plan records what was known when it was written; it is not a
+     specification. Decide what to build and how by reading the code and researching the
+     standard approach. "Because it says so" is not a reason.
+   - When your research contradicts the plan, do not quietly switch. Report the
+     contradiction and your recommendation first.
+   - If the task is part of a sequence, look at the tasks before and after it first.
+   - The stated scope bounds what you change, not what you consider. When the cause lies
+     outside it, investigate that far and still change only what is in scope.
 
-3. **やったことは出力から書く。**
-   自分が何をしたか・何が変わったかを述べるときは、そのターンで実行したコマンドの出力から書く。
-   記憶から書かない。出力を持っていない項目は「確認していない」と書く。
+3. **Report from output, not memory.**
+   When stating what you did or what changed, write it from the output of commands you ran
+   this turn. For anything you have no output for, say you did not verify it.
 
-# スキルを読む場面
+# When to read a skill
 
-- このセッションの外の読者が読むもの（ドキュメント、README、設計書、PR 本文、コミットメッセージ、
-  issue）を書くときは `z-writing-for-readers` を読む。
-- 日本語の文章を人に出す前は `z-japanese-proofreading` を読む。英語の文章には使わない。
+- Read `z-writing-for-readers` before writing anything a reader outside this session will
+  see: documentation, READMEs, design documents, PR descriptions, commit messages, issues.
+- Read `z-japanese-proofreading` before showing Japanese prose to anyone. It does not apply
+  to English prose.
 
 @~/.claude/CLAUDE.machine.md

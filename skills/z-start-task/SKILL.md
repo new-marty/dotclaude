@@ -1,128 +1,128 @@
 ---
 name: z-start-task
-description: 計画ドキュメントと Issue を突き合わせて「どのタスクをやりますか?」の相談から始め、スコープ・設計の壁打ちと合意を重ねてブランチ作成 → 設計レビュー → 実装 → セルフレビューまで進める。「次何やる?」「タスク始めたい」「Issue に着手したい」「リファクタリングの続きをやろう」"what should I work on next", "let us start a task", "pick up that issue" などタスク着手の意図があれば使う
-argument-hint: "[計画ディレクトリ or Issue番号] [補足指示](省略可)"
+description: Start from "which task are we doing?" by reading the plan documents against the issues, agree on scope and design through back-and-forth, then go on to create the branch, review the design, implement, and self-review. Use it whenever the intent is to pick up work — "what should I work on next", "let us start a task", "pick up that issue", 「次何やる?」「タスク始めたい」「Issue に着手したい」「リファクタリングの続きをやろう」
+argument-hint: "[plan directory or issue number] [extra instructions](optional)"
 allowed-tools: Bash(git *), Bash(gh issue *), Bash(gh pr *), Bash(gh repo *), Read, Edit, Write, Glob, Grep
 ---
 
-タスク選びの相談から実装完了(セルフレビュー済み)まで、合意を重ねながら進める。
-リポジトリ固有の情報(ベースブランチ、計画ドキュメントの置き場所、検証コマンド、開発フロー)は決め打ちせず、手順0で毎回調べる。
+Go from choosing the task to finished, self-reviewed work, building agreement at each step.
+Never assume the repository-specific facts — base branch, where the plan documents live,
+verification commands, development flow. Look them up in step 0 every time.
 
-## 中心原則
+## Core principles
 
-1. 会話は「どのタスクをやりますか?」から始まる。いきなり作業しない。
-2. 合意は粗→細の段階式。各段階の入口は「説明のしかた」の水準で書き、合意できてから一段細かい話に入る。
-3. Issue を仕様として信じない。計画ドキュメントと現状コードが実態を持つ。Issue と現実が食い違ったら Issue 側を疑い、切り直しを提案する。
-4. 合意チェックポイントを飛ばさない。タスク合意 → 全体像の説明と質問攻め → ブランチ → 設計承認 → 実装、の順。承認をもらう前に次の段階の作業をしない。
-5. ユーザーの案に対し、対案または反対理由を1つ以上書く。書けないときは「反対点なし」と明記する。同意だけを返さない。
+1. The conversation starts from "which task are we doing?". Never start working straight away.
+2. Agreement is staged, coarse to fine. Write the opening of each stage at the level "How to explain" describes, and move to the finer discussion only once you have agreement.
+3. Do not trust an issue as a specification. The plan documents and the current code are what is real. When an issue and reality disagree, suspect the issue and propose rewriting it.
+4. Do not skip the agreement checkpoints. The order is: agree on the task → explain the whole picture and grill → branch → design approval → implementation. Do not do the next stage's work before you have approval.
+5. For every proposal the user makes, write at least one alternative or one reason against it. When you have none, say "no objections" explicitly. Never reply with agreement alone.
 
-## 開発原則
+## Development principles
 
-- 合意した「やること」に書いていないファイルを変更しない。「ついで」は別タスクとして提案に回す。
-- 迷ったら単純な方を選ぶ。前後の層を同じ PR で出せるなら、旧スキーマ互換のシム(Optional や default 値の温存)を書かない。
-- 書く前に既存実装を探す。同じものを 2 回書いていたら共通化を設計に含める。
-- 置き場所は、そのリポジトリが採用している層構造の依存方向に従う。
+- Do not change a file that is not in the agreed "what we are doing". Something you noticed "while in there" goes into a proposal for a separate task.
+- When in doubt, choose the simpler option. If both layers can ship in the same PR, do not write a shim for the old schema (an Optional field, a preserved default).
+- Search for an existing implementation before writing one. If you are writing the same thing twice, fold factoring it out into the design.
+- Where code goes follows the dependency direction of the layering the repository uses.
 
-## 説明のしかた
+## How to explain
 
-全体像は、相手が Issue も計画も読んでいない前提で書く。
+Write the whole picture assuming the reader has read neither the issue nor the plan.
 
-- 専門用語・略語・社内用語を最初の説明に入れない。どうしても要るなら、その場で一行の言い換えを添える
-- 「何のために」「今どうなっていて」「これでどう変わるか」の順に、まず散文で書く。表や箇条書きへの細分化はそのあと
-- 比喩は一つまで使ってよい。ただし比喩で終わらせず、直後に実際の対象へ対応づける
-- 絵にしたほうが早いときは `z-show-me` を呼ぶ
-- この水準を守るのは各段階の入口(手順2の計画全体、手順3のタスクの全体像、手順5の設計の骨子)。合意が取れて細部の議論に入ったら、通常の語彙に戻してよい
+- Keep jargon, abbreviations, and in-house terms out of the first explanation. When one is unavoidable, add a one-line paraphrase on the spot
+- Write prose first, in this order: what it is for, how things stand now, and what changes. Break it into tables and bullets only afterwards
+- One metaphor is allowed. Do not stop at the metaphor: map it onto the real thing immediately after
+- Call `z-show-me` when a picture is faster
+- Hold to this level at the opening of each stage: the whole plan in step 2, the whole picture of the task in step 3, the outline of the design in step 5. Once you have agreement and the discussion turns to detail, normal vocabulary is fine
 
-## 手順
+## Steps
 
-### 0. リポジトリの前提を調べる
+### 0. Establish the repository's premises
 
-会話を始める前に、このリポジトリでの正しい進め方を確定させる。
+Before starting the conversation, settle how work is actually done in this repository.
 
-- リポジトリ名: `gh repo view --json nameWithOwner -q .nameWithOwner`
-- ベースブランチ: 直近のマージ済み PR の base を見る(`gh pr list --state merged --limit 5 --json baseRefName`)。`main` と決め打ちしない。判断できなければユーザーに確認する。
-- 計画ドキュメント: `docs/plans/`、`docs/specs/`、`plans/`、`ROADMAP.md` などを探す。README / INDEX / audit のような全体像を持つファイルがあれば、それを起点にする。
-- 開発フロー文書: `CLAUDE.md`、`AGENTS.md`、`CONTRIBUTING.md`、`docs/` 配下の開発フロー文書を読む。Issue のステータス運用、ブランチ命名、レビュー依頼の手順がそこにあれば、このスキルの手順より優先する。
-- 検証コマンド: `Taskfile.yml`、`Makefile`、`package.json` の scripts、CI 設定(`.github/workflows/`)から、push 前に通すべきコマンドを特定する。
-- コード探索の道具: GitNexus などのインデックスが使える環境ならそれを使い、なければ Grep と Glob で調べる。
+- Repository name: `gh repo view --json nameWithOwner -q .nameWithOwner`
+- Base branch: look at the base of recently merged PRs (`gh pr list --state merged --limit 5 --json baseRefName`). Do not assume `main`. Ask the user when it is unclear.
+- Plan documents: look in `docs/plans/`, `docs/specs/`, `plans/`, `ROADMAP.md`, and the like. If a README, INDEX, or audit file holds the overall picture, start from that.
+- Development flow documents: read `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, and any flow documents under `docs/`. Where they define issue status handling, branch naming, or how to request review, they take precedence over the steps in this skill.
+- Verification commands: identify what has to pass before pushing, from `Taskfile.yml`, `Makefile`, the scripts in `package.json`, and the CI configuration (`.github/workflows/`).
+- Tools for exploring the code: use an index such as GitNexus where the environment has one, and Grep and Glob otherwise.
 
-調べた前提のうちユーザーの認識と食い違いそうなもの(ベースブランチ、計画の置き場所)は、手順2の提示に一行添えて確認する。
+Where a premise you established might differ from what the user believes — the base branch, where the plans live — add a line confirming it to what you present in step 2.
 
-### 1. 状況を把握する
+### 1. Take stock
 
-- 計画ドキュメントを読み、この計画が何をしようとしているかを掴む
-- 起票状況と進行中の作業を取得する:
+- Read the plan documents and grasp what the plan is trying to do
+- Fetch what has been filed and what is in flight:
   ```
   gh issue list --state all --limit 100
   gh pr list
   git branch -a
   ```
-- Issue の open/closed、進行中 PR、既存ブランチから「今どこまで進んでいるか」を組み立てる
+- Build a picture of how far things have got, from open and closed issues, PRs in flight, and existing branches
 
-`$ARGUMENTS` に計画ディレクトリか Issue 番号が渡されていればその範囲に絞り、なければ計画全体から候補を出す。番号以降の補足指示は尊重する。
+When `$ARGUMENTS` carries a plan directory or an issue number, narrow to that; otherwise draw candidates from the whole plan. Respect any extra instructions after the number.
 
-### 2. タスクを相談する
+### 2. Discuss the task
 
-- AskUserQuestion で「どのタスクをやりますか?」を提示する。提示の形式:
-  - 最初に全体像を 2〜3 文(この計画は何をしようとしているか)。ユーザーが全体を把握している前提に立たない
-  - 候補は 3 件まで。候補ごとに: 一言で何をやる Issue か / 依存関係・進行中 PR との兼ね合い / 推奨とその理由
-- 計画と Issue の突き合わせで気づいた過不足(未起票の抜け・二重管理・計画との乖離・緊急度の変化)もここで共有する。Issue の切り直しが必要なら、タスク着手より先に提案する
-- Issue を新規に切る/書き直すときは、放置すると何が起きるか(障害、リードタイム悪化)を本文にし、受け入れ条件は検証可能な形にする
+- Put "which task are we doing?" to the user with AskUserQuestion. Format:
+  - Two or three sentences of the whole picture first: what this plan is trying to do. Do not assume the user holds the whole picture
+  - At most three candidates. For each: what the issue does in one line, how it sits against dependencies and PRs in flight, and your recommendation with its reason
+- Share here anything the plan-against-issues comparison turned up: gaps never filed, work tracked twice, drift from the plan, a change in urgency. When issues need rewriting, propose that before picking up a task
+- When filing or rewriting an issue, make the body say what happens if it is left alone (an incident, a longer lead time), and make the acceptance criteria verifiable
 
-### 3. 全体像を説明し、質問で詰める
+### 3. Explain the whole picture and grill it into shape
 
-合意の要はここ。この段階を飛ばして手を動かさない。順番も入れ替えない。
+This is where agreement is won. Do not skip this stage and start working. Do not reorder it either.
 
-1. 選んだタスクの全体像を説明する。「説明のしかた」の水準で、次の順に散文で書く:
-   - このタスクは何のためにあるか。放置すると何が困るか
-   - 今のコードや運用がどうなっていて、どこが問題か
-   - 終わったとき何がどう変わるか(使う人から見て / コードから見て)
+1. Explain the whole picture of the chosen task. At the level "How to explain" describes, in prose, in this order:
+   - What this task is for. What goes wrong if it is left alone
+   - How the current code or operation works, and where the problem is
+   - What will be different when it is done (from the user's side, and from the code's side)
 
-   説明の材料が足りなければ、先に現状コードと関連ドキュメントを調べる。ユーザーに聞く前に自分で調べる
-2. 「やること」「やらないこと」を各 2〜3 行で示す
-3. `z-grilling` を呼ぶ。スコープの境界、既存挙動との整合、データ移行の要否、エラー時の扱い、
-   テストの範囲の 5 項目について、それぞれ 1 問以上訊く。ここで訊かなかったことは実装後の手戻りになる
-4. 詰めた結果、認識がずれていた点があれば「やること / やらないこと」を書き直して再合意する
-5. 手順0で見つけた開発フロー文書が Issue のステータス運用を定めているなら、着手時のステータス変更をここで行う
+   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user
+2. Give "what we are doing" and "what we are not doing", two or three lines each
+3. Call `z-grilling`. Ask at least one question on each of five things: the boundary of the scope, consistency with existing behavior, whether data migration is needed, how errors are handled, and how far the tests go. Anything not asked here comes back as rework after implementation
+4. Where the grilling exposed a mismatch, rewrite "what we are doing / what we are not doing" and agree again
+5. If a development flow document found in step 0 defines issue status handling, change the status here to mark the work started
 
-### 4. ブランチを worktree で切る
+### 4. Create the branch in a worktree
 
-- main / ベースブランチの checkout 上で `git checkout -b` / `git switch -c` しない。複数タスクを並列で進めるので、その checkout を特定タスクで占有すると他タスクの邪魔になる
-- EnterWorktree ツールでブランチと worktree を同時に作る。使えない環境でのみ `git worktree add` で代替する
-- 事前に `git fetch origin <base>` してベースブランチ起点にする。ブランチ名は手順0で調べた命名規則に従い、なければ `{type}/{番号}-{短い英語の説明}`(feat / fix / refact / docs / chore)
-- 進行中 PR と同一ファイルを触る場合は、その PR のブランチ起点を提案する。その際 PR のベース調整が必要になる旨を伝える
-- タスク完了後の離脱は ExitWorktree。worktree を残すか消すかはユーザーに確認する
+- Do not run `git checkout -b` or `git switch -c` on the main or base branch checkout. Several tasks run in parallel, and occupying that checkout with one task gets in the way of the others
+- Create the branch and the worktree together with the EnterWorktree tool. Fall back to `git worktree add` only where that tool is unavailable
+- Run `git fetch origin <base>` first so the branch starts from the base branch. Name the branch by the convention found in step 0, or `{type}/{number}-{short-description}` (feat / fix / refact / docs / chore) when there is none
+- When the work touches the same files as a PR in flight, propose branching from that PR's branch instead, and say that the PR's base will need adjusting
+- Leave with ExitWorktree when the task is done. Ask the user whether to keep or remove the worktree
 
-### 5. 設計・方針を決める(壁打ち)
+### 5. Decide the design and the approach
 
-- 現状コードを調査する。影響範囲を先に把握してから設計を出す
-- 手順0で読んだ規約(層構造、UI 規約、マイグレーション手順、仕様駆動開発の要否)に沿っているか確認する
-- まず方針の骨子を散文 1〜2 段落で提示して合意を取る。骨子の段階で表や一覧に細分化しない
-- 骨子に合意できたら、手順3で詰めきれなかった実装レベルの判断(関数の分割単位、既存実装の再利用可否など)を洗い出す。残っていれば `z-grilling` を再度呼ぶ。ここで詰めた内容がスコープと実装順序になる
-- 詰め終えたら、スコープ / 進める順序 / やらないこと / 検証方法 を提示してレビューをもらう
-- ユーザーから「どう思う?」と聞かれたら、選択肢と推奨の提示で止める。実装に走らない
-- ユーザーの承認をもらうまで実装しない
+- Investigate the current code. Understand the blast radius before proposing a design
+- Check the design against the conventions read in step 0: layering, UI conventions, migration procedure, whether spec-driven development applies
+- Present the outline of the approach as one or two paragraphs of prose and get agreement. Do not break the outline into tables or lists
+- Once the outline is agreed, list the implementation-level decisions step 3 could not settle — how to split functions, whether an existing implementation can be reused. Call `z-grilling` again if any remain. What is settled here becomes the scope and the order of implementation
+- When it is settled, present the scope, the order of work, what is out of scope, and how it will be verified, and ask for review
+- When the user asks "what do you think?", stop at options and a recommendation. Do not run ahead into implementation
+- Do not implement until the user approves
 
-### 6. 実装する
+### 6. Implement
 
-- 合意した「やること」に書いていないファイルを変更しない。既存ファイルの書き方に合わせる
-- 影響範囲の広いシンボルを変更する前に、呼び出し元を洗い出す
-- テストを追加・変更したとき、そのリポジトリがテスト要件を文書で管理しているなら、同じ変更に含める
-- 仕組み・運用・CI を変えたら、恒久的な解説文書を書く(言われなくても書く)
+- Do not change a file that is not in the agreed "what we are doing". Match how the existing files are written
+- Before changing a symbol with a wide blast radius, list its callers
+- When you add or change tests and the repository tracks test requirements in a document, include that in the same change
+- When you change a mechanism, an operational procedure, or CI, write a lasting explanation of it — without being asked
 
-### 7. セルフレビューして Done にする
+### 7. Self-review and call it done
 
-- `code-review` スキル(またはリポジトリのレビュー用スキル)でセルフレビューする。自分のコードを他人のコードとして読む。観点は正しさ、スコープ逸脱、置き場所、命名。指摘があれば直してから次に進む
-- 手順0で特定した検証コマンドを通す。フォーマッタが lint と別ジョブになっているリポジトリでは、push 前にフォーマッタも実行する
-- コミットして push する。コミットメッセージの言語と形式は直近のコミットログに合わせる
-- 手順0で見つけたフロー文書が PR 前の作業(QA チェックリスト等)を定めているなら、それが必要になることをここで伝える
-- PR は作成しない。`z-create-pr` で PR を作成できることを伝えるだけにする
+- Self-review with the `code-review` skill, or the repository's own review skill. Read your code as someone else's. Look at correctness, scope creep, where the code was placed, and naming. Fix what it finds before moving on
+- Run the verification commands identified in step 0. In a repository where the formatter is a separate job from lint, run the formatter before pushing too
+- Commit and push. Match the language and the format of the commit message to the recent commit log
+- If a flow document found in step 0 defines pre-PR work such as a QA checklist, say here that it will be needed
+- Do not create the PR. Just say that `z-create-pr` can create it
 
-## 注意
+## Cautions
 
-- PR を自動作成しない
-- force push しない。push 済みブランチの修正は追加コミットで行う
-- コミット署名に 1Password を使っている環境では、ロック中に `failed to write commit object` で失敗する。解錠を依頼して再試行する
-- Issue が大きすぎる場合は分割を提案してから進める
-- 保護ブランチへの直接コミット・プッシュはしない
-- ブランチは worktree で切る(手順4)。ベースブランチの checkout はいつでも他タスクに使える状態を保つ
+- Do not create a PR automatically
+- Do not force push. Fix an already-pushed branch with an additional commit
+- Where commit signing uses 1Password, a locked vault fails with `failed to write commit object`. Ask for it to be unlocked and retry
+- When an issue is too large, propose splitting it before proceeding
+- Do not commit or push directly to a protected branch
+- Create branches in a worktree (step 4). Keep the base branch checkout free for any other task at any time

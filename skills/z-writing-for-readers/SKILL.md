@@ -1,37 +1,41 @@
 ---
 name: z-writing-for-readers
-description: このセッションの外にいる読者が読む文章（ドキュメント、README、設計書、PR 本文、コミットメッセージ、issue、レビューコメント）を、会話の続きではなく独立した成果物として書くための規範。言語に依らない。日本語で書くときは `z-japanese-proofreading` と併せて読む。短いチャット応答、コード、ログには使わない。
+description: The norm for writing anything a reader outside this session will see (documentation, README, design document, PR description, commit message, issue, review comment) as a standalone deliverable rather than a continuation of the conversation. Language-independent. When writing in Japanese, read `z-japanese-proofreading` alongside it. Not for short chat replies, code, or logs.
 ---
 
-# 読者のために書く
+# Write for the reader
 
-読者は、この会話も、与えられた指示も、調査で得た情報も、開いたファイルも知らない。
-文章はセッションの続きではなく、独立した成果物として書く。
+The reader knows none of it: not this conversation, not the instructions you were given,
+not what your research turned up, not the files you opened. Write the text as a standalone
+deliverable, not as a continuation of the session.
 
-## 規則
+## Rules
 
-1. 最終形として書く。
-   試行錯誤、以前の誤りとその修正、調査の経緯、会話中の指示は読者には存在しない。
-   最初からそう計画し、そう調査した結果であるかのように構成する。
-   「〜はしないようにする」「前述の方針の通り」のような経緯に依存した言及は、
-   背景ごと独立して読める文に書き直すか、削除する。
+1. Write it as the final form.
+   Your false starts, your earlier mistakes and their corrections, the path your research
+   took, the instructions given mid-conversation — none of these exist for the reader.
+   Structure the text as if you had planned and researched it this way from the start.
+   References that depend on that history — "we will avoid doing X", "as decided above" —
+   get rewritten into sentences that carry their own background, or deleted.
 
-2. 指示を復唱しない。
-   「xxx向けに」「〜の形式で」といった指示は書き方に反映するものであり、
-   成果物の中で宣言するものではない。結果だけを見せる。
+2. Do not repeat the instructions back.
+   Directions like "write this for xxx" or "use this format" shape how you write; they are
+   not declared inside the deliverable. Show only the result.
 
-3. 結論には、読者が検証できるだけの文脈を添える。
-   固有名詞、社内用語、ファイル名、判断の理由は初出時に説明する。
-   何を根拠にそう言えるのかが本文だけで追えるようにする。
+3. Give each conclusion enough context for the reader to check it.
+   Explain proper nouns, in-house terms, and file names on first use, along with the
+   reasoning behind a judgment. The body alone should let the reader follow what the claim
+   rests on.
 
-4. 書く前に、要点を1つ決める。
-   言いたいことを全部言わない。この文章で相手に伝わるべきことを1つに絞り、それを
-   理解するのに要る前提だけを先に置く。
-   自分が調べた順・考えた順に出さない。相手が読む順に組み直す。
+4. Decide on one point before you write.
+   Do not say everything you could say. Narrow it to the one thing the reader should come
+   away with, and put only the background needed to understand that up front.
+   Do not present things in the order you researched or thought about them. Rearrange them
+   into the order the reader will read them.
 
-## 判定テスト
+## The check
 
-書き終えたら各文に問う:「このセッションのログが消えた状態で、対象読者は
-この文を理解できるか。理解に必要な情報は本文中に存在するか」
-答えがNoの文は、書き直すか削除する。
-
+When you have finished, ask of each sentence: "with the log of this session gone, can the
+intended reader understand this sentence? Is the information needed to understand it
+present in the body?"
+Rewrite or delete every sentence whose answer is no.

@@ -1,32 +1,33 @@
 ---
 name: z-teach
-description: Teach the user a new skill or concept, within this workspace. 日本語でも同じく使う - 「一から教えて」「学びたい」「前提から分かっていない」など。
+description: Teach the user a new skill or concept, within this workspace. Also triggers on Japanese: 「一から教えて」「学びたい」「前提から分かっていない」など。
 disable-model-invocation: true
 argument-hint: "What would you like to learn about?"
 ---
 
 <!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/productivity/teach/
      (MIT License, Copyright (c) 2026 Matt Pocock). SKILL.md and the four
-     *-FORMAT.md files are upstream's except for the "作業ディレクトリ" section
+     *-FORMAT.md files are upstream's except for the "Working directory" section
      below, which is a local addition. In the frontmatter, `name` is renamed to
      `z-teach`, Japanese trigger phrases are appended to `description`, and
      `disable-model-invocation: true` and `argument-hint` are added. -->
 
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
 
-## 作業ディレクトリ（上流への追記）
+## Working directory (local addition)
 
-このスキルは「現在のディレクトリ」を教材置き場として扱い、`MISSION.md`・`lessons/`・
-`reference/`・`learning-records/` を作る。作業中のリポジトリで呼ぶと、そのリポジトリに
-教材が散る。
+This skill treats "the current directory" as the place for teaching material and creates
+`MISSION.md`, `lessons/`, `reference/`, and `learning-records/` there. Invoked inside a
+repository you are working in, it scatters teaching material through that repository.
 
-呼ばれたら、まず教材を置くディレクトリをユーザーに確認する。既存の学習ワークスペースが
-あればそこへ `cd` し、なければ新しく作る。リポジトリの作業ツリー内には作らない。
+When invoked, first confirm with the user which directory the material goes in. Use an
+existing learning workspace by `cd`-ing into it, or create a new one. Never create it
+inside a repository's working tree.
 
-`z-grilling` から「概念が分かっていないので学んでから戻る」目的で呼ばれた場合は、
-1回の lesson で足りることが多い。MISSION.md から始まる完全なワークスペースを作るかは、
-ユーザーがその話題を継続して学ぶ気があるかで決める。継続しないなら lesson を1つ書いて
-終わりにする。
+When `z-grilling` invokes this to cover a concept the user does not know before returning,
+a single lesson is usually enough. Whether to build the full workspace starting from
+MISSION.md depends on whether the user intends to keep studying the topic. If not, write
+one lesson and stop.
 
 ## Teaching Workspace
 

@@ -1,7 +1,7 @@
 ---
 name: z-eli5
-description: Explain an unfamiliar topic from zero as a standalone HTML artifact with big pictures and few words. Use when the user types /z-eli5 <topic>, or asks to be taught something they know nothing about. 日本語でも同じく使う - 「小学生でもわかるように説明して」「そもそも何なのか一から教えて」など。いま会話している対象の構造や変更点を図で示すなら z-show-me を使う。
-argument-hint: "<説明してほしい話題>"
+description: Explain an unfamiliar topic from zero as a standalone HTML artifact with big pictures and few words. Use when the user types /z-eli5 <topic>, or asks to be taught something they know nothing about. Also triggers on Japanese: 「小学生でもわかるように説明して」「そもそも何なのか一から教えて」など。To show the structure or the changes of whatever is being discussed as a diagram, use z-show-me instead.
+argument-hint: "<topic you want explained>"
 ---
 
 <!-- Vendored from https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md

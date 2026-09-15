@@ -1,111 +1,128 @@
 ---
 name: z-review-finding
-description: コードレビューの指摘、バグ報告、不具合の説明を、コードを開いていない読者に一読で伝わる形で書く。レビュー結果を人に見せるとき、issue や PR コメントで問題を報告するとき、調査で見つけた不具合を説明するときに使う("write up this finding", "report this bug", "レビューコメントにして")。コードそのものを書くときや、問題を見つける作業そのものには使わない。
+description: Write a code review finding, a bug report, or an explanation of a defect so that a reader who has not opened the code understands it in one pass. Use it when showing review results to someone, reporting a problem in an issue or a PR comment, or explaining a defect found during investigation ("write up this finding", "report this bug", 「レビューコメントにして」). Not for writing the code itself, nor for the work of finding the problems.
 ---
 
 <!-- Adapted from the "Per-item Template" section of
      https://github.com/p3bot/library/blob/main/tasks/review/pre-commit/task.md
-     (Mozilla Public License 2.0). This file is a Japanese rewrite of that
-     section and is therefore covered by the MPL-2.0. A copy of the licence is
-     at https://mozilla.org/MPL/2.0/. -->
+     (Mozilla Public License 2.0). This file is a rewrite of that section and is
+     therefore covered by the MPL-2.0. A copy of the licence is at
+     https://mozilla.org/MPL/2.0/. -->
 
-# レビュー指摘の書き方
+# How to write a review finding
 
-読むのは、コードを開いていない人である。その場で何も調べられず、一度読んだだけで何かを決める。
+The reader has not opened the code. They can look nothing up on the spot, and they decide
+something from a single read.
 
-## 四つの手順
+## Four steps
 
-問題を起こしている最小の具体例から始め、そのあとに説明を置く。順番を入れ替えない。
+Start with the smallest concrete case that produces the problem, and put the explanation
+after it. Do not reorder these.
 
-1. **正しい姿と、それに対する破れを見せる。**
-   動かせるコードなら、コマンドと出力、呼び出しと戻り値、リクエストと応答のいずれかを、期待値を並べて書く — `ParseDuration("500ms") → 0s (期待 500ms)`。
-   構造だけを変えていて何も出力されないなら、その変更が壊す場面を平たい言葉で書く。
-   条件によって挙動が変わるなら、2つの場合を対比する。破れが明らかになるのは、たいていこの対比である。
-2. **かんたんな説明** — 日常の言葉で1〜2文。識別子を1つも含めない。問題に名前を付けるだけで、原因の連鎖は書かない。
-3. **何がそれを起こしているか**を、2で使った名詞だけで書く。新しい識別子を出さない。
-4. **何を損なうか**を書く。
+1. **Show what it should be, and where it breaks.**
+   If the code can be run, write one of these next to the expected value: the command and
+   its output, the call and its return value, or the request and its response —
+   `ParseDuration("500ms") → 0s (expected 500ms)`.
+   If the change is structural and produces no output, describe in plain words the
+   situation it breaks.
+   If the behavior depends on a condition, contrast the two cases. That contrast is usually
+   what makes the break visible.
+2. **A simple explanation** — one or two sentences in everyday words. Not a single
+   identifier. Name the problem, and leave out the chain of causes.
+3. **What causes it**, using only the nouns from step 2. Introduce no new identifiers.
+4. **What it costs.**
 
-## 書き方の規則
+## Rules for writing it
 
-- **コード上の名前ではなく、物の名前で呼ぶ。** `svc.rc` ではなく「リトライ回数のカウンタ」。識別子と `file:line` は、平たい名詞のうしろに括弧で添える錨である。説明をそこに担わせない。
-- **略記は初出で開く。** 要件ID、チケット番号、プロジェクト内の略語は、読者に何も伝えない。
-- **観測していないものを書かない。** 実際に実行したコマンドの出力以外を、コードブロックに入れない。走らせられないなら場面で示す。
-- **詳細は6行以内。**
-- **指摘が本物であることを論じない。意図を要約し直さない。** 具体例と説明で足りている。
-- **選択肢は空行で区切る。** 1行に畳まない。
+- **Call things by what they are, not by their name in the code.** "The retry counter", not
+  `svc.rc`. Identifiers and `file:line` are anchors in parentheses after a plain noun. Do
+  not make them carry the explanation.
+- **Expand an abbreviation on first use.** Requirement IDs, ticket numbers, and in-house
+  abbreviations tell the reader nothing.
+- **Write nothing you did not observe.** Put nothing in a code block but the output of a
+  command you actually ran. When you cannot run it, describe the situation instead.
+- **Keep the details to six lines.**
+- **Do not argue that the finding is real, and do not restate the intent.** The concrete
+  case and the explanation are enough.
+- **Separate options with a blank line.** Do not fold them onto one line.
 
-## テンプレート
+## Template
 
-必須は「具体例／かんたんな説明／詳細／推奨」の4節。「決めること」と「選択肢」は、並べることで
-判断がはっきりする場合にだけ置く。推奨は `A + C` のように組み合わせてもよい。
-
-```markdown
-### 指摘 n / m — <ID>: <短い題>
-
-分類: <正しさ / セキュリティ / 保守性 など>
-場所: <file:line>
-
-<問題を起こしている最小の具体例。コマンドと出力、リクエストと応答、呼び出しと
-戻り値のいずれかを、期待値と並べて書く。何も動かないなら、その変更が壊す場面を
-書く。説明せず、見せる。>
-
-**かんたんな説明**
-
-<日常の言葉で1〜2文。識別子を含めない。原因の連鎖も選択肢も書かない。>
-
-**詳細**
-
-<地の文で6行以内。何がそれを起こし、何を損なうか。上と同じ平たい言葉で。>
-
-**決めること**
-
-<読者に問うている、ただ一つの問い>
-
-**選択肢**
-
-A. <何をするものか、その代償>
-
-B. <選択肢>
-
-**推奨 (B)**
-
-<選んだ記号と、なぜかを一節。場当たりの対処ではなく、長く効く方を選ぶ。>
-```
-
-## 例
+Four sections are required: the concrete case, the simple explanation, the details, and the
+recommendation. Include "Decision" and "Options" only when laying them out makes the choice
+clearer. A recommendation may combine options, as in `A + C`.
 
 ```markdown
-### 指摘 1 / 1 — M1: ParseDuration が1秒未満の値をゼロに切り捨てる
+### Issue n of m — <ID>: <short title>
 
-分類: 正しさ
-場所: internal/timeutil/parse.go:42
+Category: <correctness / security / maintainability / …>
+Location: <file:line>
 
-  ParseDuration("500ms")  → 0s     (期待 500ms)
-  ParseDuration("1500ms") → 1s     (期待 1.5s)
+<The smallest concrete case that produces the problem. A command and its output, a
+request and its response, or a call and its return value, next to the expected
+value. If nothing can be run, describe the situation the change breaks. Show it;
+do not explain it.>
 
-**かんたんな説明**
+**Simple Explanation**
 
-1秒未満の時間指定が黙って切り捨てられるので、500ミリ秒のタイムアウトを渡すと
-タイムアウトなしになる。
+<One or two sentences in everyday words. No identifiers. No chain of causes, no options.>
 
-**詳細**
+**Details**
 
-結果を秒単位で組み立てているため、ミリ秒の端数は時間の値を作る前に落ちている。
-1秒未満のタイムアウトを渡した呼び出し側は、タイムアウトが効かない状態になる。
-しかも失敗が表に出ない。呼び出しは正しい型の値を返し、ただ中身が違う。
+<Six lines or fewer of flowing text. What causes it and what it costs, in the same
+plain words as above.>
+
+**Decision**
+
+<The single question being put to the reader>
+
+**Options**
+
+A. <what it does, and what it costs>
+
+B. <option>
+
+**Recommendation (B)**
+
+<The letter chosen, and one passage on why. Choose what holds up over time, not the
+expedient patch.>
 ```
 
-## 見出しの対応表
+## Example
 
-出力する言語は `CLAUDE.md` の規約に従う。訳すときはこの表を使う。
+```markdown
+### Issue 1 of 1 — M1: ParseDuration truncates sub-second values to zero
 
-| 日本語 | English |
+Category: correctness
+Location: internal/timeutil/parse.go:42
+
+  ParseDuration("500ms")  → 0s     (expected 500ms)
+  ParseDuration("1500ms") → 1s     (expected 1.5s)
+
+**Simple Explanation**
+
+A duration under a second is silently truncated, so passing a 500-millisecond timeout
+leaves you with no timeout at all.
+
+**Details**
+
+The result is assembled in whole seconds, so the millisecond remainder is dropped before
+the duration value is built. A caller that passes a sub-second timeout ends up with a
+timeout that never fires. The failure never surfaces: the call returns a value of the
+right type, only with different contents.
+```
+
+## Heading translations
+
+The output language follows the rules in `CLAUDE.md`. Use this table when translating.
+
+| English | 日本語 |
 | --- | --- |
-| 指摘 n / m | Issue n of m |
-| 分類 | Category |
-| 場所 | Location |
-| かんたんな説明 | Simple Explanation |
-| 詳細 | Details |
-| 決めること | Decision |
-| 選択肢 | Options |
-| 推奨 | Recommendation |
+| Issue n of m | 指摘 n / m |
+| Category | 分類 |
+| Location | 場所 |
+| Simple Explanation | かんたんな説明 |
+| Details | 詳細 |
+| Decision | 決めること |
+| Options | 選択肢 |
+| Recommendation | 推奨 |

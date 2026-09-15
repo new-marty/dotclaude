@@ -1,12 +1,12 @@
 ---
 name: z-show-me
-description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. いま会話している対象の構造・変更点・流れを、応答本文の中の図で示す。日本語でも同じく使う - 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。話題そのものを知らない相手に一から教えるなら z-eli5 を使う。
+description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. Shows the structure, the changes, or the flow of whatever is being discussed, as a diagram inside the reply. Also triggers on Japanese: 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。To teach someone a topic they do not know at all, use z-eli5 instead.
 ---
 
 <!-- Vendored from https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md
      (MIT License, Copyright (c) 2026 HumanLayer). The body is upstream's except
      for the final bullet on HTML output, which is rewritten for this
-     environment, and the "この環境での出し方" section, which is a local
+     environment, and the "Handing it over in this environment" section, which is a local
      addition. In the frontmatter, `name` is renamed to `z-show-me` and Japanese
      trigger phrases are appended to `description`. -->
 
@@ -123,18 +123,20 @@ function expandSkill(command: string): string {
 
 - For a visual UI, layout, state comparison, or concept too dense for Mermaid, write one focused HTML file — a diagram, an infographic, or a short slide deck, whichever fits the point. Match the product's colors, type, spacing, and components; use real labels and data; support desktop and mobile. Then hand it to the user (see below).
 
-### この環境での出し方
+### Handing it over in this environment
 
-HTML を書いたら、`open` コマンドで開かない。次のどちらかで渡す。
+Once the HTML is written, do not open it with the `open` command. Hand it over one of two
+ways.
 
-- **Artifact ツール** — 共有できる URL になる。読者が複数いる図、あとで見返す資料、
-  リンクを渡したいものはこれ。先に `artifact-design` スキルを読む。図を含むなら
-  `artifact-diagramming` も読む。
-- **SendUserFile ツール** — その場で見せて終わりの図。`display: "render"` を指定する。
+- **The Artifact tool** — gives a shareable URL. Use it for a diagram with several readers,
+  material to look back at later, or anything you want to pass as a link. Read the
+  `artifact-design` skill first, and `artifact-diagramming` too if it contains diagrams.
+- **The SendUserFile tool** — for a diagram shown once and done. Pass `display: "render"`.
 
-擬似コード、呼び出し木、ファイル木、diff は、HTML にせず応答本文に直接書く。
+Pseudocode, call trees, file trees, and diffs go straight into the reply, not into HTML.
 
-mermaid は、Claude Code の TUI が図にしないため、応答本文に出すときは ASCII に変換する。
+Claude Code's TUI does not render mermaid, so convert it to ASCII before putting it in a
+reply.
 
 ```sh
 node ~/.claude/scripts/mermaid-term/render.mjs <<'EOF'
@@ -143,16 +145,18 @@ flowchart LR
 EOF
 ```
 
-その出力を `text` のコードブロックに入れる。読者が読むのは図のほうなので、mermaid の
-ソースは併記しない。flowchart（subgraph を含む）、sequenceDiagram、stateDiagram、
-classDiagram、erDiagram を描ける。日本語のラベルも枠が揃うが、そのために表示幅 0 の
-文字を混ぜているため、出力をコードとして再利用する用途には向かない。
+Put that output in a `text` code block. The reader reads the diagram, so do not show the
+mermaid source alongside it. It can draw flowcharts (including subgraphs),
+sequenceDiagram, stateDiagram, classDiagram, and erDiagram. Full-width labels line up with
+their boxes, but only because zero-width characters are mixed in, so the output is not
+suited to being reused as code.
 
-ただし、段数の違う subgraph を横に並べると枠線が重なって読めなくなる。並べるなら各
-subgraph の段数を揃えるか、図を分ける。出力は貼る前に必ず目で見て、崩れていたら図の
-ほうを書き直す。
+Subgraphs of differing heights placed side by side do overlap into an unreadable mess. To
+place them side by side, give each subgraph the same height, or split the diagram. Always
+look at the output before pasting it, and rewrite the diagram if it came out broken.
 
-一方、Artifact に載せる図は変換しない。mermaid のまま書けばブラウザ側で描画される。
+A diagram going into an Artifact is not converted. Written as mermaid, it renders in the
+browser.
 
 ### guidance
 

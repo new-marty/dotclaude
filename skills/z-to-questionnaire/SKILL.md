@@ -1,21 +1,22 @@
 ---
 name: z-to-questionnaire
-description: Turn a decision you can't fully answer into a questionnaire for someone else to fill in. 日本語でも同じく使う - 「誰かに訊かないと決められない」「確認事項をまとめて」など。
+description: Turn a decision you can't fully answer into a questionnaire for someone else to fill in. Also triggers on Japanese: 「誰かに訊かないと決められない」「確認事項をまとめて」など。
 disable-model-invocation: true
 ---
 
 <!-- Vendored from https://github.com/mattpocock/skills/blob/main/skills/productivity/to-questionnaire/SKILL.md
      (MIT License, Copyright (c) 2026 Matt Pocock). The body is upstream's except
-     for the "書き出し先" section below, which is a local addition. In the
+     for the "Where to write it" section below, which is a local addition. In the
      frontmatter, `name` is renamed to `z-to-questionnaire`, Japanese trigger
      phrases are appended to `description`, and `disable-model-invocation: true`
      is added. -->
 
-## 書き出し先（上流への追記）
+## Where to write it (local addition)
 
-上流は質問票を「現在のディレクトリ」に書く。`z-grilling` から呼ばれる想定なので、その
-まま従うと作業中のリポジトリに成果物が混ざる。書き出す前に置き場所をユーザーに確認し、
-リポジトリの作業ツリー内には作らない。
+Upstream writes the questionnaire into "the current directory". Since this is meant to be
+invoked from `z-grilling`, following that as is mixes the deliverable into the repository
+you are working in. Confirm the location with the user before writing, and never write
+inside a repository's working tree.
 
 Turn something the user can't answer alone into a **questionnaire**: a Markdown document they hand to one person to fill in async, or fill out together over a meeting. The recipient holds knowledge the user lacks; the questionnaire pulls it out of them.
 

@@ -1,50 +1,49 @@
 ---
 name: z-create-pr
-description: 現在のブランチから Pull Request を作成する。本文はリポジトリのテンプレートに沿い、「読む人にとって何が変わるか」の言葉で書く。「PR を作って」「PR にして」「push したから PR お願い」「PR 本文を書いて / 下書きして」"create a PR", "open a pull request", "write the PR description" など、PR 作成・本文作成の意図があれば必ず使う。
+description: Open a Pull Request from the current branch. The description follows the repository's template and is written in terms of what changes for the people who read it. Also triggers on Japanese: 「PR を作って」「PR にして」「push したから PR お願い」「PR 本文を書いて / 下書きして」. Always use it when the intent is to create a PR or write its description — "create a PR", "open a pull request", "write the PR description".
 allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 ---
 
-## 手順
+## Steps
 
-1. base ブランチを決める。決め打ちせず `gh pr list --state merged --limit 5 --json baseRefName` で直近のマージ先を確認し、それに合わせる。判断できなければユーザーに確認する。指示があればそれに従う。
-2. 情報を集める: `git log origin/<base>..HEAD` でコミット群を読み、必要なら `git diff origin/<base>...HEAD --stat` で全体像を掴む。ブランチ名・コミットから関連 Issue を特定する。
-3. PR テンプレートを読む(`.github/pull_request_template.md` または `.github/PULL_REQUEST_TEMPLATE/` 配下。なければ見出しなしの散文で書く)。`gh pr create --body` はテンプレートを自動適用しないので、この構成を自分で埋める。SDD・チェックリストの欄は実際にやったことだけに正直にチェックを入れる。タスクが完了した Issue には `Closes #xxxx` を入れ、クローズの意図を明示する。
-4. タイトルと本文を下書きし、base とあわせてユーザーに提示して承認を得る。承認前に `gh pr create` を実行しない。
-5. 承認後に `gh pr create --base <base>` で作成し（指示があれば `--draft`）、URL を返す。
+1. Determine the base branch. Do not assume it: check where recent PRs merged with `gh pr list --state merged --limit 5 --json baseRefName` and match that. Ask the user when it is unclear. Follow an explicit instruction when there is one.
+2. Gather the material: read the commits with `git log origin/<base>..HEAD`, and get the overall shape with `git diff origin/<base>...HEAD --stat` if needed. Identify the related issue from the branch name and the commits.
+3. Read the PR template (`.github/pull_request_template.md`, or a file under `.github/PULL_REQUEST_TEMPLATE/`; write flowing prose without headings when there is none). `gh pr create --body` does not apply the template automatically, so fill in that structure yourself. In SDD and checklist fields, tick only what was actually done. Put `Closes #xxxx` on an issue the work completes, to state the intent to close it.
+4. Draft the title and body, present them together with the base branch, and get the user's approval. Do not run `gh pr create` before approval.
+5. After approval, create it with `gh pr create --base <base>` (add `--draft` if asked) and return the URL.
 
-## タイトル
+## Title
 
-- 1 行だけで変更内容が完結すること。履歴を流し読みする人はタイトルしか読まない。
-- 「Fix bug」「対応」「Phase 1」のような、文脈がないと意味を成さないタイトルにしない。
+- One line that stands on its own. Someone skimming the history reads nothing but the title.
+- No titles that mean nothing without context, like "Fix bug", "Updates", or "Phase 1".
 
-## 本文の書き方
+## Writing the body
 
-- 書き出しは日常の言い方 1 文で目的を宣言する。「デグレを止める最後の砦が人間のレビューしかなかった」ではなく「CI のチェックがゆるかったので厳しくした」。
-- 「なぜこのやり方を選んだか」を述べた文を 1 つ以上含める。コードと diff は what を語るが、why は本文にしか書けない。
-- ファイルパス・lint ルール名・件数・設定キーを書かない。詳細が必要なら「詳細はコミットを参照」で足りる。ツール名や機能名（knip、StrictMode 等）は読者が学ぶべき内容なので書いてよい。
-- 変更ファイルが多いときは読み順を一言添える。パスではなく機能名で示す。diff はアルファベット順に並ぶだけなので、読み順の設計は書き手の仕事。
-- 変更内容の欄は、変更ファイルの列挙ではなく読者への影響（何ができるようになる・できなくなる・何に気をつけるか）で書く。
-- 動作確認の欄は、レビュワーがそのまま手を動かせる手順を書く。UI 変更なら Before / After のスクリーンショット欄を残す。
-- 評価語を使わない。「大幅に高速化」ではなく「3.2s → 0.4s」。
-- 表とボールド装飾を使わない。見出し・箇条書き・本文だけで構成する。
+- Open by stating the purpose in one everyday sentence. Not "the last line of defense against regressions was human review alone", but "CI checks were loose, so they were tightened".
+- Include at least one sentence on why this approach was chosen. Code and the diff say what; only the body can say why.
+- Do not write file paths, lint rule names, counts, or configuration keys. When detail is needed, "see the commits for details" is enough. Tool and feature names (knip, StrictMode, and the like) are things the reader should learn, so they are fine.
+- When many files changed, add a line on what to read first. Name features, not paths. A diff is sorted alphabetically and nothing more; the reading order is the writer's job.
+- Write the changes field in terms of the effect on the reader — what becomes possible, what stops being possible, what to watch out for — not as a list of changed files.
+- In the verification field, write steps a reviewer can follow as they stand. For a UI change, leave before/after screenshot slots.
+- No evaluative words. Not "much faster", but "3.2s → 0.4s".
+- No tables and no bold. Headings, bullets, and body text only.
 
-本文の言語は `CLAUDE.md` の規約に従う。日本語で書くなら `z-japanese-proofreading` を、言語を問わず
-`z-writing-for-readers` を読む。
+The language of the body follows the rules in `CLAUDE.md`. Read `z-japanese-proofreading` when writing in Japanese, and `z-writing-for-readers` in any language.
 
-## 例
+## Example
 
-書き直し前（実装の言葉。diff の繰り返しでしかない）:
+Before (the language of the implementation — only a restatement of the diff):
 
-> - `eslint-plugin-boundaries` の `no-unknown-files` を有効化し、違反 42 ファイルを修正
-> - `knip.json` の `ignoreDependencies` に 3 件追加
+> - Enabled `no-unknown-files` in `eslint-plugin-boundaries` and fixed 42 violating files
+> - Added three entries to `ignoreDependencies` in `knip.json`
 
-書き直し後（読者への影響の言葉）:
+After (the language of the effect on the reader):
 
-> - FSD のレイヤーに属さない場所にファイルを置くと CI が落ちるようになります。新しいファイルは所属レイヤーの中に置いてください
-> - knip の誤検知を整理したので、今後出る未使用依存の警告はすべて本物です
+> - CI now fails when a file sits outside the FSD layers. Put new files inside the layer they belong to
+> - The false positives in knip are cleared out, so every unused-dependency warning from now on is real
 
-## 提出前チェック
+## Before submitting
 
-- ファイルパス・件数・設定キーが残っていないか
-- レビュワーが動作確認欄だけ見て手を動かせるか
-- `z-writing-for-readers` の判定テストを通るか
+- No file paths, counts, or configuration keys left in
+- A reviewer can act on the verification field alone
+- It passes the check in `z-writing-for-readers`

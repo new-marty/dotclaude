@@ -1,11 +1,11 @@
-# ~/.claude には設定とランタイム状態が同居する。
-# 既定ですべて無視し、設定ファイルだけを明示的に許可する。
-# この方式なら、Claude Code が新しいランタイムファイルを作っても
-# 追跡対象に紛れ込まない。
+# ~/.claude holds configuration and runtime state side by side.
+# Ignore everything by default and allow the configuration files explicitly.
+# This way, new runtime files that Claude Code creates never slip into
+# the tracked set.
 
 *
 
-# --- 追跡する設定 ---
+# --- Tracked configuration ---
 !.gitignore
 !README.md
 !ADOPTIONS.md
@@ -21,19 +21,21 @@
 !scripts/**
 !output-styles/**
 
-# Orca がマシンごとに作るシンボリックリンク。追跡すると、Orca のない環境で
-# リンク切れになる。
+# Symlinks Orca creates per machine. Tracking them leaves broken links on
+# machines without Orca.
 skills/computer-use
 skills/find-skills
 skills/orca-cli
 skills/orchestration
 
-# --- 保険 ---
-# 上の許可指定を将来書き足したときに、認証情報を巻き込まないための最終防衛線。
+# --- Backstop ---
+# Last line of defense against pulling in credentials when the allow list
+# above grows later.
 *-oauth-token
 *.pem
 *.key
 .DS_Store
 
-# mermaid-term がローカルに解決する依存。package.json と lock から再現できる。
+# Dependencies mermaid-term resolves locally. Reproducible from package.json
+# and the lockfile.
 scripts/mermaid-term/node_modules/

@@ -1,12 +1,13 @@
 #!/usr/bin/env node
-// mermaid のテキストを ASCII 図に変換して stdout に出す。
-// Claude Code の TUI は mermaid を図にしないので、応答に貼る図はここを通す。
+// Convert mermaid text into an ASCII diagram on stdout.
+// Claude Code's TUI does not render mermaid, so any diagram pasted into a reply goes
+// through here.
 //
 //   node render.mjs diagram.mmd
 //   echo 'flowchart LR; A --> B' | node render.mjs
 //
-// 入力に ```mermaid フェンスがあれば、その中身だけを順に変換する。
-// 変換できない図種は、元のコードをそのまま返して落ちない。
+// When the input contains ```mermaid fences, only their contents are converted, in order.
+// A diagram type it cannot convert is returned as the original code rather than crashing.
 
 import { readFileSync } from 'node:fs'
 import { renderMermaidASCII } from 'beautiful-mermaid'
@@ -15,10 +16,11 @@ import stringWidth from 'string-width'
 const FENCE = /^[ \t]*```+[ \t]*mermaid[^\n]*\n([\s\S]*?)^[ \t]*```+[ \t]*$/gm
 const ZERO_WIDTH = '​'
 
-// beautiful-mermaid は枠の幅を文字数で決めるため、全角文字のラベルは枠からはみ出す。
-// 「検証」は 2 文字だが端末では 4 桁を占める。そこで、はみ出す桁数と同じ数だけ
-// 表示幅 0 の文字をラベルの前後に足し、ライブラリに正しい桁数を数えさせる。
-// 端末では足した文字が見えないので、枠と中身の両方が揃う。
+// beautiful-mermaid sizes a box by character count, so a label made of full-width
+// characters overflows it. The two-character label 検証 occupies four columns in a
+// terminal. Pad the label with as many zero-width characters as the shortfall, split
+// across both sides, and the library counts the right number of columns. The padding is
+// invisible in a terminal, so box and contents both line up.
 function padWideChars(code) {
   return code.replace(/[^\x00-\x7F]+/gu, (run) => {
     const shortfall = stringWidth(run) - [...run].length
