@@ -19,7 +19,7 @@ verification commands, development flow. Look them up in step 0 every time.
 
 ## Development principles
 
-- Do not change a file that is not in the agreed "what we are doing". Something you noticed "while in there" goes into a proposal for a separate task.
+- Do not change a file that is not in the agreed "what we are doing". For something you noticed "while in there", take one of the four exits in `z-write-task` — filing it is only one of them, and rarely the right one.
 - When in doubt, choose the simpler option. If both layers can ship in the same PR, do not write a shim for the old schema (an Optional field, a preserved default).
 - Search for an existing implementation before writing one. If you are writing the same thing twice, fold factoring it out into the design.
 - Where code goes follows the dependency direction of the layering the repository uses.
@@ -100,6 +100,7 @@ This is where agreement is won. Do not skip this stage and start working. Do not
 - Present the outline of the approach as one or two paragraphs of prose and get agreement. Do not break the outline into tables or lists
 - Once the outline is agreed, list the implementation-level decisions step 3 could not settle — how to split functions, whether an existing implementation can be reused. Call `z-grilling` again if any remain. What is settled here becomes the scope and the order of implementation
 - When it is settled, present the scope, the order of work, what is out of scope, and how it will be verified, and ask for review
+- This is the only point at which the work may be split into more than one pull request. If it does not fit in one, call `z-write-task` to file the Tasks; splitting anywhere earlier can only follow the shape of the code
 - When the user asks "what do you think?", stop at options and a recommendation. Do not run ahead into implementation
 - Do not implement until the user approves
 
