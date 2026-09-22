@@ -48,27 +48,45 @@ false alarm.
 Where no such document exists, fall back to the epic's own body, then the pull request
 descriptions. Say nothing about purpose rather than inventing it.
 
+This step is not optional. Skipping it produces a briefing made of ticket numbers and
+status names, which reads as a restatement of the board and returns nothing to a person who
+has lost the context — the one failure this skill exists to prevent.
+
 ### 3. Write the briefing
 
 Conclusion first, evidence after — the reader may stop after the first paragraph, so the
 first paragraph has to survive alone.
 
 ```
-<Three or four sentences: how many streams of work are running, what they are for,
- how much is moving, and how much of it needs this person's own hands.>
+<Two or three sentences: what all of this work is for, what state it is in as a whole,
+ and how much of it this person can actually move. Plain words only.>
 
-▍<stream name> — <what it is for, one line>
-  現在地  <where it has got to, against the plan's own order>
-  あなた  <only what this person can finish alone; "なし" is a complete answer>
-  待ち    <count, and nothing else unless something is genuinely wrong>
+▍<stream name> (<epic>, <n of m done>)
+  <Two or three sentences on what is wrong today and why it is worth fixing. Taken from
+   the plan or the epic, not from the ticket title.>
 
-▍<next stream …>   ← three or four streams at most
+  #NNNN  <what this piece of work does, in words someone who has read nothing follows>   <PR and its state>
+  #NNNN  <…>
 
-<Anything that needs a decision. Two items at most. Nothing invented to fill the space.>
+▍<next stream>  ← three or four at most
+
+▍盤面が実態とずれている  ← only when there is something to say
+▍手つかず N 件           ← count, plus a line only where the plan explains the parking
 ```
 
-Budget: the whole thing fits in a terminal without scrolling. Three lines per stream. When
-there are more streams than fit, group them and say how many were grouped.
+Three rules on the writing, and the briefing fails without them:
+
+- **Say what the work does, not what the ticket is called.** "境界検査が panel-content だけ
+  グループをスライスと誤認している件" beats "#5897 境界検査が widgets のスライスを実態
+  どおりに捕捉する". The second is the title; the first is the work.
+- **The number is never the subject.** A person coming back does not recognise #5334. They
+  recognise "検索フィルタの型が各所に散っている". Put the number at the head of the line as
+  a reference and let the words carry it.
+- **One item, one line. Never wrap prose by hand.** Hard-wrapped continuation lines read as
+  noise in a terminal that already wraps. Long is fine; folded is not.
+
+Budget: three or four streams, each with its paragraph and its items. When there are more,
+group them and say how many were grouped.
 
 Shape it by how long the gap was — `since_last_run.last_seen_days_ago` in the digest:
 
