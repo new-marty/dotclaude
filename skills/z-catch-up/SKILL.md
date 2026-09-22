@@ -83,40 +83,38 @@ another finishes is not what the reader resumes; it gets one line saying so.
 
 ### 3. Write each stream
 
-Open with the verdict, two or three sentences: where the stream stands, what the reader
-will do next, and the one caveat about the next task's premises if there is one. The reader
-who stops here must have the answer.
+Keep it short. A stream is a heading, one line, a list of rows, and two boxes. The whole
+page for two streams fits in about one and a half screens; if it runs longer, cut words,
+not parts.
 
-Then, under plain headings in the reader's language:
-
-- **What it is for.** The problem and the approach in the container's own words, compressed
-  to a paragraph. Include the intended order and why it is that order, because the order
-  is what makes the next task the next task.
-- **What is done.** One row per piece, in the order the plan gave them, each row carrying
-  the piece's title as the tracker shows it, its state in the tracker's spelling, and one
-  or two sentences on what doing it established or changed. Chronology matters: the reader
-  restores what they were thinking by reading what happened in order. A piece that was
-  split has its parts summarised on its row, not listed.
-- **Next.** The next task and what its text tells the reader to do first.
-- **What moved since the text was written.** Dated facts: the body's date, and what
-  happened on sibling tasks, on the container, and in the plan since then. Where a fact
-  casts doubt on the task's premises, add one sentence saying what to check before
-  starting. Facts first, the doubt after; never the doubt alone.
+- **Heading.** The container's title as the tracker shows it, with its number as a link.
+- **One line on what it is for.** The problem and the approach, and the intended order,
+  because the order is what makes the next task the next task. One or two sentences, muted.
+- **Rows, one per piece, in the plan's order.** Each row: state in the tracker's spelling
+  with a date when done, the piece's title, and at most one short line on what doing it
+  established or changed. No line at all when the title says it. A piece that was split
+  has its parts summed up in that line, not listed.
+- **Next.** One line: the next task and what its text says to do first.
+- **What moved since the text was written.** Dated facts as short bullets: the body's
+  date, then what happened on sibling tasks, on the container, and in the plan since then.
+  Where a fact casts doubt on the task's premises, the bullet ends with what to check.
+  Facts first, the doubt after; never the doubt alone.
 
 Identify a row by its title. Numbers are links beside the title, never the thing the reader
 is expected to recognise.
 
 ### 4. Publish
 
-One page, as an Artifact, in the language the person writes in. Prose and short rows, no
-interactive controls, nothing folded away: collapsing detail has been tried and it broke the
-reader's picture of the whole. Read `artifact-design` before writing it, and
+One page, as an Artifact, in the language the person writes in. Rows and one-liners, not
+paragraphs; no interactive controls; nothing folded away, because collapsing detail broke
+the reader's picture of the whole when it was tried. Plain system sans-serif at normal
+size; no display typeface, no decoration. Read `artifact-design` before writing it, and
 `z-japanese-proofreading` when the page is in Japanese.
 
-Design for one read from the top: the lead paragraph of the page is the verdict across all
-streams, each stream's opening is its verdict, and the four parts follow in the order above.
-Encode state in a small marker beside each row so the reader can find "where am I" by eye,
-but never let the state decide where a row sits; the plan's order does.
+The page opens with a two-sentence summary across all streams, the second sentence in bold
+naming what the reader will do next and its one caveat. Then the streams in the plan's
+order, then the loose pieces that are moving. Mark the next row so it can be found by eye,
+but never let state decide where a row sits; the plan's order does.
 
 Close with the sources and the collection time.
 
