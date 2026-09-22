@@ -36,6 +36,26 @@ out.
 - Not a task picker. When the assigned work is unrelated pieces with nothing in common,
   say so in one line and stop; this skill has nothing to add.
 
+## Whose hands it is in
+
+The page is written for the person who resumes, so "done" means done from their side.
+A piece is off their hands when it is closed, or when its pull request is waiting for
+review, or when it is waiting on someone else's decision. Those are summed up, never
+listed. A piece is theirs when it is not started, in progress, or a review has come back
+asking for changes. The page shows only what is theirs, and says in the header whether any
+review has come back, so the reader knows that was checked.
+
+Fractions count pieces off their hands over the total, and say in small type how that
+splits (closed, waiting for review).
+
+## Streams are not always clean
+
+A container is a hint, not the truth. Read the bodies: a task filed under one container
+may serve another's purpose, a container may hold two unrelated purposes, and a task with
+no container may belong to a stream by what it says it is for. Group by purpose, keep the
+container's name when it matches, and say on the page when a piece was moved or a
+container was split.
+
 ## Sources
 
 Where the facts live differs from project to project and will change over time. Discover
@@ -88,15 +108,15 @@ page for two streams fits in about one and a half screens; if it runs longer, cu
 not parts.
 
 - **Heading.** The container's title as the tracker shows it, the fraction of its pieces
-  that are closed (5 / 6), and its number as a link.
+  off the reader's hands (2 / 4, with the split in small type), and its number as a link.
 - **One line on what it is for.** The problem and the approach, and the intended order,
   because the order is what makes the next task the next task. One or two sentences, muted.
-- **What remains before it closes.** Only the pieces that are not closed, in the plan's
-  order. Each carries its title, its own fraction when it has sub-pieces, and its state in
-  the tracker's spelling. Under it, the sub-pieces that are not closed, one short line
-  each, with where each one is waiting (a review, a merge, a decision). Mark the one the
-  reader will pick up next. Closed pieces are folded into one muted line naming them, so
-  the fraction can be checked, and nothing more.
+- **One muted line on what is off their hands**, naming the pieces so the fraction can
+  be checked. Nothing more about them.
+- **What is theirs.** Only the pieces the reader still has to touch, in the plan's order,
+  each with its title and one short line on what is missing or what it waits for. Mark
+  the one the reader will pick up next. When a piece has sub-pieces, list only the
+  sub-pieces that are theirs. When nothing is theirs, say so in one line and skip the list.
 - **Next.** One line: the next task and what its text says to do first.
 - **What moved since the text was written.** Dated facts as short bullets: the body's
   date, then what happened on sibling tasks, on the container, and in the plan since then.
@@ -130,7 +150,8 @@ Close with the sources and the collection time.
 
 - Could a reader who stops after the first paragraph act correctly? If not, the verdict
   is missing something.
-- Does every row say what the piece changed, not what it is called or which files moved?
+- Is every row something the reader still has to touch? A closed piece or one waiting
+  for review belongs in the muted line, not in a row.
 - Is there a status name, a count, or a percentage carrying meaning that a sentence should
   carry instead?
 - Is every "what moved" item a dated fact, with its doubt stated as a separate sentence?
