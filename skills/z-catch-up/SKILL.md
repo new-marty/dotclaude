@@ -87,18 +87,26 @@ Keep it short. A stream is a heading, one line, a list of rows, and two boxes. T
 page for two streams fits in about one and a half screens; if it runs longer, cut words,
 not parts.
 
-- **Heading.** The container's title as the tracker shows it, with its number as a link.
+- **Heading.** The container's title as the tracker shows it, the fraction of its pieces
+  that are closed (5 / 6), and its number as a link.
 - **One line on what it is for.** The problem and the approach, and the intended order,
   because the order is what makes the next task the next task. One or two sentences, muted.
-- **Rows, one per piece, in the plan's order.** Each row: state in the tracker's spelling
-  with a date when done, the piece's title, and at most one short line on what doing it
-  established or changed. No line at all when the title says it. A piece that was split
-  has its parts summed up in that line, not listed.
+- **What remains before it closes.** Only the pieces that are not closed, in the plan's
+  order. Each carries its title, its own fraction when it has sub-pieces, and its state in
+  the tracker's spelling. Under it, the sub-pieces that are not closed, one short line
+  each, with where each one is waiting (a review, a merge, a decision). Mark the one the
+  reader will pick up next. Closed pieces are folded into one muted line naming them, so
+  the fraction can be checked, and nothing more.
 - **Next.** One line: the next task and what its text says to do first.
 - **What moved since the text was written.** Dated facts as short bullets: the body's
   date, then what happened on sibling tasks, on the container, and in the plan since then.
   Where a fact casts doubt on the task's premises, the bullet ends with what to check.
   Facts first, the doubt after; never the doubt alone.
+
+The page is about the situation, not the tasks. A row exists because it is what stands
+between the stream and its goal, and its line says what is still missing, not what the task
+is called. When a row would only restate its title and status, drop the line and keep the
+title.
 
 Identify a row by its title. Numbers are links beside the title, never the thing the reader
 is expected to recognise.
