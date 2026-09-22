@@ -37,6 +37,33 @@ slices that individually ship nothing. Split after starting, when the implementa
 view. Creating a Task is the act of declaring "this becomes a separate PR", so it carries
 the burden of proof described under Splitting.
 
+## Recording the level in the tracker
+
+The levels above are promises. The type field is where they are recorded, and the two
+vocabularies do not line up: each GitHub organization defines its own set, and Story and
+Chore are usually absent from it. Read the set before filing:
+
+```sh
+gh api /orgs/<org>/issue-types --jq '.[] | [.name, .description] | @tsv'
+```
+
+Map by what the item does, not by what the level is called. Where an organization offers
+Epic, Task, Bug and Feature:
+
+| Level | Type to set |
+| --- | --- |
+| Epic | Epic |
+| Story that changes what someone can do | Feature |
+| Story that is refactoring or upkeep | Task |
+| Task split out of a Story | Task |
+| Bug | Bug |
+
+Set the type on every issue, children included. Filing a parent with a type and leaving its
+children without one is the common failure, and it is the worst one: an issue with no type
+drops out of every query and rollup that filters by type, and the children are where the
+work actually sits. A label saying `bugfix` does not stand in for the Bug type — the two
+fields are read by different tools.
+
 ## Where each sentence goes
 
 Every sentence has exactly one destination. Wanting to write one in two places means the

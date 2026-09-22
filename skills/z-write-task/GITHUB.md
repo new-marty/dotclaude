@@ -23,6 +23,10 @@ The organization's default types are Feature, Bug, and Task, but any of them may
 renamed, disabled, or added to. **One issue carries exactly one type**, so the type never
 belongs in the title as well.
 
+**`--type` is not optional.** Every `gh issue create` carries one, children included. The
+type is a separate field from the labels, and an issue without it is invisible to anything
+that filters by type.
+
 ## Searching before writing
 
 Look for both an item that already covers this and an Epic it belongs under.
