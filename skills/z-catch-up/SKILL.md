@@ -113,13 +113,14 @@ not parts.
 - **One line on what it is for.** The problem and the approach, and the intended order,
   because the order is what makes the next task the next task. One or two sentences, muted.
 - **One line on what is theirs**, or that nothing is.
-- **What is not closed.** A muted list, in the plan's order, of every piece that is not
-  closed, whether or not it is theirs: title, its own closed fraction when it has
-  sub-pieces, its state in the tracker's spelling, and the names of the sub-pieces still
-  open in one short phrase. Mark the one the reader will pick up next in the accent
-  colour. This list is secondary, set small and muted, but it is there so the reader can
-  see how much is left and what it is called; the judgement about the next task depends
-  on it. Closed pieces are not listed.
+- **The pieces, as the tracker's sub-issue panel would show them**, in the plan's
+  order: state icon, title, and on the right the ring with "n / m" when it has
+  sub-pieces, the PR glyph with its number or merge date, and the hourglass when it is
+  off the reader's hands. Closed rows are greyed to one line. Under a parent that is not
+  closed, its sub-pieces are indented, closed ones greyed. The next piece is the only row
+  with the accent dot and tint. A piece that cannot start yet carries the blocked glyph
+  and "after X". A stacked PR carries the stack glyph and a line saying it will not close
+  its issue on merge.
 - **Next.** One line: the next task and what its text says to do first.
 - **What moved since the text was written.** Dated facts as short bullets: the body's
   date, then what happened on sibling tasks, on the container, and in the plan since then.
@@ -139,8 +140,16 @@ is expected to recognise.
 One page, as an Artifact, in the language the person writes in. Rows and one-liners, not
 paragraphs; no interactive controls; nothing folded away, because collapsing detail broke
 the reader's picture of the whole when it was tried. Plain system sans-serif at normal
-size; no display typeface, no decoration. Read `artifact-design` before writing it, and
-`z-japanese-proofreading` when the page is in Japanese.
+size; no display typeface, no decoration.
+
+State is shown in the tracker's own visual language so it is recognised, not read:
+`references/visual.md` lists the devices (GitHub's issue and PR icons and colours, a
+three-segment bar per stream, a ring with "n / m" on parent rows, an hourglass for
+"off my hands", one blue dot for "next", a blocked glyph for "after X", a stack glyph for
+stacked PRs, closed rows greyed) and where each was borrowed from. The icon paths are in
+`assets/octicons.svg`; `assets/example-2026-09-22.html` is a finished page to copy the
+markup from. Read `artifact-design` before writing it, and `z-japanese-proofreading` when
+the page is in Japanese.
 
 The page opens with a two-sentence summary across all streams, the second sentence in bold
 naming what the reader will do next and its one caveat. Then the streams in the plan's
