@@ -45,8 +45,9 @@ listed. A piece is theirs when it is not started, in progress, or a review has c
 asking for changes. The page shows only what is theirs, and says in the header whether any
 review has come back, so the reader knows that was checked.
 
-Fractions count pieces off their hands over the total, and say in small type how that
-splits (closed, waiting for review).
+The heading carries two fractions: closed over total, and in small type off-their-hands
+over total. Both matter; the first says how far the stream is, the second how much of the
+rest is theirs.
 
 ## Streams are not always clean
 
@@ -111,12 +112,14 @@ not parts.
   off the reader's hands (2 / 4, with the split in small type), and its number as a link.
 - **One line on what it is for.** The problem and the approach, and the intended order,
   because the order is what makes the next task the next task. One or two sentences, muted.
-- **One muted line on what is off their hands**, naming the pieces so the fraction can
-  be checked. Nothing more about them.
-- **What is theirs.** Only the pieces the reader still has to touch, in the plan's order,
-  each with its title and one short line on what is missing or what it waits for. Mark
-  the one the reader will pick up next. When a piece has sub-pieces, list only the
-  sub-pieces that are theirs. When nothing is theirs, say so in one line and skip the list.
+- **One line on what is theirs**, or that nothing is.
+- **What is not closed.** A muted list, in the plan's order, of every piece that is not
+  closed, whether or not it is theirs: title, its own closed fraction when it has
+  sub-pieces, its state in the tracker's spelling, and the names of the sub-pieces still
+  open in one short phrase. Mark the one the reader will pick up next in the accent
+  colour. This list is secondary, set small and muted, but it is there so the reader can
+  see how much is left and what it is called; the judgement about the next task depends
+  on it. Closed pieces are not listed.
 - **Next.** One line: the next task and what its text says to do first.
 - **What moved since the text was written.** Dated facts as short bullets: the body's
   date, then what happened on sibling tasks, on the container, and in the plan since then.
@@ -150,8 +153,8 @@ Close with the sources and the collection time.
 
 - Could a reader who stops after the first paragraph act correctly? If not, the verdict
   is missing something.
-- Is every row something the reader still has to touch? A closed piece or one waiting
-  for review belongs in the muted line, not in a row.
+- Is the reader's own next piece the only thing in the accent colour? Everything not
+  closed is listed, but only what is theirs is emphasised.
 - Is there a status name, a count, or a percentage carrying meaning that a sentence should
   carry instead?
 - Is every "what moved" item a dated fact, with its doubt stated as a separate sentence?
