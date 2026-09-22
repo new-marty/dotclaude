@@ -6,7 +6,7 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 
 ## Steps
 
-1. Determine the base branch. Do not assume it: check where recent PRs merged with `gh pr list --state merged --limit 5 --json baseRefName` and match that. Ask the user when it is unclear. Follow an explicit instruction when there is one.
+1. Determine the base branch. Do not assume it: check where recent PRs merged with `gh pr list --state merged --limit 10 --json baseRefName,title` and match that. Read the titles in the same output for the repository's title convention. Ask the user when it is unclear. Follow an explicit instruction when there is one.
 2. Gather the material: read the commits with `git log origin/<base>..HEAD`, and get the overall shape with `git diff origin/<base>...HEAD --stat` if needed. Identify the related issue from the branch name and the commits.
 3. Read the PR template (`.github/pull_request_template.md`, or a file under `.github/PULL_REQUEST_TEMPLATE/`; write flowing prose without headings when there is none). `gh pr create --body` does not apply the template automatically, so fill in that structure yourself. In SDD and checklist fields, tick only what was actually done. Put `Closes #xxxx` on the issue the work completes, to state the intent to close it, and follow it with that issue's title — issues and pull requests share one number sequence, so a bare `#xxxx` says neither which of the two it is nor which level.
 4. Draft the title and body, present them together with the base branch, and get the user's approval. Do not run `gh pr create` before approval.
@@ -14,11 +14,18 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 
 ## Title
 
-- **When the work closes one issue, reuse that issue's title as it stands.** The issue list
-  and the pull request list then read in the same vocabulary, which is the only thing that
-  makes a number in a comment recoverable later.
-- Otherwise, one line that stands on its own. Someone skimming the history reads nothing
-  but the title.
+- **Follow the repository's own convention first.** Read it off recent merged titles with
+  `gh pr list --state merged --limit 10 --json title`. A prefix like `refactor:` is there to
+  drive release notes, so keep it where the repository uses one and leave it out where it
+  does not.
+- **Then reuse the title of the issue this closes.** The issue list and the pull request
+  list read in the same vocabulary, which is the only thing that makes a number in a comment
+  recoverable later. The rules for the title itself live in `z-write-task` — one thing only,
+  words the reader already has, about 30 characters in Japanese. **A bad issue title does not
+  get inherited.** Rewrite it here, and say so, so the issue can be fixed too.
+- **Never put the issue number in the title.** A squash merge appends the pull request's own
+  number, so a title ending in `(#5898)` merges as `... (#5898) (#5930)` and neither number
+  can be told from the other. `Closes` already carries it.
 - No titles that mean nothing without context, like "Fix bug", "Updates", or "Phase 1".
 
 ## Writing the body

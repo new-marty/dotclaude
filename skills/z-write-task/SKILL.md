@@ -80,8 +80,15 @@ Chore  [invoice] Move pdfkit to v3
 - **The prefix is the Epic's key**, decided when the Epic is filed and used by every
   descendant. It is a product-feature name, never a directory name: directories move,
   feature names do not. Siblings end up adjacent in any flat list.
+- **Say one thing.** Joining two with "and" means the search for the word that covers both
+  was abandoned. Look for that word: two defects in one directory are one non-conformance.
+  If no such word exists, these are two items, not one title.
+- **Use words the reader already has.** Layer names, internal vocabulary, and directory
+  names describe the inside; the title is read from the outside. The prefix is the one
+  exception, and it is a feature name for exactly that reason.
 - About 60 characters, or 30 in Japanese. Over that, rewrite and move the detail into the
-  body. Do not truncate.
+  body. Do not truncate. A title that lists what was wrong is always too long — listing is
+  the body's job.
 
 ## Templates
 
