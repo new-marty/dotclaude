@@ -10,14 +10,14 @@ tool's vocabulary; the procedure in `SKILL.md` stays.
 | device | encodes | source |
 | --- | --- | --- |
 | Three-segment bar per stream: closed, waiting for review, mine; counts printed beside it | how far the stream is, and how much of the rest is the reader's | Jira timeline epic bar (done / in progress / to do); numbers printed because segments off the baseline are judged by length, not position (Cleveland & McGill; NN/g "3 of 50") |
-| State icon at the start of every row: `issue-opened` green, `issue-closed` purple | open or closed, as GitHub shows it | Primer StateLabel; GitHub changelog 2021-06-08 |
+| State circle at the start of every row: empty grey (Todo), half-filled amber (In Review), filled green with check (Done), ringed blue dot (next) | where the piece stands from the reader's side; GitHub's open/closed pair is deliberately not used because "open" hides the Todo / In Review split | Linear's filling status circle; Carbon three-of-four rule |
 | `git-pull-request` green with the PR number, `git-merge` purple with the merge date, `git-pull-request-draft` grey | there is a PR, and where it stands | GitHub issue list "linked pull requests" count; Jira development panel |
-| Small ring plus "n / m" on a parent row | sub-issue progress | GitHub sub-issue progress ring; Linear parent-row count |
-| `hourglass` in attention yellow with the word for what is waited on | off the reader's hands: review, someone's decision | GTD "Waiting For"; Asana "Waiting on"; Spectrum notice = pending; Octicon `hourglass` |
+| "n / m" after a parent row's number, and its open sub-pieces as inline chips | sub-issue progress and what exactly is still open | GitHub sub-issue count; Linear parent-row count |
+| The In Review group itself, amber, with a word for what is waited on when it is not a review (a decision) | off the reader's hands | GTD "Waiting For"; Asana "Waiting on"; Spectrum notice = pending |
 | One filled dot in accent blue, the word "next", and a tinted row | the single task the reader picks up | Things "Today" star; Graphite `◉` current branch; Few: highlight one thing |
 | `blocked` glyph with "after X" in muted text | an order dependency that has not cleared | Linear blocked-by; Jira dependency lozenge; Tufte: keep rails muted |
 | `stack` glyph with "k / n" | a PR stacked on another PR, base merged first | Graphite stack rail; GitHub stacked PRs (trunk at the bottom, merged bottom-up) |
-| Closed rows at 55% opacity, one line, no description | done is visible for the fraction, but the eye lands on what is left | Jira greys merged commits |
+| Rows grouped Todo, In Review, Done in that order; Done rows dimmed to one line | the reader's own work comes first, done is visible for the fraction | Jira status categories (To Do / In Progress / Done); Jira greys merged commits |
 | Type pill (Epic, Task) outlined in the type's colour; status pill in the project's own spelling | the organisation's vocabulary, unchanged | GitHub issue types; Projects v2 single-select |
 
 Every state carries at least three of: shape, colour, word (Carbon status-indicator rule;
@@ -27,10 +27,10 @@ WCAG 1.4.1 colour never alone). The page never uses a percentage by itself.
 
 | role | light | dark | used for |
 | --- | --- | --- | --- |
-| open (success) | `#1a7f37` | `#3fb950` | open issue, open PR |
-| done | `#8250df` | `#ab7df8` | closed issue, merged PR, "closed" bar segment |
-| attention | `#9a6700` | `#d29922` | waiting on someone, "waiting" bar segment |
-| accent | `#0969da` | `#4493f8` | the next task, "mine" bar segment |
+| success | `#1a7f37` | `#3fb950` | Done circle and bar segment; open PR glyph |
+| done (purple) | `#8250df` | `#ab7df8` | merged PR glyph only |
+| attention | `#9a6700` | `#d29922` | In Review circle, group heading, bar segment |
+| accent | `#0969da` | `#4493f8` | next dot and tint, Todo group heading, Todo bar segment |
 | danger | `#d1242f` | `#f85149` | changes requested (the review came back) |
 | muted | `#59636e` | `#9198a1` | draft PR, blocked, not started |
 

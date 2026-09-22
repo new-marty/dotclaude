@@ -38,16 +38,11 @@ out.
 
 ## Whose hands it is in
 
-The page is written for the person who resumes, so "done" means done from their side.
-A piece is off their hands when it is closed, or when its pull request is waiting for
-review, or when it is waiting on someone else's decision. Those are summed up, never
-listed. A piece is theirs when it is not started, in progress, or a review has come back
-asking for changes. The page shows only what is theirs, and says in the header whether any
-review has come back, so the reader knows that was checked.
-
-The heading carries two fractions: closed over total, and in small type off-their-hands
-over total. Both matter; the first says how far the stream is, the second how much of the
-rest is theirs.
+The page is written for the person who resumes, so every piece is sorted by whose hands it
+is in. Done: closed. In Review: off their hands, waiting for a review or for someone
+else's decision. Todo: theirs, whether not started, in progress, or sent back by a review
+asking for changes. The header says whether any review has come back, so the reader knows
+that was checked. Done and In Review are context; Todo is what the page is for.
 
 ## Streams are not always clean
 
@@ -104,23 +99,30 @@ another finishes is not what the reader resumes; it gets one line saying so.
 
 ### 3. Write each stream
 
-Keep it short. A stream is a heading, one line, a list of rows, and two boxes. The whole
-page for two streams fits in about one and a half screens; if it runs longer, cut words,
-not parts.
+The summary carries the page. It comes first, in three labelled lines: the whole (what the
+streams together are for, and how they depend on each other), now (where each stream
+stands and what is the reader's), next (the task and its one caveat). Each stream then
+opens with its own verdict paragraph before any row; the rows are evidence for the
+verdict, not the content. A page that reads as a task list has lost this order.
 
-- **Heading.** The container's title as the tracker shows it, the fraction of its pieces
-  off the reader's hands (2 / 4, with the split in small type), and its number as a link.
-- **One line on what it is for.** The problem and the approach, and the intended order,
-  because the order is what makes the next task the next task. One or two sentences, muted.
-- **One line on what is theirs**, or that nothing is.
-- **The pieces, as the tracker's sub-issue panel would show them**, in the plan's
-  order: state icon, title, and on the right the ring with "n / m" when it has
-  sub-pieces, the PR glyph with its number or merge date, and the hourglass when it is
-  off the reader's hands. Closed rows are greyed to one line. Under a parent that is not
-  closed, its sub-pieces are indented, closed ones greyed. The next piece is the only row
-  with the accent dot and tint. A piece that cannot start yet carries the blocked glyph
-  and "after X". A stacked PR carries the stack glyph and a line saying it will not close
-  its issue on merge.
+A stream is a heading with its fraction, a bar, a verdict paragraph, the grouped rows, and
+two boxes. Two streams fit in about two screens.
+
+- **Heading.** The container's title as the tracker shows it, closed over total, and its
+  number as a link. Under it a thin three-segment bar (Done, In Review, Todo) with the
+  three counts printed beside it.
+- **Verdict paragraph.** One muted sentence or two on what it is for and the intended
+  order, then in normal weight: what is done, what is off the reader's hands, what is
+  theirs, and which of those is next and why. This paragraph must answer the reader who
+  reads nothing else in the section.
+- **The pieces, grouped by where they stand**: Todo, In Review, Done, in that order,
+  each group headed by its name and count. Inside a group the plan's order. Todo rows are
+  the reader's; the next one is the only row with the accent dot and tint, and a row that
+  cannot start yet carries the blocked glyph and "after X". In Review rows are off the
+  reader's hands: their open sub-pieces are shown inline as short chips with the PR
+  glyph, and a stacked PR carries the stack glyph plus a line saying it will not close
+  its issue on merge. Done rows are one greyed line each with the merge date. A row with
+  sub-pieces shows "n / m" after its number.
 - **Next.** One line: the next task and what its text says to do first.
 - **What moved since the text was written.** Dated facts as short bullets: the body's
   date, then what happened on sibling tasks, on the container, and in the plan since then.
@@ -137,24 +139,26 @@ is expected to recognise.
 
 ### 4. Publish
 
-One page, as an Artifact, in the language the person writes in. Rows and one-liners, not
-paragraphs; no interactive controls; nothing folded away, because collapsing detail broke
-the reader's picture of the whole when it was tried. Plain system sans-serif at normal
-size; no display typeface, no decoration.
+One page, as an Artifact, in the language the person writes in. Short paragraphs for the
+summary and the verdicts, rows for everything else; no interactive controls; nothing
+folded away, because collapsing detail broke the reader's picture of the whole when it
+was tried. Plain system sans-serif at normal size; no display typeface, no decoration.
 
-State is shown in the tracker's own visual language so it is recognised, not read:
-`references/visual.md` lists the devices (GitHub's issue and PR icons and colours, a
-three-segment bar per stream, a ring with "n / m" on parent rows, an hourglass for
-"off my hands", one blue dot for "next", a blocked glyph for "after X", a stack glyph for
-stacked PRs, closed rows greyed) and where each was borrowed from. The icon paths are in
+State is shown with a small fixed vocabulary so it is recognised, not read:
+`references/visual.md` lists the devices (three state circles for Todo, In Review, Done
+plus one accent dot for next; a three-segment bar per stream; GitHub's own PR and merge
+glyphs for "there is a PR" and "it is merged"; a blocked glyph for "after X"; a stack
+glyph for stacked PRs; Done rows greyed) and where each was borrowed from. Borrow the
+tracker's glyphs only for what the tracker does well; GitHub's open-versus-closed icons
+are not used, because "open" lumps Todo and In Review together and that is the one
+distinction this page exists to make. The icon paths are in
 `assets/octicons.svg`; `assets/example-2026-09-22.html` is a finished page to copy the
 markup from. Read `artifact-design` before writing it, and `z-japanese-proofreading` when
 the page is in Japanese.
 
-The page opens with a two-sentence summary across all streams, the second sentence in bold
-naming what the reader will do next and its one caveat. Then the streams in the plan's
-order, then the loose pieces that are moving. Mark the next row so it can be found by eye,
-but never let state decide where a row sits; the plan's order does.
+The page opens with the three-line summary, then the streams in the plan's order, then
+the loose pieces that are moving, then one line on what comes after the streams. Exactly
+one row on the whole page carries the "next" mark.
 
 Close with the sources and the collection time.
 
@@ -162,8 +166,8 @@ Close with the sources and the collection time.
 
 - Could a reader who stops after the first paragraph act correctly? If not, the verdict
   is missing something.
-- Is the reader's own next piece the only thing in the accent colour? Everything not
-  closed is listed, but only what is theirs is emphasised.
+- Is the reader's own next piece the only thing in the accent colour? Everything is
+  listed under its group, but only the next piece is emphasised.
 - Is there a status name, a count, or a percentage carrying meaning that a sentence should
   carry instead?
 - Is every "what moved" item a dated fact, with its doubt stated as a separate sentence?
