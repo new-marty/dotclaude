@@ -52,27 +52,20 @@ This step is not optional. Skipping it produces a briefing made of ticket number
 status names, which reads as a restatement of the board and returns nothing to a person who
 has lost the context — the one failure this skill exists to prevent.
 
-### 3. Write the briefing
+### 3. Publish the briefing
+
+The briefing is a page, not terminal output. Build it from `assets/briefing-example.html`
+and publish it with the Artifact tool — `references/artifact.md` carries the structure and
+how the standing URL is reused, and it is a short read. The terminal gets the first two
+paragraphs and the link, nothing more.
 
 Conclusion first, evidence after — the reader may stop after the first paragraph, so the
 first paragraph has to survive alone.
 
-```
-<Two or three sentences: what all of this work is for, what state it is in as a whole,
- and how much of it this person can actually move. Plain words only.>
-
-▍<stream name> (<epic>, <n of m done>)
-  <Two or three sentences on what is wrong today and why it is worth fixing. Taken from
-   the plan or the epic, not from the ticket title.>
-
-  #NNNN  <what this piece of work does, in words someone who has read nothing follows>   <PR and its state>
-  #NNNN  <…>
-
-▍<next stream>  ← three or four at most
-
-▍盤面が実態とずれている  ← only when there is something to say
-▍手つかず N 件           ← count, plus a line only where the plan explains the parking
-```
+The page carries, in this order: what all of this work is for and where it stands as a
+whole, two or three sentences; the counts; each stream with a paragraph on why it exists and
+its items; the board's disagreements with reality, when there are any; the parked count and
+what moved while they were away.
 
 Three rules on the writing, and the briefing fails without them:
 
@@ -125,11 +118,18 @@ When nothing at all is in their hands, say so plainly, name one candidate from t
 items with a one-line reason, and stop. Choosing is `/z-start-task`'s job; do not open the
 issue, do not compare options, do not start.
 
-## When the terminal is not enough
+## When the terminal is all there is
 
-Default to the terminal. Reach for an Artifact when the shape itself is the message —
-several streams at once, or a board of stages where the pile-up is the point. Read
-`artifact-design` first. Terminal briefing first, then offer the board in one line.
+Where the Artifact tool is unavailable, write the same briefing into the terminal, in the
+same order, with the plain-text shape below. It loses the whole picture at a glance and
+keeps everything else.
+
+```
+▍<stream name> (<epic>, <n of m done>)
+  <why this stream exists>
+
+  #NNNN  <what the work does>   <PR and its state>  ← あなたの番
+```
 
 ## Do not
 
