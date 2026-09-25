@@ -13,12 +13,19 @@ of the latter.
 | Path | Contents |
 | --- | --- |
 | `CLAUDE.md` | Global instructions applied to every project |
-| `settings.json` | Output style, permissions, hooks, statusline, enabled plugins, MCP deny rules |
+| `settings.example.json` | The starting point for `settings.json`: output style, permissions, the sync hooks, statusline, enabled plugins, MCP deny rules |
 | `statusline.sh` | The script that renders the statusline (called from `settings.json`) |
 | `skills/` | Skills. Both hand-written and adopted ones start with `z-` |
 | `output-styles/` | Output styles that override how responses are written |
 | `scripts/` | Scripts invoked from hooks |
 | `ADOPTIONS.md` | A record of what was adopted from elsewhere and what was considered and declined |
+
+`settings.json` itself is not tracked. Each machine keeps its own: Orca injects hooks into
+it on machines where Orca runs, and a headless machine runs hooks of its own, so the file
+differs from machine to machine and syncing it only produced conflicts. A new machine
+copies `settings.example.json` to `settings.json` once (see "Setting up a new machine")
+and edits it locally from then on. A change that every machine should have — a new hook,
+a permission — goes into `settings.example.json` and is copied by hand.
 
 `.gitignore` is written to **ignore everything by default and allow only what is tracked**.
 New runtime files that Claude Code creates never slip into the tracked set. Authentication
@@ -47,18 +54,17 @@ add the entry there at the same time you add the skill.
 
 ## How syncing works
 
-Hooks registered in `settings.json` run automatically. No manual pull or push is needed.
+Hooks registered in each machine's `settings.json` run automatically. No manual pull or
+push is needed. `settings.example.json` carries both hooks, so a machine set up from it
+syncs from its first session.
 
 | When | What runs | What it does |
 | --- | --- | --- |
 | Session start | `scripts/sync-pull.sh` | `git pull --rebase --autostash` |
 | Session end | `scripts/sync-push.sh` | Commits and pushes if anything changed |
-| Right after `EnterWorktree` | `scripts/sync-worktree-env.sh` | Copies `.env` files into the new worktree |
 
-`sync-worktree-env.sh` has nothing to do with syncing this repository; it is hard-coded to
-the `example-app` repository alone. It copies three files — `backend/.env`,
-`backend/workers/.env`, `frontend/.env` — and never overwrites one that already exists at
-the destination. In any other repository it exits without doing anything.
+A machine that only pulls (a headless one, say) leaves the `SessionEnd` hook out of its
+`settings.json` and pulls on its own schedule instead.
 
 Thanks to `--autostash`, local edits are shelved before the pull and restored afterwards.
 `sync-push.sh` takes its lock non-blocking: if another session is already running, the
@@ -126,6 +132,15 @@ Files that already exist on the machine are not overwritten. Where the content d
 the remote, the local version stays and shows up as a change in `git status`. Which one to
 keep is decided by hand.
 
+Then create the machine's own `settings.json` from the tracked starting point, unless
+Claude Code has already written one you want to keep:
+
+```bash
+cp -n ~/.claude/settings.example.json ~/.claude/settings.json
+```
+
+Without this step no sync hook is registered and the machine never pulls or pushes.
+
 To do it manually:
 
 ```bash
@@ -137,4 +152,21 @@ git branch -f main origin/main && git symbolic-ref HEAD refs/heads/main
 git branch -u origin/main main
 git reset origin/main
 git checkout-index -a          # write out only the files that do not exist
+cp -n settings.example.json settings.json
 ```
+
+### If this machine tracked `settings.json` before
+
+`settings.json` was tracked until 2026-09-26. Pulling the commit that stopped tracking it
+deletes the file from the working tree on a machine that still has the tracked version,
+and with it the sync hooks. Before that pull, keep a copy and put it back afterwards:
+
+```bash
+cp ~/.claude/settings.json ~/.claude/settings.json.bak
+git -C ~/.claude update-index --no-skip-worktree settings.json   # only if it was skip-worktree
+git -C ~/.claude checkout -- settings.json                        # only if it was skip-worktree
+git -C ~/.claude pull --rebase
+cp ~/.claude/settings.json.bak ~/.claude/settings.json
+```
+
+After that the file is ignored by git, so local edits never conflict with a pull again.

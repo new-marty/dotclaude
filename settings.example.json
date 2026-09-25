@@ -1,0 +1,54 @@
+{
+  "cleanupPeriodDays": 14,
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Cloudflare Developer Platform"
+    }
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/sync-pull.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/sync-push.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": true
+  },
+  "outputStyle": "Concise",
+  "effortLevel": "high",
+  "autoUpdatesChannel": "stable",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "switchModelsOnFlag": false,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
+}
