@@ -6,7 +6,7 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 
 ## Steps
 
-1. Determine the base branch. Do not assume it: check where recent PRs merged with `gh pr list --state merged --limit 10 --json baseRefName,title` and match that. Read the titles in the same output for the repository's title convention. Ask the user when it is unclear. Follow an explicit instruction when there is one.
+1. Determine the base branch. Do not assume it: check where recent PRs merged with `gh pr list --state merged --limit 10 --json baseRefName` and match that. Ask the user when it is unclear. Follow an explicit instruction when there is one.
 2. Gather the material: read the commits with `git log origin/<base>..HEAD`, and get the overall shape with `git diff origin/<base>...HEAD --stat` if needed. Identify the related issue from the branch name and the commits.
 3. Read the PR template (`.github/pull_request_template.md`, or a file under `.github/PULL_REQUEST_TEMPLATE/`; write flowing prose without headings when there is none). `gh pr create --body` does not apply the template automatically, so fill in that structure yourself. In SDD and checklist fields, tick only what was actually done. Put `Closes #xxxx` on the issue the work completes, to state the intent to close it, and follow it with that issue's title — issues and pull requests share one number sequence, so a bare `#xxxx` says neither which of the two it is nor which level.
 4. Draft the title and body, present them together with the base branch, and get the user's approval. Do not run `gh pr create` before approval.
@@ -14,19 +14,30 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 
 ## Title
 
-- **Follow the repository's own convention first.** Read it off recent merged titles with
-  `gh pr list --state merged --limit 10 --json title`. A prefix like `refactor:` is there to
-  drive release notes, so keep it where the repository uses one and leave it out where it
-  does not.
-- **Then reuse the title of the issue this closes.** The issue list and the pull request
-  list read in the same vocabulary, which is the only thing that makes a number in a comment
-  recoverable later. The rules for the title itself live in `z-write-task` — one thing only,
-  words the reader already has, about 30 characters in Japanese. **A bad issue title does not
-  get inherited.** Rewrite it here, and say so, so the issue can be fixed too.
+- **Keep the kind of change out of the title.** `refactor:`, `feat:`, `[Bug]`: GitHub holds
+  all of them in a label or a type field, and that is where anyone filtering by kind looks.
+  The first words of a title are the part everyone reads, so give them to what changed.
+- **One exception, and it is mechanical.** Where a squash merge feeds release automation, the
+  title becomes the commit message on the base branch, and the tool reads the prefix to decide
+  the version. Confirm that setup instead of inferring it: `release-please-config.json`, a
+  `.releaserc` or a `semantic-release` key, a workflow running
+  `amannn/action-semantic-pull-request`, or a rule written down in CONTRIBUTING or the pull
+  request template. When one of those exists, follow it exactly. A title the linter rejects
+  blocks the merge.
+- **Merged titles are not a rule.** Agents write them now, and an agent that reads them writes
+  the same shape back, so one guess hardens into a house style nobody decided on. Read that
+  list for the base branch and nothing else.
+- **Reuse the title of the issue this closes.** The issue list and the pull request list read
+  in the same vocabulary, which is the only thing that makes a number in a comment recoverable
+  later. The feature key at the front of the issue title (`[invoice]`) comes along; it names
+  the area, not the kind. The rules for the title itself live in `z-write-task`: one thing
+  only, words the reader already has, about 30 characters in Japanese. **A bad issue title
+  does not get inherited.** Rewrite it here, and say so, so the issue can be fixed too.
 - **Never put the issue number in the title.** A squash merge appends the pull request's own
   number, so a title ending in `(#5898)` merges as `... (#5898) (#5930)` and neither number
   can be told from the other. `Closes` already carries it.
-- No titles that mean nothing without context, like "Fix bug", "Updates", or "Phase 1".
+- No titles that mean nothing without context, like "Fix bug", "Updates", or "Phase 1". Name
+  the change, not the area it sits in. "Update CSS" leaves the reader to open the diff.
 
 ## Writing the body
 
