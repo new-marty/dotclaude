@@ -31,7 +31,9 @@ by hand.
 Two more things live under `skills/` without being tracked. Orca symlinks four of its own
 skills there (`computer-use`, `find-skills`, `orca-cli`, `orchestration`), and claude.ai
 syncs a bundle into `skills/synced/` and moves deleted skills into `skills/.trash/`. Both
-are per machine, both are ignored.
+are per machine, both are ignored. The Mac mini also keeps six skills of its own under
+`skills/` as untracked symlinks; `sync-push.sh` refuses to commit a directory with one of
+those names, because a tracked copy would silently replace the symlink there.
 
 To start tracking a new file, add a `!name` line to `.gitignore`; a directory needs
 `!name/` and `!name/**`.

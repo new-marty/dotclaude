@@ -39,7 +39,9 @@ are writing in.
 
 - Read `z-writing-for-readers` before writing anything a reader outside this session will
   see: documentation, READMEs, design documents, PR descriptions, commit messages, issues.
-- Read `z-japanese-proofreading` before showing Japanese prose to anyone. It does not apply
-  to English prose.
+- For Japanese prose anyone will read, use `z-natural-japanese` and `z-japanese-proofreading`
+  in that order: the constitution in `z-natural-japanese` before writing, its `lint.py` on
+  the draft, then `z-japanese-proofreading` for the sentence-level pass. Neither applies to
+  English prose.
 
 @~/.claude/CLAUDE.machine.md

@@ -30,6 +30,20 @@ if [ -n "$(git -C "$DIR" ls-files --unmerged 2>/dev/null | head -1)" ] \
 fi
 
 git -C "$DIR" add -A
+
+# Another machine keeps skills under these names as untracked symlinks to its own
+# checkouts. If this repository ever tracked a directory with one of these names,
+# that machine's pull would swap its symlink for our copy without a word. Refuse.
+RESERVED="adding-services browsing-web reading-x recovering-gateway restoring-media-mount tracking-tasks"
+for name in $RESERVED; do
+    if git -C "$DIR" diff --cached --name-only | grep -q "^skills/$name\(/\|$\)"; then
+        echo "[claude-sync] skills/$name is reserved for another machine's local skill; not committing." >&2
+        echo "[claude-sync] rename it (z-$name, say) or remove it, then the next push proceeds." >&2
+        git -C "$DIR" reset -q
+        exit 0
+    fi
+done
+
 if ! git -C "$DIR" diff --cached --quiet; then
     files=$(git -C "$DIR" diff --cached --name-only | sed 's/^/  /')
     git -C "$DIR" commit -q -m "Sync Claude Code configuration from $(hostname -s)

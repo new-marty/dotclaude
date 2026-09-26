@@ -7,8 +7,9 @@ description: Help the user understand the current topic visually with concise di
      (MIT License, Copyright (c) 2026 HumanLayer). The body is upstream's except
      for the final bullet on HTML output, which is rewritten for this
      environment, and the "Handing it over in this environment" section, which is a local
-     addition. In the frontmatter, `name` is renamed to `z-show-me` and Japanese
-     trigger phrases are appended to `description`. -->
+     addition, as is the paragraph on Japanese output at its end. In the frontmatter,
+     `name` is renamed to `z-show-me` and Japanese trigger phrases are appended to
+     `description`. -->
 
 Help the user understand the current topic of conversation visually. Skip the preamble and keep prose brief. Pick the smallest view that makes the key point clear.
 
@@ -163,3 +164,7 @@ browser.
 Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
 
 You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+
+When the prose around a diagram is Japanese, it goes through `z-natural-japanese` (the
+constitution before writing, `lint.py` on the draft) and then `z-japanese-proofreading`,
+like any other Japanese text a person will read. The diagram labels count as prose.

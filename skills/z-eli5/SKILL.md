@@ -6,12 +6,13 @@ argument-hint: "<topic you want explained>"
 
 <!-- Vendored from https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md
      (Apache-2.0). The body is upstream's except for the clause on writing the
-     artifact in the user's language, which is a local addition. The `name`
+     artifact in the user's language and passing Japanese text through
+     `z-natural-japanese` and `z-japanese-proofreading`, which are local additions. The `name`
      field is renamed to `z-eli5` and Japanese trigger phrases are appended to
      `description`. -->
 
 # eli5
 
-Explain like I'm someone who knows nothing about this topic, using a HTML artifact with big pictures and few words. Write the artifact in the language the user is writing in.
+Explain like I'm someone who knows nothing about this topic, using a HTML artifact with big pictures and few words. Write the artifact in the language the user is writing in. When that language is Japanese, the text goes through `z-natural-japanese` (the constitution before writing, `lint.py` on the draft) and then `z-japanese-proofreading` before it is published.
 
 Topic: $ARGUMENTS
