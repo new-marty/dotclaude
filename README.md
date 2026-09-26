@@ -58,6 +58,51 @@ Hooks registered in each machine's `settings.json` run automatically. No manual 
 push is needed. `settings.example.json` carries both hooks, so a machine set up from it
 syncs from its first session.
 
+```mermaid
+flowchart LR
+    subgraph marty["Marty (edits here)"]
+        m_cfg["~/.claude<br/>CLAUDE.md · skills/ · scripts/ · output-styles/"]
+        m_set["settings.json<br/>(ignored, Orca hooks inside)"]
+    end
+    subgraph gh["github.com/new-marty/dotclaude"]
+        main["main"]
+    end
+    subgraph mini["mac-mini (pull only)"]
+        n_cfg["~/.claude<br/>same tracked files"]
+        n_set["settings.json<br/>(ignored, its own hooks)"]
+        n_own["skills/&lt;own&gt; symlinks<br/>(untracked)"]
+    end
+    m_cfg -- "SessionEnd: sync-push.sh<br/>add · commit · push" --> main
+    main -- "SessionStart: sync-pull.sh<br/>pull --rebase --autostash" --> m_cfg
+    main -- "05:00 cron: git pull" --> n_cfg
+```
+
+`settings.json` never crosses the wire: each machine keeps its own, and the tracked files
+are the ones every machine should share. What one session does, in order:
+
+```mermaid
+sequenceDiagram
+    participant CC as Claude Code
+    participant P as sync-pull.sh
+    participant G as .git
+    participant R as origin/main
+    CC->>P: SessionStart hook
+    P->>G: rebase in progress or unmerged files?
+    alt conflict left from an earlier run
+        P-->>CC: skip, statusline shows ".claude CONFLICT"
+    else clean
+        P->>R: git pull --rebase --autostash
+        R-->>G: remote commits replayed under local edits
+    end
+    Note over CC: session runs, files under ~/.claude change
+    CC->>P: SessionEnd hook → sync-push.sh
+    P->>G: mkdir .git/claude-sync.lock (one session at a time)
+    P->>G: git add -A (only what .gitignore allows)
+    P->>G: commit "Sync Claude Code configuration from <host>"
+    P->>R: git push origin HEAD:main
+    R-->>CC: statusline shows "⇡N" until the push lands
+```
+
 | When | What runs | What it does |
 | --- | --- | --- |
 | Session start | `scripts/sync-pull.sh` | `git pull --rebase --autostash` |
