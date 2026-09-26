@@ -1,6 +1,6 @@
 ---
 name: z-writing-for-readers
-description: The norm for writing anything a reader outside this session will see (documentation, README, design document, PR description, commit message, issue, review comment) as a standalone deliverable rather than a continuation of the conversation. Language-independent. When writing in Japanese, read `z-japanese-proofreading` alongside it. Not for short chat replies, code, or logs.
+description: The norm for writing anything a reader outside this session will see (documentation, README, design document, PR description, commit message, issue, review comment) as a standalone deliverable rather than a continuation of the conversation. Language-independent; names the pass to run on the draft for its language (`z-humanizer` for English, `z-natural-japanese` and `z-japanese-proofreading` for Japanese). Not for short chat replies, code, or logs.
 ---
 
 # Write for the reader
@@ -32,6 +32,33 @@ deliverable, not as a continuation of the session.
    away with, and put only the background needed to understand that up front.
    Do not present things in the order you researched or thought about them. Rearrange them
    into the order the reader will read them.
+
+5. Name the section in the heading, and put the informative words first.
+   "How tags are assigned", not "Overview" or "Details". Style guides agree on this much
+   (Google and Microsoft ask for descriptive headings; GOV.UK and Microsoft ask for the
+   important words first). A heading that states the section's conclusion is stronger but
+   reads as machine-made when every heading does it; use it for the two or three sections
+   whose content a reader could not guess from a name, and keep the rest as names, in one
+   grammatical shape.
+
+6. Bullets are for items that are genuinely parallel; reasoning is prose.
+   A cause and its effect, or a decision and why, go in sentences joined by "so", "but",
+   "because". Steps go in a numbered list. Items in one list share one grammatical shape.
+   Google's course notes that engineers like lists; digital.gov and NN/g warn that a page
+   of bullets is as hard to read as a wall of text. Both are right, so the test is whether
+   the items stand alone without a relation between them.
+
+7. Bold is for the one thing the reader must not miss, at most once a section.
+   Google, Microsoft and GOV.UK reserve bold for UI elements and forbid it for emphasis;
+   GitHub's docs allow it sparingly. Bold labels on every list item are decoration. A
+   template's field labels are structure, not emphasis, and do not count.
+
+## The language pass
+
+After the draft, run the pass for its language, then the check below. English:
+`z-humanizer`. Japanese: `z-natural-japanese` (the constitution before writing, its
+`lint.py` on the draft) and then `z-japanese-proofreading`. Neither pass applies to the
+other language.
 
 ## The check
 

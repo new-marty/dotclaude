@@ -53,7 +53,7 @@ recommendation. Include "Decision" and "Options" only when laying them out makes
 clearer. A recommendation may combine options, as in `A + C`.
 
 ```markdown
-### Issue n of m — <ID>: <short title>
+### Issue n of m: <ID> <short title>
 
 Category: <correctness / security / maintainability / …>
 Location: <file:line>
@@ -91,7 +91,7 @@ expedient patch.>
 ## Example
 
 ```markdown
-### Issue 1 of 1 — M1: ParseDuration truncates sub-second values to zero
+### Issue 1 of 1: M1 ParseDuration truncates sub-second values to zero
 
 Category: correctness
 Location: internal/timeutil/parse.go:42

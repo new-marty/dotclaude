@@ -153,8 +153,9 @@ tracker's glyphs only for what the tracker does well; GitHub's open-versus-close
 are not used, because "open" lumps Todo and In Review together and that is the one
 distinction this page exists to make. The icon paths are in
 `assets/octicons.svg`; `assets/example-2026-09-22.html` is a finished page to copy the
-markup from. Read `artifact-design` before writing it, and `z-japanese-proofreading` when
-the page is in Japanese.
+markup from. Read `artifact-design` before writing it, then run the language pass from
+`z-writing-for-readers` on the prose (`z-humanizer` for English, `z-natural-japanese` and
+`z-japanese-proofreading` for Japanese).
 
 The page opens with the three-line summary, then the streams in the plan's order, then
 the loose pieces that are moving, then one line on what comes after the streams. Exactly

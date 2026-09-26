@@ -44,6 +44,9 @@ skills/orchestration
 *.key
 .DS_Store
 
+# Python bytecode the lint scripts leave behind.
+__pycache__/
+
 # Dependencies mermaid-term resolves locally. Reproducible from package.json
 # and the lockfile.
 scripts/mermaid-term/node_modules/

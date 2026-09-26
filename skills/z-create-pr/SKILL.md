@@ -39,7 +39,7 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 - No evaluative words. Not "much faster", but "3.2s → 0.4s".
 - No tables and no bold. Headings, bullets, and body text only.
 
-The language of the body follows the rules in `CLAUDE.md`. Read `z-japanese-proofreading` when writing in Japanese, and `z-writing-for-readers` in any language.
+The language of the body follows the rules in `CLAUDE.md`. Read `z-writing-for-readers` in any language, then run its language pass on the draft: `z-humanizer` for English, `z-natural-japanese` and `z-japanese-proofreading` for Japanese.
 
 ## Tidying that was outside the task
 

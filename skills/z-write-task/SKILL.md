@@ -227,8 +227,9 @@ invoice as PDF`.
    this belongs under. On a hit, say so and propose commenting on the existing item rather
    than filing beside it.
 3. **Decide the level** from the promise, using the table above.
-4. **Write the body**, within 20 lines. Read `z-writing-for-readers` first; add
-   `z-japanese-proofreading` when writing in Japanese, and `z-review-finding` for a Bug.
+4. **Write the body**, within 20 lines. Read `z-writing-for-readers` first, then run its
+   language pass on the draft (`z-humanizer` for English, `z-natural-japanese` and
+   `z-japanese-proofreading` for Japanese). Add `z-review-finding` for a Bug.
 5. **Run the checks below**, and fix what fails before showing anything.
 6. **Show the title and body, and get approval.** Do not run `gh issue create` first.
 7. **File it, then set the relationships in the native fields** — parent, type, blocked-by.

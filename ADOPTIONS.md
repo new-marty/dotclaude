@@ -21,6 +21,7 @@ response length into `output-styles/concise.md`.
 
 | Name | Source | License | What was changed |
 | --- | --- | --- | --- |
+| `z-humanizer` | [blader/humanizer](https://github.com/blader/humanizer) at 9862685 (2026-09-06) | MIT | Body is upstream's. `name`, an `argument-hint`, and a closing section that sets it as the English pass after `z-writing-for-readers`, exempts repository templates and index-line dashes, and defaults to embedded mode when another skill calls it |
 | `z-natural-japanese` | [coji/natural-japanese](https://github.com/coji/natural-japanese) at 9a78a42 (2026-09-04) | MIT | Taken whole: references, scripts, fixtures. `name`, the slash-command examples and the script paths use the `z-` name. A closing section fixes the order of use with `z-japanese-proofreading`: constitution before writing, lint after, proofreading last |
 | `output-styles/concise.md` | [i-have-adhd](https://github.com/ayghri/i-have-adhd) | MIT | Cut down to three rules and rewritten, matching the research that people can hold about three constraints at once |
 | `z-show-me` | [humanlayer/skills](https://github.com/humanlayer/skills) | MIT | HTML delivery swapped for Artifact / SendUserFile. Japanese triggers |
