@@ -1,62 +1,42 @@
 # dotclaude
 
-A repository for keeping Claude Code's user-level configuration (`~/.claude`) in sync
-across several machines.
+`~/.claude` is a git repository. Every machine that runs Claude Code pulls it when a
+session starts, and the machine you edit on pushes it when the session ends. Nothing else
+is needed to keep instructions, skills and output styles identical everywhere.
 
-Claude Code keeps global instructions, skills, output styles, and settings in `~/.claude`
-in the home directory. The same directory also accumulates runtime state: conversation
-logs, caches, authentication tokens. This repository tracks the former and contains none
-of the latter.
+The same directory is also where Claude Code dumps conversation logs, caches and OAuth
+tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
+handful of files that are configuration.
 
-## What is tracked
+## Five things travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
-| `CLAUDE.md` | Global instructions applied to every project |
-| `settings.example.json` | The starting point for `settings.json`: output style, permissions, the sync hooks, statusline, enabled plugins, MCP deny rules |
-| `statusline.sh` | The script that renders the statusline (called from `settings.json`) |
-| `skills/` | Skills. Both hand-written and adopted ones start with `z-` |
-| `output-styles/` | Output styles that override how responses are written |
-| `scripts/` | Scripts invoked from hooks |
-| `ADOPTIONS.md` | A record of what was adopted from elsewhere and what was considered and declined |
+| `CLAUDE.md` | Instructions applied to every project |
+| `skills/` | Skills, all prefixed `z-` |
+| `output-styles/` | How answers are written |
+| `scripts/` | What the hooks run |
+| `statusline.sh` | The statusline |
+| `settings.example.json` | Where a new machine's `settings.json` starts from |
+| `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 
-`settings.json` itself is not tracked. Each machine keeps its own: Orca injects hooks into
-it on machines where Orca runs, and a headless machine runs hooks of its own, so the file
-differs from machine to machine and syncing it only produced conflicts. A new machine
-copies `settings.example.json` to `settings.json` once (see "Setting up a new machine")
-and edits it locally from then on. A change that every machine should have — a new hook,
-a permission — goes into `settings.example.json` and is copied by hand.
+`settings.json` is the file Claude Code actually reads, and it is not tracked. On the
+machine where Orca runs, Orca writes thirteen hooks into it; the headless Mac mini runs
+hooks of its own and pulls on a cron schedule instead of a session hook. A month of
+syncing the file produced conflicts and nothing else, so since 2026-09-26 each machine
+keeps its own copy and a new machine copies `settings.example.json` once. A hook or
+permission that every machine should have goes into the example file and is copied over
+by hand.
 
-`.gitignore` is written to **ignore everything by default and allow only what is tracked**.
-New runtime files that Claude Code creates never slip into the tracked set. Authentication
-tokens (`personal-oauth-token` and the like), conversation logs (`history.jsonl`,
-`sessions/`, `projects/`), and caches are all excluded. Beyond the table above, the allow
-list covers `.gitignore` itself and `README.md`.
+Two more things live under `skills/` without being tracked. Orca symlinks four of its own
+skills there (`computer-use`, `find-skills`, `orca-cli`, `orchestration`), and claude.ai
+syncs a bundle into `skills/synced/` and moves deleted skills into `skills/.trash/`. Both
+are per machine, both are ignored.
 
-Directly under `skills/` sit symlinks that Orca creates per machine (`computer-use`,
-`find-skills`, `orca-cli`, `orchestration`). They are excluded again after the allow lines,
-because tracking them leaves broken links on machines without Orca.
+To start tracking a new file, add a `!name` line to `.gitignore`; a directory needs
+`!name/` and `!name/**`.
 
-To track something new, add an allow line to `.gitignore`. A directory needs two lines
-(`!name/` and `!name/**`).
-
-`skills/` mixes hand-written skills with ones adopted from other repositories. An adopted
-skill records its source URL and license in a comment at the top of the file. When it was
-taken as is, everything but `name` matches upstream. When it was modified — retranslated,
-or given an extra section — the same comment says where upstream ends and local work
-begins. `name` is rewritten to follow this repository's convention that every skill starts
-with `z-`.
-
-That opening comment protects attribution for the file on its own; it gives no overall
-view. What was taken from where, what was changed, and what was considered and declined is
-recorded entry by entry in `ADOPTIONS.md`. When you decide to adopt or decline something,
-add the entry there at the same time you add the skill.
-
-## How syncing works
-
-Hooks registered in each machine's `settings.json` run automatically. No manual pull or
-push is needed. `settings.example.json` carries both hooks, so a machine set up from it
-syncs from its first session.
+## Two hooks do all the syncing
 
 ```mermaid
 flowchart LR
@@ -77,8 +57,11 @@ flowchart LR
     main -- "05:00 cron: git pull" --> n_cfg
 ```
 
-`settings.json` never crosses the wire: each machine keeps its own, and the tracked files
-are the ones every machine should share. What one session does, in order:
+`settings.example.json` registers `scripts/sync-pull.sh` on `SessionStart` and
+`scripts/sync-push.sh` on `SessionEnd`, so a machine set up from it syncs from its first
+session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it likes.
+
+Within one session the two scripts do this:
 
 ```mermaid
 sequenceDiagram
@@ -103,90 +86,64 @@ sequenceDiagram
     R-->>CC: statusline shows "⇡N" until the push lands
 ```
 
-| When | What runs | What it does |
-| --- | --- | --- |
-| Session start | `scripts/sync-pull.sh` | `git pull --rebase --autostash` |
-| Session end | `scripts/sync-push.sh` | Commits and pushes if anything changed |
+The pull uses `--autostash`, so edits you made on this machine before the session are
+shelved, the remote commits come in underneath, and the edits are put back on top. If
+putting them back conflicts, the rebase stops there and both hooks refuse to touch the
+repository until you resolve it (below).
 
-A machine that only pulls (a headless one, say) leaves the `SessionEnd` hook out of its
-`settings.json` and pulls on its own schedule instead.
+The push takes a lock by creating a directory, because two sessions can end at the same
+moment. The second one to arrive exits without committing; its changes wait for the next
+session's push. A lock older than five minutes is treated as left over from a killed
+session and taken over.
 
-Thanks to `--autostash`, local edits are shelved before the pull and restored afterwards.
-`sync-push.sh` takes its lock non-blocking: if another session is already running, the
-later session exits without doing anything. It does not queue and run in turn, so that
-session's changes stay uncommitted until the next push runs. While an unresolved conflict
-exists it does not commit, to avoid pushing conflict markers.
+## The statusline is where you notice a stuck sync
 
-## What the statusline shows
+`statusline.sh` draws up to four lines: account, model, directory and git on the first;
+context usage on the second; the five-hour and seven-day usage limits on the third and
+fourth. When usage cannot be fetched, on first launch or while the keychain is locked,
+the last two lines are simply absent.
 
-`statusline.sh` renders up to four lines. The first carries account, model, directory, and
-git; the second, context usage; the third and fourth, usage limits (the five-hour and
-seven-day windows). When usage cannot be fetched — first launch, keychain not yet read, API
-failure — lines three and four are omitted and only two remain.
+The first line names the account only when it is not the default. Under `~/work`,
+`CLAUDE_SECURESTORAGE_CONFIG_DIR=~/.claude-work` is set and the line starts with
+`work`. Claude Code stores each account's credentials under its own keychain service
+name (`Claude Code-credentials-<tag>`, where `<tag>` is the first eight hex digits of the
+SHA-256 of that directory's path), and the statusline derives the same name, so the usage
+it shows is the signed-in account's. The cache under `/tmp/claude-usage-cache*.json` is
+split the same way.
 
-The start of the first line names the account only when it is not the default one. Under
-`~/work`, `CLAUDE_SECURESTORAGE_CONFIG_DIR=~/.claude-work` is set and `work` is shown.
-Nothing is shown for the default account.
+The end of the first line is the sync state, and it is empty when all is well. `.claude ⇡N`
+means N commits have not reached GitHub: the SSH agent is locked, the network is down, or
+the remote moved ahead. `⚠ .claude CONFLICT` means the last pull stopped on a conflict.
 
-The end of the first line shows this repository's sync state. Nothing is shown when all is
-well.
-
-- `.claude ⇡N` — N commits have not been pushed
-- `⚠ .claude CONFLICT` — there is an unresolved conflict
-
-### Usage per account
-
-Claude Code stores separate credentials per account in the login keychain. The default
-account uses the service name `Claude Code-credentials`; an account selected through
-`CLAUDE_SECURESTORAGE_CONFIG_DIR` uses `Claude Code-credentials-<tag>`, where `<tag>` is the
-first eight digits of the SHA-256 of that directory's absolute path.
-
-The statusline builds the service name by this rule and shows the usage of whichever
-account is actually signed in. The cache (`/tmp/claude-usage-cache*.json`) is also split per
-account, so two accounts never overwrite each other's numbers.
-
-When `⇡N` will not go away, the push is failing: the SSH agent is locked, the network is
-down, or the remote has moved ahead.
-
-## When a conflict happens
-
-`⚠ .claude CONFLICT` means two machines changed the same file. The hooks exit without doing
-anything once they detect a conflict, so resolve it yourself.
+## A conflict stops both hooks until you resolve it by hand
 
 ```bash
-git -C ~/.claude status          # see which files conflict
-git -C ~/.claude diff            # look at the conflicting hunks
-# edit the files and remove the conflict markers
+git -C ~/.claude status          # which files
+git -C ~/.claude diff            # which hunks
+# edit, remove the markers
 git -C ~/.claude add <file>
 git -C ~/.claude rebase --continue
 ```
 
-The pre-pull state also remains in the stash (`git -C ~/.claude stash list`).
+Your pre-pull state is also in `git -C ~/.claude stash list` if you want to compare.
 
-## Setting up a new machine
+## A new machine needs the bootstrap script and one copy
 
-The dotfiles repository (`github.com:<you>/dotfiles`) runs
-`run_once_before_bootstrap-dotclaude.sh` automatically. The only step is
-`chezmoi init --apply git@github.com:<you>/dotfiles.git`.
+`chezmoi init --apply git@github.com:<you>/dotfiles.git` runs
+`run_once_before_bootstrap-dotclaude.sh` from the dotfiles repository, which turns the
+existing `~/.claude` into this repository in place. A plain `git clone` fails because the
+Claude Code installer has already created `~/.claude/downloads/` and friends. Files that
+already exist are left alone; where they differ from the remote they show up in
+`git status` for you to pick.
 
-That script turns `~/.claude` into a git repository in place. Cloning does not work: the
-Claude Code installer creates `~/.claude/downloads/` and others first, so `git clone` fails
-with "directory not empty".
-
-Files that already exist on the machine are not overwritten. Where the content differs from
-the remote, the local version stays and shows up as a change in `git status`. Which one to
-keep is decided by hand.
-
-Then create the machine's own `settings.json` from the tracked starting point, unless
-Claude Code has already written one you want to keep:
+Then give the machine its `settings.json`:
 
 ```bash
 cp -n ~/.claude/settings.example.json ~/.claude/settings.json
 ```
 
-Without this step no sync hook is registered and the machine never pulls or pushes.
-
-To do it manually:
+Skip this and no hook is registered, so the machine never syncs. By hand, the whole
+bootstrap is:
 
 ```bash
 mkdir -p ~/.claude && cd ~/.claude
@@ -196,22 +153,13 @@ git fetch origin main
 git branch -f main origin/main && git symbolic-ref HEAD refs/heads/main
 git branch -u origin/main main
 git reset origin/main
-git checkout-index -a          # write out only the files that do not exist
+git checkout-index -a          # writes only the files that do not exist yet
 cp -n settings.example.json settings.json
 ```
 
-### If this machine tracked `settings.json` before
+## Adopted skills say where they came from
 
-`settings.json` was tracked until 2026-09-26. Pulling the commit that stopped tracking it
-deletes the file from the working tree on a machine that still has the tracked version,
-and with it the sync hooks. Before that pull, keep a copy and put it back afterwards:
-
-```bash
-cp ~/.claude/settings.json ~/.claude/settings.json.bak
-git -C ~/.claude update-index --no-skip-worktree settings.json   # only if it was skip-worktree
-git -C ~/.claude checkout -- settings.json                        # only if it was skip-worktree
-git -C ~/.claude pull --rebase
-cp ~/.claude/settings.json.bak ~/.claude/settings.json
-```
-
-After that the file is ignored by git, so local edits never conflict with a pull again.
+A skill taken from another repository keeps its source URL and license in a comment at
+the top of `SKILL.md`, and that comment says where upstream ends and local edits begin.
+`ADOPTIONS.md` is the index over all of them, including the ones looked at and declined.
+When you adopt or decline something, add the row there in the same commit.
