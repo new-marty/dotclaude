@@ -59,7 +59,7 @@ section only when it would be empty, and say so in one word rather than leaving 
 silently:
 
 ```markdown
-# Handoff — <project> — <YYYY-MM-DD HH:MM>
+# Handoff: <project>, <YYYY-MM-DD HH:MM>
 
 ## What this session was doing
 One paragraph: the goal, and how far it got.

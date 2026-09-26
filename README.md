@@ -62,6 +62,9 @@ flowchart LR
 `settings.example.json` registers `scripts/sync-pull.sh` on `SessionStart` and
 `scripts/sync-push.sh` on `SessionEnd`, so a machine set up from it syncs from its first
 session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it likes.
+The same file registers `scripts/handoff-inject.py` on `SessionStart`: when `z-wrap-up`
+ended the previous session in this directory, the handoff it wrote comes back into
+context for a week, so `/clear` costs nothing that was written down.
 
 Within one session the two scripts do this:
 

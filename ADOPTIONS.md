@@ -45,7 +45,7 @@ response length into `output-styles/concise.md`.
 ## Hand-written
 
 `z-japanese-proofreading` / `z-cognitive-rhythm-writing` / `z-create-pr` / `z-start-task` /
-`z-writing-for-readers`
+`z-writing-for-readers` / `z-catch-up` / `z-wrap-up`
 
 The symlinks directly under `skills/` (`computer-use`, `find-skills`, `orca-cli`,
 `orchestration`) are created per machine by Orca and are excluded from tracking in
