@@ -20,6 +20,14 @@
             "command": "~/.claude/scripts/sync-pull.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/handoff-inject.py"
+          }
+        ]
       }
     ],
     "SessionEnd": [
