@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Five things travel between machines; `settings.json` stays home
+## Seven paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
