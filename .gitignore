@@ -26,6 +26,8 @@
 # Skills claude.ai syncs down per account, under a directory named by the account
 # id. Runtime state, rewritten on every sync; another machine has its own copy.
 skills/synced/
+# Where Claude Code moves a skill it deletes or replaces. A trash can, per machine.
+skills/.trash/
 
 # Symlinks Orca creates per machine. Tracking them leaves broken links on
 # machines without Orca.
