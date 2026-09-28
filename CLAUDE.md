@@ -1,13 +1,30 @@
 # Language
 
-Match deliverables — commit messages, PR descriptions, code comments, READMEs, design
-documents — to the language the repository already uses, not the language of this
-conversation. Ask when it is unclear.
+Match deliverables — PR descriptions, code comments, READMEs, design documents — to the
+language the repository already uses, not the language of this conversation. Ask when it
+is unclear. Commit messages follow the next section instead.
 
 An instruction written in a given language is not a reason to answer in it. This
 `CLAUDE.md`, the output style, and the skills are instructions, not samples of output.
 Translate the headings and labels of any template a skill supplies into the language you
 are writing in.
+
+# Commit messages
+
+Write them in English, in the Conventional Commits format:
+`<type>[(scope)][!]: <description>`, then an optional body and footers
+(https://www.conventionalcommits.org/en/v1.0.0/). Use `feat` for a new feature and `fix`
+for a bug fix; for the rest, pick from `build`, `chore`, `ci`, `docs`, `perf`,
+`refactor`, `style`, `test`. Mark a breaking change with `!` or a `BREAKING CHANGE:`
+footer.
+
+The only exception is a rule the repository writes down: a commitlint config, CONTRIBUTING,
+or similar. Then follow it exactly. The existing commit log is not such a rule, even when
+it is in Japanese or in another format, because agents wrote much of it.
+
+This rule covers the commits a reviewer reads on the branch. PR titles follow `z-create-pr`,
+so where a squash merge turns the title into the commit on the base branch, that commit
+carries no prefix. Leave it that way.
 
 # How to work
 

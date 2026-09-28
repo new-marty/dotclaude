@@ -115,7 +115,7 @@ This is where agreement is won. Do not skip this stage and start working. Do not
 
 - Self-review with the `code-review` skill, or the repository's own review skill. Read your code as someone else's. Look at correctness, scope creep, where the code was placed, and naming. Fix what it finds before moving on
 - Run the verification commands identified in step 0. In a repository where the formatter is a separate job from lint, run the formatter before pushing too
-- Commit and push. Match the language and the format of the commit message to the recent commit log
+- Commit and push. Write the commit message by the Commit messages section of `~/.claude/CLAUDE.md`, not by the recent commit log
 - If a flow document found in step 0 defines pre-PR work such as a QA checklist, say here that it will be needed
 - Do not create the PR. Just say that `z-create-pr` can create it
 
