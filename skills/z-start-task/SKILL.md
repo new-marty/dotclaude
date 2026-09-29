@@ -79,7 +79,7 @@ This is where agreement is won. Do not skip this stage and start working. Do not
    - How the current code or operation works, and where the problem is
    - What will be different when it is done (from the user's side, and from the code's side)
 
-   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user
+   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user. Read the issue's comments too (`gh issue view <n> --comments`): a findings comment left at filing records what was already investigated. Use it as leads to verify against the code, not as a decision
 2. Give "what we are doing" and "what we are not doing", two or three lines each
 3. Call `z-grilling`. Ask at least one question on each of five things: the boundary of the scope, consistency with existing behavior, whether data migration is needed, how errors are handled, and how far the tests go. Anything not asked here comes back as rework after implementation
 4. Where the grilling exposed a mismatch, rewrite "what we are doing / what we are not doing" and agree again

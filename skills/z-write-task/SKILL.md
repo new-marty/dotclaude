@@ -14,6 +14,12 @@ This is the writing side of `z-start-task`, whose third principle tells the read
 trust an issue as a specification. Write items that earn that distrust: thin enough that
 there is nothing stale to trust.
 
+That thinness is a rule for the body only. When an item is filed after investigating
+— the cause located, a fix that looks like it would work — that investigation is the most
+valuable thing you have, and dropping it to keep the body short throws it away. It goes in
+a findings comment posted with the issue (see "Findings"), and the body is written from
+where the investigation ended, not from the request it started with.
+
 Nothing in this file is a gate on starting work. A checklist that has to be fully satisfied
 before anyone may begin turns into pre-work that goes stale before it is used, which is the
 failure this skill exists to prevent.
@@ -75,8 +81,9 @@ the sentence you are about to write
   ├─ what is going wrong now, and for whom ──→ body, Problem
   ├─ the condition under which this is done ─→ acceptance criteria
   ├─ the larger purpose, or a relationship ──→ the parent, or a native field. Not the body
-  ├─ something you found out ────────────────→ a comment, not the body
+  ├─ something you found out ────────────────→ the findings comment, not the body
   ├─ how to build it ┬─ already decided ─────→ an ADR or the PR. A link at most
+  │                  ├─ investigated, likely → the findings comment, marked as a candidate
   │                  └─ not yet ─────────────→ nowhere. Decide it from the code at the start
   └─ something to do later, or while in there → nowhere. See "Something you noticed"
 ```
@@ -84,6 +91,39 @@ the sentence you are about to write
 The body is the specification and changes only when the acceptance criteria change.
 Comments are the record, and the platform dates them for you. A hand-written date rots; a
 comment's does not.
+
+## Findings
+
+Whatever the investigation turned up goes in one comment, posted right after the issue is
+created and shown in the same approval as the body. Length is not limited; this is where
+the detail lives so that the body does not have to carry it.
+
+```markdown
+## Findings at filing
+<What was read or run, and what it showed: files, commands, outputs, links>
+
+## Likely cause
+<Where the problem sits, and the evidence for it. Say which parts are confirmed and which are inferred>
+
+## Candidate fix
+<The approach that looked workable, and what it rests on. A lead to verify, not a decision>
+
+## Ruled out
+<What was tried or considered and why it does not work, so nobody repeats it>
+```
+
+Drop the sections that have nothing in them. Within the rest, leave out only what would not
+change what the next person does; a comment is cheap and redoing the investigation is not.
+
+The comment records what was true when it was written, and the platform's date says when.
+Whoever starts the work reads it as leads to check against the code, per `z-start-task`'s
+third principle — which is why a candidate fix can live here and not in the body.
+
+The body still has to agree with it. If the investigation narrowed or moved the problem —
+the reported symptom turned out to be one case of something wider, or the cause is not
+where the request assumed — write the Problem and the acceptance criteria for the problem
+as it now stands. A body that restates the original request above a comment that
+contradicts it is the failure this section exists to prevent.
 
 ## Titles
 
@@ -119,7 +159,10 @@ Chore  [invoice] Move pdfkit to v3
 
 ## Templates
 
-Keep the body within 20 lines. The parent goes in the native field, not here.
+The body holds what, why, and the acceptance criteria, and nothing else. Those three need
+few lines, so a long body is a sign that some sentence belongs elsewhere: check it against
+"Where each sentence goes". Most often it belongs in the findings comment.
+The parent goes in the native field, not here.
 
 ```markdown
 ## Problem
@@ -131,8 +174,6 @@ Keep the body within 20 lines. The parent goes in the native field, not here.
 ## Acceptance criteria
 - [ ] <Observable from outside: a command and its result, or something a person can do>
 - [ ] <…>
-
-PR: 1
 ```
 
 For a Bug, follow `z-review-finding` and use these headings: What happens (observed, not
@@ -227,25 +268,29 @@ invoice as PDF`.
    this belongs under. On a hit, say so and propose commenting on the existing item rather
    than filing beside it.
 3. **Decide the level** from the promise, using the table above.
-4. **Write the body**, within 20 lines. Read `z-writing-for-readers` first, then run its
-   language pass on the draft (`z-humanizer` for English, `z-natural-japanese` and
+4. **Write the body, and the findings comment if anything was investigated.** Write the
+   body from where the investigation ended. Read `z-writing-for-readers` first, then run
+   its language pass on both drafts (`z-humanizer` for English, `z-natural-japanese` and
    `z-japanese-proofreading` for Japanese). Add `z-review-finding` for a Bug.
 5. **Run the checks below**, and fix what fails before showing anything.
-6. **Show the title and body, and get approval.** Do not run `gh issue create` first.
-7. **File it, then set the relationships in the native fields** — parent, type, blocked-by.
-   Return the URL.
+6. **Show the title, the body, and the findings comment, and get approval.** Do not run
+   `gh issue create` first.
+7. **File it, post the findings comment, then set the relationships in the native fields**
+   — parent, type, blocked-by. Return the URL.
 
 ## Before filing
 
 - [ ] The title is within about 60 characters (30 in Japanese), carries the Epic key, and
       names no identifier, ticket number, or issue type
-- [ ] The body is within 20 lines
+- [ ] The body holds only the problem, the desired outcome, and the acceptance criteria
+- [ ] If anything was investigated, a findings comment carries it, and the body describes
+      the problem as the investigation left it, not as it was first reported
 - [ ] Every acceptance criterion is observable from outside — a command, or something a
       person can do
 - [ ] Every number is either rounded evidence with a date, a command, or a predicate
-- [ ] There is no implementation plan and no list of file paths
+- [ ] The body has no implementation plan and no list of file paths; those, when known,
+      are in the findings comment
 - [ ] The parent appears in one place only: the native field, never also the body
-- [ ] `PR: n` is stated, and `n` is 1 unless the split has passed the vertical slice test
 
 ## Heading translations
 
@@ -265,3 +310,7 @@ The output language follows the rules in `CLAUDE.md`. Use this table when transl
 | Why now | なぜ今か |
 | Not in this epic | この Epic に含まないもの |
 | Key | キー |
+| Findings at filing | 起票時点の調査結果 |
+| Likely cause | 原因の見立て |
+| Candidate fix | 修正案 |
+| Ruled out | 除外したもの |

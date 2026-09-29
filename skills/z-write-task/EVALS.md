@@ -1,6 +1,6 @@
 # Test prompts
 
-Three prompts for checking that `SKILL.md` produces the same thing every time. They are
+Four prompts for checking that `SKILL.md` produces the same thing every time. They are
 written down rather than run: putting the pass conditions into words is what finds the
 holes in the norm. Run them when the skill is read but the output still varies — with the
 skill and without it, and compare.
@@ -17,14 +17,15 @@ Each case fails if any check fails. The checks are all decidable by reading the 
 
 - [ ] One Story is filed. The library comparison, the `InvoiceService.render` design, the
       custom templates, and the thin tests are **not** in the body
-- [ ] The library comparison is either dropped or placed in a comment, never in the body
+- [ ] The library comparison and the `InvoiceService.render` idea are in the findings
+      comment, the latter marked as a candidate. Neither is in the body
 - [ ] The custom templates and the thin tests are sorted into the four exits and shown, not
       filed silently and not filed as issues of their own
 - [ ] "40 a month" appears rounded with a date, or not at all
 - [ ] The title reads as an outcome, not as an instruction to build something
 - [ ] Approval is asked for before `gh issue create` runs
 
-Failure looks like: a body over 20 lines; a Design section; three issues filed at once.
+Failure looks like: a Design section in the body; three issues filed at once.
 
 ## 2. A bug
 
@@ -54,3 +55,21 @@ Failure looks like: a title like "Fix the currency formatter"; the guess written
 - [ ] No Task is titled after a layer (model, API, UI)
 
 Failure looks like: three Tasks split by layer; an ordinal such as `(1/3)` in a title.
+
+## 4. Filing after the investigation found a fix
+
+> CSV エクスポートで日本語が文字化けするって報告を調べた。Excel で開いたときだけで、
+> BOM を付けてないのが原因。`export/csv.ts` の `toCsv` で先頭に `\uFEFF` を足せば直るの
+> を手元で確認した。Shift_JIS で出す案も考えたけど、絵文字が落ちるのでやめた。Issue に
+> して。
+
+- [ ] The body describes the problem as the investigation left it: Excel shows the CSV
+      garbled because it has no BOM — not only "Japanese is garbled in CSV exports"
+- [ ] A findings comment is drafted and shown in the same approval, carrying the cause,
+      the BOM fix as a candidate with what confirmed it, and Shift_JIS as ruled out with
+      its reason
+- [ ] `export/csv.ts` and `toCsv` appear in the comment, not in the body
+- [ ] After approval, the comment is posted right after `gh issue create`
+
+Failure looks like: a body that restates the original report and nothing else, with the
+cause and the fix gone; or the fix written into the body as the plan.

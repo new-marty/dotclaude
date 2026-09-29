@@ -50,6 +50,12 @@ gh issue create --title "[invoice] Return a generated PDF from the API" \
 Write the body to a file and pass `--body-file`. A body typed inline loses its line breaks
 to shell quoting.
 
+Post the findings comment straight after, the same way:
+
+```sh
+gh issue comment 11 --body-file <findings-file>
+```
+
 ## Relationships
 
 These are the native fields. Put the relationship here, not in the body — GitHub renders
