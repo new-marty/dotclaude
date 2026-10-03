@@ -127,7 +127,7 @@ or ~/.claude except the one allowed test in X4.
 |---|---|---|---|---|---|---|---|
 | TASK-16 | implement | done | main 5dfe644, 165ec3d (from 2ac4da7, 73d4aa0) | | subagent (Opus 5.5), worktree | 2026-10-04 | fix round 1 reused the same agent |
 | TASK-16 | verify | done | | round 1: 0 spec gaps, 0 writer changes, 3 low bugs, 1 README contradiction; round 2 (fix diff): 0 / 0 / 0 / 0 / 0 | 2 subagents (Opus 5.5) | 2026-10-04 | negative control confirmed advice.diverging; tests re-run on main by the orchestrator: 12 ok |
-| mac-mini opt-in | — | filed | | | | | ~/server T-479, after this lands |
+| mac-mini opt-in | — | done | ~/server af5aec0 | review: 2 findings, both fixed | orchestrator + review subagent | 2026-10-04 | role set; manual sync runs: no change, rc=0; 05:00 run not yet observed |
 
 ### Brief: TASK-16 implement
 
