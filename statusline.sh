@@ -28,13 +28,18 @@ build_bar() {
     echo "$bar"
 }
 
+# Time until a reset, from Unix epoch seconds (what Claude Code sends) or an
+# ISO 8601 timestamp (what the usage endpoint returns).
 format_reset_time() {
-    local iso="$1"
-    local clean="${iso%%.*}"
-    clean="${clean%%+*}"
-    local epoch
-    epoch=$(TZ=UTC date -jf "%Y-%m-%dT%H:%M:%S" "$clean" "+%s" 2>/dev/null || echo "")
-    if [ -z "$epoch" ]; then echo "$iso"; return; fi
+    local when="$1" epoch
+    if [[ "$when" =~ ^[0-9]+$ ]]; then
+        epoch="$when"
+    else
+        local clean="${when%%.*}"
+        clean="${clean%%+*}"
+        epoch=$(TZ=UTC date -jf "%Y-%m-%dT%H:%M:%S" "$clean" "+%s" 2>/dev/null || echo "")
+        if [ -z "$epoch" ]; then echo "$when"; return; fi
+    fi
 
     local now diff
     now=$(date "+%s")
@@ -49,8 +54,31 @@ format_reset_time() {
     [ "$days" -gt 0 ] && result="${days}d "
     [ "$hours" -gt 0 ] && result="${result}${hours}h "
     [ "$mins" -gt 0 ] && result="${result}${mins}m"
+    result="${result% }"
     echo "${result:-now}"
 }
+
+# Which billing path this session runs on. Claude Code does not say so in the
+# JSON, so follow its authentication precedence
+# (https://code.claude.com/docs/en/authentication#authentication-precedence):
+# a cloud provider, then ANTHROPIC_AUTH_TOKEN / ANTHROPIC_API_KEY, then an
+# apiKeyHelper, and only then the claude.ai login. rate_limits in the JSON is
+# sent only to Pro and Max subscribers, so its presence settles the question.
+is_truthy() { case "${1:-}" in 1|true|TRUE|True|yes) return 0;; *) return 1;; esac; }
+BILLING="subscription"
+if is_truthy "${CLAUDE_CODE_USE_BEDROCK:-}"; then BILLING="Bedrock"
+elif is_truthy "${CLAUDE_CODE_USE_VERTEX:-}"; then BILLING="Vertex"
+elif is_truthy "${CLAUDE_CODE_USE_FOUNDRY:-}"; then BILLING="Foundry"
+elif [ -n "${ANTHROPIC_AUTH_TOKEN:-}${ANTHROPIC_API_KEY:-}" ]; then BILLING="API"
+else
+    for f in "$HOME/.claude/settings.json" "$DIR/.claude/settings.json" "$DIR/.claude/settings.local.json"; do
+        if [ -f "$f" ] && jq -e '.apiKeyHelper // empty' "$f" >/dev/null 2>&1; then
+            BILLING="API"; break
+        fi
+    done
+fi
+echo "$input" | jq -e '.rate_limits.five_hour // .rate_limits.seven_day // empty' >/dev/null 2>&1 &&
+    BILLING="subscription"
 
 # --- Line 1: Account | Model | Dir | Git | ~/.claude sync ---
 sep="${C_OVERLAY}|${R}"
@@ -67,6 +95,11 @@ if [ -n "${CLAUDE_SECURESTORAGE_CONFIG_DIR:-}" ]; then
     account_name="${account_name#.claude-}"
     ACCOUNT_S="${BOLD}${C_MAUVE}${account_name}${R} ${sep} "
 fi
+
+# Pay-per-token sessions name their provider, so they are never mistaken for
+# a subscription session.
+BILLING_S=""
+[ "$BILLING" != "subscription" ] && BILLING_S="${BOLD}${C_PEACH}${BILLING}${R} ${sep} "
 
 # ~/.claude is a git repository synced across machines by the SessionStart and
 # SessionEnd hooks. Surface the two states a hook cannot resolve on its own:
@@ -93,13 +126,13 @@ if git -C "$DIR" rev-parse --git-dir > /dev/null 2>&1; then
     GIT_INFO=" ${sep} ${C_BLUE}${BRANCH}${R} ${git_detail}"
 fi
 
-printf '%b\n' "${ACCOUNT_S}${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
+printf '%b\n' "${BILLING_S}${ACCOUNT_S}${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
 
 # --- Line 2: Context bar ---
 ctx_bar=$(build_bar "$PCT" 25)
 printf '%b\n' "${C_SUBTEXT}ctx${R}  ${C_BLUE}${ctx_bar}${R}  ${C_BLUE}${PCT}%${R}"
 
-# --- Lines 3-4: Usage limits (Anthropic API) ---
+# --- Lines 3-4: Usage limits ---
 # Claude Code keeps one credential per account in the login Keychain. The
 # default account uses the service name "Claude Code-credentials"; setting
 # CLAUDE_SECURESTORAGE_CONFIG_DIR selects a second account whose service name
@@ -187,6 +220,31 @@ print_usage_line() {
 
     printf '%b\n' "${C_SUBTEXT}${label}${R}  ${color}${bar}${R}  ${color}${pct}%${R}  ${C_OVERLAY}resets in ${reset_str}${R}"
 }
+
+# Pay-per-token: the session's estimated cost replaces the subscription
+# limits, plus the spend limit when a Claude apps gateway sets one.
+if [ "$BILLING" != "subscription" ]; then
+    cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0' | awk '{printf "%.2f", $1}')
+    printf '%b\n' "${C_SUBTEXT}cost${R}  ${C_PEACH}\$${cost}${R}  ${C_OVERLAY}this session, at list price${R}"
+    spend_pct=$(echo "$input" | jq -r '.rate_limits.spend_limit.used_percentage // empty' | awk '{printf "%d", $1}')
+    if [ -n "$spend_pct" ]; then
+        spend_reset=$(echo "$input" | jq -r '.rate_limits.spend_limit.resets_at // empty')
+        print_usage_line "spend" "$spend_pct" "$(format_reset_time "${spend_reset:-?}")" "$C_RED"
+    fi
+    exit 0
+fi
+
+# Subscription: Claude Code sends the limits itself after the first API
+# response. Before that, fall back to the usage endpoint.
+five_hour_util=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty' | awk '{printf "%d", $1}')
+if [ -n "$five_hour_util" ]; then
+    five_hour_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+    seven_day_util=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // 0' | awk '{printf "%d", $1}')
+    seven_day_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
+    print_usage_line " 5h" "$five_hour_util" "$(format_reset_time "${five_hour_reset:-?}")" "$C_MAUVE"
+    print_usage_line " 7d" "$seven_day_util" "$(format_reset_time "${seven_day_reset:-?}")" "$C_PEACH"
+    exit 0
+fi
 
 usage_data=$(get_usage_data 2>/dev/null)
 if [ -n "$usage_data" ]; then

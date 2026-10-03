@@ -109,6 +109,14 @@ context usage on the second; the five-hour and seven-day usage limits on the thi
 fourth. When usage cannot be fetched, on first launch or while the keychain is locked,
 the last two lines are simply absent.
 
+The usage limits belong to a claude.ai subscription, so they appear only there. A session
+billed per token (Bedrock, Vertex, Foundry, an API key or an `apiKeyHelper`) starts the
+first line with the provider and shows the session's estimated cost instead, plus the
+spend limit when a gateway sets one. Claude Code does not tell the statusline which
+billing path it is on, so the script follows Claude Code's
+[authentication precedence](https://code.claude.com/docs/en/authentication#authentication-precedence),
+and takes `rate_limits` in its input as proof of a subscription.
+
 The first line names the account only when it is not the default. Under `~/work`,
 `CLAUDE_SECURESTORAGE_CONFIG_DIR=~/.claude-work` is set and the line starts with
 `work`. Claude Code stores each account's credentials under its own keychain service
