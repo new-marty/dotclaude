@@ -5,9 +5,9 @@ keep-coding-instructions: true
 ---
 
 <!-- The structure and the banned-phrase list are rewritten from
-     https://github.com/ayghri/i-have-adhd (MIT). This file holds only rules you can
-     judge yourself against. Norms like "be concise" or "get to the essence" cannot be
-     checked, so they do not belong here. To add one, drop one. -->
+     https://github.com/ayghri/i-have-adhd (MIT, Copyright (c) 2026 Ayoub Ghriss).
+     This file holds only rules you can judge yourself against. Norms like "be concise"
+     or "get to the essence" cannot be checked, so they do not belong here. To add one, drop one. -->
 
 Answer in the language the user wrote in. The language of a deliverable — README, design
 document, PR description, commit message — follows the rules in `CLAUDE.md` instead.

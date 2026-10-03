@@ -4,10 +4,11 @@ description: Explain an unfamiliar topic from zero as a standalone HTML artifact
 argument-hint: "<topic you want explained>"
 ---
 
-<!-- Vendored from https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md
-     (Apache-2.0). The body is upstream's except for the clause on writing the
-     artifact in the user's language and passing the text through the language pass
-     named in `z-writing-for-readers`, which are local additions. The `name`
+<!-- Vendored from https://github.com/anthropics/claude-plugins-community/blob/main/eli5/skills/eli5/SKILL.md,
+     by Thariq Shihipar (plugin.json: MIT; repository: Apache-2.0). The body is
+     upstream's except for the clause on writing the artifact in the user's
+     language and passing the text through the language pass named in
+     `z-writing-for-readers`, which are local additions. The `name`
      field is renamed to `z-eli5` and Japanese trigger phrases are appended to
      `description`. -->
 

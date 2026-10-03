@@ -5,9 +5,11 @@ description: Write a code review finding, a bug report, or an explanation of a d
 
 <!-- Adapted from the "Per-item Template" section of
      https://github.com/p3bot/library/blob/main/tasks/review/pre-commit/task.md
-     (Mozilla Public License 2.0). This file is a rewrite of that section and is
-     therefore covered by the MPL-2.0. A copy of the licence is at
-     https://mozilla.org/MPL/2.0/. -->
+     (Mozilla Public License 2.0).
+
+     This Source Code Form is subject to the terms of the Mozilla Public
+     License, v. 2.0. If a copy of the MPL was not distributed with this
+     file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
 
 # How to write a review finding
 

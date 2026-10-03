@@ -377,7 +377,7 @@ Keep the details that carry the writer's voice unless they hurt the meaning:
 
 ## Source
 
-The patterns come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
+The patterns come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup (Wikipedia contributors, CC BY-SA 4.0, https://creativecommons.org/licenses/by-sa/4.0/); example passages quoted from it remain under CC BY-SA 4.0. The patterns also draw on reviews of AI-generated text on Wikipedia and elsewhere.
 
 ## In this environment
 

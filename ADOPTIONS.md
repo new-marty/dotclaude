@@ -6,7 +6,8 @@ change does not survive there.
 
 Each `SKILL.md` carries its source and license in a comment at the top, so attribution
 survives even when the file is passed around on its own. This file is the index over those,
-and it also lists what was declined.
+and it also lists what was declined. The full license texts and copyright lines are in
+`THIRD_PARTY_NOTICES.md`.
 
 Add new rows above the existing ones.
 
@@ -21,6 +22,7 @@ response length into `output-styles/concise.md`.
 
 | Name | Source | License | What was changed |
 | --- | --- | --- | --- |
+| `z-japanese-proofreading` | [VarYUvrc's predictable-reading-japanese gist](https://gist.github.com/VarYUvrc/6fe8174afa5d902fa2bc7a8a47b5484e) and [k16shikano's japanese-tech-writing gist](https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d) | VarYUvrc: none; k16shikano: Unlicense | From VarYUvrc, ideas only: the gist has no license, so every example is rewritten. Norms from k16shikano. Written in Japanese and consolidated with the other rules for Japanese prose |
 | `z-gemini-write` | the workflow in [this note article](https://note.com/genkaijokyo/n/n8562c2500420) | none taken | Only the idea (Gemini rewrites, Claude checks for meaning drift). Script, prompt and procedure written from scratch; OpenRouter added as a paid route used only on the user's approval |
 | `z-humanizer` | [blader/humanizer](https://github.com/blader/humanizer) at 9862685 (2026-09-06) | MIT | Body is upstream's. `name`, an `argument-hint`, and a closing section that sets it as the English pass after `z-writing-for-readers`, exempts repository templates and index-line dashes, and defaults to embedded mode when another skill calls it |
 | `z-natural-japanese` | [coji/natural-japanese](https://github.com/coji/natural-japanese) at 9a78a42 (2026-09-04) | MIT | Taken whole: references, scripts, fixtures. `name`, the slash-command examples and the script paths use the `z-` name. A closing section fixes the order of use with `z-japanese-proofreading`: constitution before writing, lint after, proofreading last |
@@ -33,7 +35,7 @@ response length into `output-styles/concise.md`.
 | `z-wait-what` | same as above | MIT | Rewritten. Added the `z-japanese-proofreading` condition, `disable-model-invocation` |
 | `z-unstuck` | [oi-owarasero](https://github.com/nwiizo/oi-owarasero) | MIT | A local section at the end |
 | `z-review-finding` | the Per-item Template from [p3bot/library](https://github.com/p3bot/library) | MPL-2.0 | Rewritten from scratch |
-| `z-eli5` | [claude-plugins-community](https://github.com/anthropics/claude-plugins-community) | Apache-2.0 | Added the output-language rule. Japanese triggers, `argument-hint` |
+| `z-eli5` | [claude-plugins-community](https://github.com/anthropics/claude-plugins-community), by Thariq Shihipar | `plugin.json`: MIT; repository: Apache-2.0 | Added the output-language rule. Japanese triggers, `argument-hint` |
 | `frontend-design` | claude-plugins-official | upstream | A plugin. Its body is not synced |
 
 ## Declined
@@ -49,7 +51,7 @@ response length into `output-styles/concise.md`.
 
 ## Hand-written
 
-`z-japanese-proofreading` / `z-cognitive-rhythm-writing` / `z-create-pr` / `z-start-task` /
+`z-cognitive-rhythm-writing` / `z-create-pr` / `z-start-task` /
 `z-writing-for-readers` / `z-catch-up` / `z-wrap-up`
 
 The symlinks directly under `skills/` (`computer-use`, `find-skills`, `orca-cli`,

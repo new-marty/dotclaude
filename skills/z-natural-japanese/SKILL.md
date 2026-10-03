@@ -6,7 +6,7 @@ argument-hint: "[write|score] [quick|full|exp] [対象ファイルや依頼内�
 ---
 
 <!-- Vendored from https://github.com/coji/natural-japanese/tree/9a78a42/skills/natural-japanese
-     (MIT License, Copyright (c) coji). Everything below is upstream's at commit 9a78a42
+     (MIT License, Copyright (c) 2026 coji). Everything below is upstream's at commit 9a78a42
      (2026-09-04) except: `name` is z-natural-japanese, the slash-command examples and the
      one script path use that name, and the "この環境での役割分担" section at the end is a
      local addition. Scripts run with `uv run`; lint.py needs only sudachipy and its
