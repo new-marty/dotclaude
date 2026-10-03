@@ -1,6 +1,7 @@
 ---
 name: z-grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. Also triggers on Japanese: 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
+description: >-
+  Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrase. Also triggers on Japanese: 「grill me」「壁打ちして」「この計画を詰めたい」「穴がないか叩いて」など、案を検証したい意図があれば呼ぶ。
 ---
 
 <!-- The design comes from grilling in https://github.com/mattpocock/skills (MIT,

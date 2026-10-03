@@ -1,6 +1,7 @@
 ---
 name: z-to-questionnaire
-description: Turn a decision you can't fully answer into a questionnaire for someone else to fill in. Also triggers on Japanese: 「誰かに訊かないと決められない」「確認事項をまとめて」など。
+description: >-
+  Turn a decision you can't fully answer into a questionnaire for someone else to fill in. Also triggers on Japanese: 「誰かに訊かないと決められない」「確認事項をまとめて」など。
 disable-model-invocation: true
 ---
 

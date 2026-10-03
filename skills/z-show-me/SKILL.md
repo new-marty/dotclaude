@@ -1,6 +1,7 @@
 ---
 name: z-show-me
-description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. Shows the structure, the changes, or the flow of whatever is being discussed, as a diagram inside the reply. Also triggers on Japanese: 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。To teach someone a topic they do not know at all, use z-eli5 instead.
+description: >-
+  Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts. Shows the structure, the changes, or the flow of whatever is being discussed, as a diagram inside the reply. Also triggers on Japanese: 「図で見せて」「構造を見せて」「どこがどう変わるのか図にして」など。To teach someone a topic they do not know at all, use z-eli5 instead.
 ---
 
 <!-- Vendored from https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md

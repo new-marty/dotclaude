@@ -1,6 +1,7 @@
 ---
 name: z-create-pr
-description: Open a Pull Request from the current branch. The description follows the repository's template and is written in terms of what changes for the people who read it. Also triggers on Japanese: 「PR を作って」「PR にして」「push したから PR お願い」「PR 本文を書いて / 下書きして」. Always use it when the intent is to create a PR or write its description — "create a PR", "open a pull request", "write the PR description".
+description: >-
+  Open a Pull Request from the current branch. The description follows the repository's template and is written in terms of what changes for the people who read it. Also triggers on Japanese: 「PR を作って」「PR にして」「push したから PR お願い」「PR 本文を書いて / 下書きして」. Always use it when the intent is to create a PR or write its description — "create a PR", "open a pull request", "write the PR description".
 allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
 ---
 
