@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Nine paths travel between machines; `settings.json` stays home
+## Ten paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -21,6 +21,7 @@ handful of files that are configuration.
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
 | `backlog/` | Tasks for this repository (Backlog.md) |
+| `.claude-plugin/` | The manifests claude.ai reads to install `skills/` as a plugin |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the
 machine where Orca runs, Orca writes thirteen hooks into it; the headless Mac mini runs
@@ -181,6 +182,31 @@ git reset origin/main
 git checkout-index -a          # writes only the files that do not exist yet
 cp -n settings.example.json settings.json
 ```
+
+## claude.ai installs the skills as a plugin
+
+`.claude-plugin/` holds two manifests that make this repository a plugin marketplace with
+one plugin, `dotclaude`. The plugin's root is the repository root, so claude.ai finds the
+skills in `skills/` and no file has to move. Add the repository once on claude.ai under
+Customize > Plugins > Add > Add marketplace, give the Claude GitHub App access to it
+because it is private, and turn on Sync automatically so that pushes to `main` reach the
+account. [Plugins](https://claude.com/docs/plugins/overview) in the Claude docs has the
+steps.
+
+Only `skills/` takes effect there. Chat on the web, in the desktop app and in the mobile
+apps loads a plugin's skills and ignores its output styles and hooks, and `CLAUDE.md` is
+not part of a plugin. A skill that tells Claude to follow `CLAUDE.md` therefore finds no
+such rules in chat, and a skill that runs `gh`, `git` or a script under `~/.claude` cannot
+do its work there.
+
+A plugin installed on the account also comes back to Claude Code, on every machine signed
+in to that account, as `dotclaude@synced`. That machine already loads the same skills from
+`skills/`, so `settings.example.json` sets `"dotclaude@synced": false` under
+`enabledPlugins` to keep the second copy from loading. A machine whose `settings.json` was
+copied before that line existed needs it added by hand.
+
+Edits travel one way. Change a skill in this repository and push; a change made on
+claude.ai stays on claude.ai.
 
 ## Adopted skills say where they came from
 

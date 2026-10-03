@@ -1,0 +1,11 @@
+{
+  "name": "dotclaude",
+  "owner": { "name": "new-marty" },
+  "description": "The skills kept in ~/.claude, published so claude.ai can sync them.",
+  "plugins": [
+    {
+      "name": "dotclaude",
+      "source": "./"
+    }
+  ]
+}

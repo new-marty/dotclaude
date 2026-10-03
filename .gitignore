@@ -28,6 +28,11 @@
 !backlog/
 !backlog/**
 
+# The plugin marketplace manifests. They let claude.ai install skills/ from this
+# repository as a plugin.
+!.claude-plugin/
+!.claude-plugin/**
+
 # Skills claude.ai syncs down per account, under a directory named by the account
 # id. Runtime state, rewritten on every sync; another machine has its own copy.
 skills/synced/
