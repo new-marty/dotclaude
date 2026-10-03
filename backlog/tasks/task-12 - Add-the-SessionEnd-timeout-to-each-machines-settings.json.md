@@ -1,0 +1,22 @@
+---
+id: TASK-12
+title: Add the SessionEnd timeout to each machine's settings.json
+status: To Do
+assignee: []
+created_date: '2026-10-03 12:09'
+labels: []
+dependencies: []
+priority: medium
+ordinal: 12000
+---
+
+## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
+settings.example.json now gives the sync-push SessionEnd hook "timeout": 30 (SessionEnd hooks share a 1.5 s budget by default, https://code.claude.com/docs/en/hooks). settings.json is per machine and untracked, so each machine that registers sync-push.sh needs the same field, or fetch+rebase+push (TASK-8) can be cancelled before it warns.
+<!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 Every machine whose settings.json registers sync-push.sh on SessionEnd has timeout 30 on that hook
+<!-- AC:END -->
