@@ -24,6 +24,23 @@
 !scripts/**
 !output-styles/**
 
+# --- Device-local layer (README "Pull-only devices") ---
+# Paths a device keeps for itself. Never track or force-add anything here: a pull
+# would overwrite the device's file without a word.
+# The root entries are anchored with "/" so that a rules/ directory inside a skill
+# or under scripts/ stays trackable. "*" already ignores them; they are listed for the record.
+/CLAUDE.machine.md
+/statusline.local.sh
+/rules/
+skills/local-*
+output-styles/local-*
+# The mac-mini's own skills, kept under the names its agents call.
+skills/adding-services
+skills/reading-x
+skills/recovering-gateway
+skills/restoring-media-mount
+skills/tracking-tasks
+
 # The task list for this repository (Backlog.md), one markdown file per task.
 !backlog/
 !backlog/**

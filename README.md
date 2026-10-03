@@ -35,8 +35,10 @@ Two more things live under `skills/` without being tracked. Orca symlinks four o
 skills there (`computer-use`, `find-skills`, `orca-cli`, `orchestration`), and claude.ai
 syncs a bundle into `skills/synced/` and moves deleted skills into `skills/.trash/`. Both
 are per machine, both are ignored. The Mac mini also keeps five skills of its own under
-`skills/` as untracked symlinks; `sync-push.sh` refuses to commit a directory with one of
-those names, because a tracked copy would silently replace the symlink there.
+`skills/` as untracked symlinks (`adding-services`, `reading-x`, `recovering-gateway`,
+`restoring-media-mount`, `tracking-tasks`). `.gitignore` lists those names, so
+`sync-push.sh` never stages them and a pull never tracks them. They are part of the
+device-local layer described in [Pull-only devices](#pull-only-devices).
 
 To start tracking a new file, add a `!name` line to `.gitignore`; a directory needs
 `!name/` and `!name/**`.
@@ -66,7 +68,8 @@ flowchart LR
 
 `settings.example.json` registers `scripts/sync-pull.sh` on `SessionStart` and
 `scripts/sync-push.sh` on `SessionEnd`, so a machine set up from it syncs from its first
-session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it likes.
+session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it likes;
+see [Pull-only devices](#pull-only-devices).
 The same file registers `scripts/handoff-inject.py` on `SessionStart`: when `z-wrap-up`
 ended the previous session in this directory, the handoff it wrote comes back into
 context for a week, so `/clear` costs nothing that was written down.
@@ -146,7 +149,10 @@ rebase onto them without a conflict (or was rejected anyway); the rebase was abo
 commits are still local, and the marker `.git/claude-sync-diverged` stays until a push lands.
 `sync-push.sh` also exits 2 then, which is how a SessionEnd hook gets its stderr shown.
 
-## A conflict stops both hooks until you resolve it by hand
+## On a writer, a conflict stops both hooks until you resolve it by hand
+
+This section is for writers. A pull-only device resolves conflicts as described under
+[Pull-only devices](#pull-only-devices).
 
 ```bash
 git -C ~/.claude status          # which files
@@ -157,6 +163,141 @@ git -C ~/.claude rebase --continue
 ```
 
 Your pre-pull state is also in `git -C ~/.claude stash list` if you want to compare.
+
+## Pull-only devices
+
+A pull-only device is a machine whose `~/.claude` pulls this repository and never pushes:
+the Mac mini, or a company Mac where hooks and scripts may be blocked. It keeps its own
+instructions, skills and settings next to the shared ones, and a pull never overwrites them.
+
+A device is marked by a git setting that lives in `.git/config`, so no pull touches it:
+
+```bash
+git -C ~/.claude config dotclaude.role pull-only
+```
+
+With the setting, `sync-push.sh` exits at once and `sync-pull.sh` only fast-forwards. A
+machine without it is a writer and behaves as described above.
+
+### The local layer
+
+These paths are listed in `.gitignore` under "Device-local layer". Upstream never tracks them,
+so a device may keep anything there:
+
+| To | Create |
+| --- | --- |
+| add or override instructions | `~/.claude/CLAUDE.machine.md`, starting with "Where these rules conflict with the shared ones above, these win." Claude Code concatenates memory files and ranks none, so the text has to say it |
+| add rules for some files only | `~/.claude/rules/<name>.md` with `paths:` frontmatter |
+| add a skill | `~/.claude/skills/local-<name>/SKILL.md`, or a symlink at that path |
+| add an output style | `~/.claude/output-styles/local-<name>.md` |
+| hide a shared skill | `"skillOverrides": {"<name>": "off"}` in `~/.claude/settings.json`; only this string form works |
+| use its own statusline | `~/.claude/statusline.local.sh`, set as `statusLine` in `settings.json` |
+
+Keep device files at these paths only. A root-level file with any other name is ignored too,
+but if upstream ever adds a file of that name, the pull overwrites the device's copy without
+a word. Never `git add -f` a path in this list: the same overwrite happens in the other
+direction. `scripts/test-sync-push.sh` fails if one of them becomes tracked or stops being
+ignored. `CLAUDE.md` ends with `@~/.claude/CLAUDE.machine.md`, so the file loads when it exists, and a
+missing one does not fail a session.
+
+### Updating without local edits
+
+The device stays on `main` and only fast-forwards. `sync-pull.sh` does this at session start
+where hooks run; by hand:
+
+```bash
+git -C ~/.claude pull --ff-only
+```
+
+A fast-forward cannot conflict. If the device has changed a shared file, the pull refuses:
+for an uncommitted change git names the file ("Your local changes to the following files
+would be overwritten by merge"), for a commit on `main` it says only "Not possible to
+fast-forward". Nothing is lost. `sync-pull.sh` then prints "pull failed" with git's output
+and a line pointing here, and exits 0.
+
+### Updating with local edits to shared files
+
+A device that edits a shared file keeps the edit as a commit on a branch named `local`.
+Once:
+
+```bash
+git -C ~/.claude switch -c local
+git -C ~/.claude branch -u origin/main            # a new branch tracks nothing until told
+git -C ~/.claude config merge.conflictStyle zdiff3
+git -C ~/.claude commit -am "local: <what changed>"
+git -C ~/.claude branch -D main                   # so `switch main` cannot hide the edits
+```
+
+Each update:
+
+```bash
+git -C ~/.claude status --short                   # commit any new edit first
+git -C ~/.claude fetch
+git -C ~/.claude merge origin/main
+```
+
+On any branch other than `main`, `sync-pull.sh` only fetches and tells you how many commits
+you are behind; merging stays manual. When the merge stops:
+
+- `CONFLICT (content)`: the file shows `<<<<<<< HEAD` (this device), `||||||| <hash>` (the
+  common ancestor) and `>>>>>>> origin/main` (upstream). Edit to the wanted text,
+  `git add <file>`, `git commit --no-edit`.
+- `CONFLICT (modify/delete)`: `git rm <file>` takes upstream's deletion, `git add <file>`
+  keeps the file; then `git commit --no-edit`.
+- `git merge --abort` returns to the state before the update.
+
+Commits on `local` use the device's git identity and signing settings. If company settings
+require signing and the device has no key, those commits fail; signing with a device key, or
+`git -C ~/.claude config commit.gpgsign false` for commits that never leave the device, is a
+deliberate choice about company policy.
+
+### Setting up a device
+
+```bash
+# A. No ~/.claude yet
+git clone https://github.com/new-marty/dotclaude.git ~/.claude
+
+# B. ~/.claude exists (Claude Code has run here): make it a clone, keep its old files aside
+cd ~/.claude && git init -b main
+git remote add origin https://github.com/new-marty/dotclaude.git && git fetch origin
+git reset origin/main && git checkout-index -a
+mkdir -p ~/claude-before
+git diff -z --name-only | while IFS= read -r -d '' f; do
+  mkdir -p ~/claude-before/"$(dirname "$f")" && cp -p "$f" ~/claude-before/"$f"
+done
+git restore . && cd -
+#   Move what you want to keep from ~/claude-before into the local layer.
+#   A skill of your own that shows as "?? skills/<name>/": rename it to skills/local-<name>.
+
+# Then, for both:
+git -C ~/.claude config dotclaude.role pull-only
+git -C ~/.claude branch -u origin/main
+cp -n ~/.claude/settings.example.json ~/.claude/settings.json
+```
+
+Then edit `settings.json`: remove the `SessionEnd` hook (it exits at once on a device anyway);
+keep the `SessionStart` hook only if hooks are allowed; review `permissions.defaultMode`,
+`skipDangerousModePermissionPrompt` and `skipAutoPermissionPrompt` against the company's rules.
+
+Check after setup and after each update: `/context` lists `CLAUDE.machine.md` under memory
+files, and `/skills` lists the shared skills and the `local-` ones.
+
+### What the statusline shows on a device
+
+`.claude ⇣N` means N upstream commits have not been merged, as of the last fetch (the
+statusline makes no network call). On a branch other than `main` it also says `local`, as in
+`.claude local ⇣2`. `⚠ .claude CONFLICT` still appears while a merge is unresolved;
+`DIVERGED` and `⇡N` never appear, because nothing pushes.
+
+### When it goes wrong
+
+| What happens | What you see | What to do |
+| --- | --- | --- |
+| A device edits a shared file, then pulls with `--ff-only` | the pull refuses | the section on local edits |
+| Upstream adds a file at a path a device uses without the `local-` prefix | "untracked working tree files would be overwritten" | rename the device's file to `local-...`, pull again |
+| A device forgets to pull for weeks | `⇣N` after any fetch, nothing without one | `git fetch`; no reminder exists without hooks |
+| The company blocks `~/.claude/skills` (`strictPluginOnlyCustomization`) | `/skills` lacks the shared skills, with no warning | out of scope; the plugin route (`claude plugin install dotclaude@dotclaude`) is untested, and carries no `CLAUDE.md` |
+| A company `CLAUDE.md` contradicts the device's | Claude may follow either | nothing in dotclaude ranks them |
 
 ## A new machine needs the bootstrap script and one copy
 
@@ -193,9 +334,8 @@ cp -n settings.example.json settings.json
 `.claude-plugin/` holds two manifests that make this repository a plugin marketplace with
 one plugin, `dotclaude`. The plugin's root is the repository root, so claude.ai finds the
 skills in `skills/` and no file has to move. Add the repository once on claude.ai under
-Customize > Plugins > Add > Add marketplace, give the Claude GitHub App access to it
-because it is private, and turn on Sync automatically so that pushes to `main` reach the
-account. [Plugins](https://claude.com/docs/plugins/overview) in the Claude docs has the
+Customize > Plugins > Add > Add marketplace (the repository is public), and turn on Sync
+automatically so that pushes to `main` reach the account. [Plugins](https://claude.com/docs/plugins/overview) in the Claude docs has the
 steps.
 
 Only `skills/` takes effect there. Chat on the web, in the desktop app and in the mobile

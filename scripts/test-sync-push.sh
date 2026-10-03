@@ -35,3 +35,40 @@ rc=0; CLAUDE_SYNC_DIR="$T/b" "$SCRIPT" 2>"$T/err" || rc=$?
 grep -q "conflicted" "$T/err" || fail "no stderr message"
 [ "$(g "$T/b" log -1 --format=%s)" = "Sync Claude Code configuration from $(hostname -s)" ] || fail "local commit lost"
 echo "ok 2: conflict -> no push, tree clean, marker, exit 2"
+
+# Case 3: a pull-only device exits 0 without committing, staging or pushing.
+git clone -q "$T/remote.git" "$T/c"
+g "$T/c" config dotclaude.role pull-only
+mkdir -p "$T/c/scripts"; echo c1 > "$T/c/scripts/c.sh"
+before=$(g "$T/remote.git" rev-parse main); head=$(g "$T/c" rev-parse HEAD)
+rc=0; CLAUDE_SYNC_DIR="$T/c" "$SCRIPT" 2>"$T/err" || rc=$?
+[ "$rc" = 0 ] || fail "case 3 exit $rc, want 0"
+[ "$(g "$T/c" rev-parse HEAD)" = "$head" ] || fail "pull-only device committed"
+[ "$(g "$T/remote.git" rev-parse main)" = "$before" ] || fail "pull-only device pushed"
+[ -z "$(g "$T/c" diff --cached --name-only)" ] || fail "pull-only device staged"
+[ ! -s "$T/err" ] || fail "pull-only device printed something"
+echo "ok 3: pull-only exits 0, no commit, no push"
+
+# Case 4: the device block of .gitignore holds. For each path in it, a sample path
+# must be ignored (catches a "!" line that re-includes it) and nothing under it may
+# be tracked (catches a force-add). This repository's own .gitignore is checked.
+ROOT="$(cd "$(dirname "$SCRIPT")/.." && pwd)"
+n=0
+while IFS= read -r line; do
+    case "$line" in
+        "# --- Device-local layer"*) inblock=1; continue ;;
+    esac
+    [ -n "${inblock:-}" ] || continue
+    [ -n "$line" ] || break                # the block ends at the next blank line
+    case "$line" in '#'*) continue ;; esac
+    spec="${line#/}"                       # anchored root entries: same path, no "/"
+    sample="${spec//\*/x}"                 # skills/local-* -> skills/local-x
+    case "$sample" in */) sample="${sample}x.md" ;; *) sample="$sample/SKILL.md" ;; esac
+    case "$spec" in *.md|*.sh) sample="${sample%/SKILL.md}" ;; esac
+    g "$ROOT" check-ignore -q -- "$sample" || fail "$sample is not ignored (line: $line)"
+    [ -z "$(g "$ROOT" ls-files -- "$spec")" ] || fail "tracked files under $spec"
+    n=$((n+1))
+done < "$ROOT/.gitignore"
+[ "$n" -eq 10 ] || fail "device block: only $n entries read"
+g "$ROOT" check-ignore -q -- skills/z-a/rules/x.md && fail "skills/z-a/rules/x.md must stay trackable"
+echo "ok 4: $n device-block paths ignored and untracked; skills/*/rules/ stays trackable"

@@ -65,13 +65,15 @@ format_reset_time() {
 # apiKeyHelper, and only then the claude.ai login. rate_limits in the JSON is
 # sent only to Pro and Max subscribers, so its presence settles the question.
 is_truthy() { case "${1:-}" in 1|true|TRUE|True|yes) return 0;; *) return 1;; esac; }
+# The ~/.claude checkout; CLAUDE_SYNC_DIR lets tests point at a scratch clone.
+SYNC_DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 BILLING="subscription"
 if is_truthy "${CLAUDE_CODE_USE_BEDROCK:-}"; then BILLING="Bedrock"
 elif is_truthy "${CLAUDE_CODE_USE_VERTEX:-}"; then BILLING="Vertex"
 elif is_truthy "${CLAUDE_CODE_USE_FOUNDRY:-}"; then BILLING="Foundry"
 elif [ -n "${ANTHROPIC_AUTH_TOKEN:-}${ANTHROPIC_API_KEY:-}" ]; then BILLING="API"
 else
-    for f in "$HOME/.claude/settings.json" "$DIR/.claude/settings.json" "$DIR/.claude/settings.local.json"; do
+    for f in "$SYNC_DIR/settings.json" "$DIR/.claude/settings.json" "$DIR/.claude/settings.local.json"; do
         if [ -f "$f" ] && jq -e '.apiKeyHelper // empty' "$f" >/dev/null 2>&1; then
             BILLING="API"; break
         fi
@@ -105,14 +107,22 @@ BILLING_S=""
 # SessionEnd hooks. Surface the two states a hook cannot resolve on its own:
 # an unresolved merge conflict, and commits that failed to reach the remote.
 CLAUDE_SYNC=""
-if [ -d "$HOME/.claude/.git" ]; then
-    if [ -n "$(git -C "$HOME/.claude" ls-files --unmerged 2>/dev/null | head -1)" ]; then
+if [ -d "$SYNC_DIR/.git" ]; then
+    if [ -n "$(git -C "$SYNC_DIR" ls-files --unmerged 2>/dev/null | head -1)" ]; then
         CLAUDE_SYNC=" ${sep} ${BOLD}${C_RED}⚠ .claude CONFLICT${R}"
+    elif [ "$(git -C "$SYNC_DIR" config dotclaude.role 2>/dev/null)" = pull-only ]; then
+        # A pull-only device never pushes. Show how far behind the last fetch it is,
+        # and that it sits on the "local" branch when it keeps edits to shared files.
+        behind=$(git -C "$SYNC_DIR" rev-list --count 'HEAD..@{u}' 2>/dev/null || echo 0)
+        parts=""
+        [ "$(git -C "$SYNC_DIR" branch --show-current 2>/dev/null)" != main ] && parts="local"
+        [ "${behind:-0}" -gt 0 ] && parts="${parts:+$parts }⇣${behind}"
+        [ -n "$parts" ] && CLAUDE_SYNC=" ${sep} ${C_YELLOW}.claude ${parts}${R}"
     else
-        ahead=$(git -C "$HOME/.claude" rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
+        ahead=$(git -C "$SYNC_DIR" rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
         [ "${ahead:-0}" -gt 0 ] && CLAUDE_SYNC=" ${sep} ${C_YELLOW}.claude ⇡${ahead}${R}"
         # sync-push.sh leaves this marker when it could not rebase or push.
-        if [ -f "$HOME/.claude/.git/claude-sync-diverged" ]; then
+        if [ -f "$SYNC_DIR/.git/claude-sync-diverged" ]; then
             CLAUDE_SYNC=" ${sep} ${BOLD}${C_RED}⚠ .claude DIVERGED${R}"
         fi
     fi

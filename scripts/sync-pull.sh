@@ -9,7 +9,8 @@
 # CONFLICT" until then.
 set -uo pipefail
 
-DIR="$HOME/.claude"
+# CLAUDE_SYNC_DIR exists so tests can run against a scratch clone.
+DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 [ -d "$DIR/.git" ] || exit 0
 
 # A rebase already in progress means an earlier sync stopped on a conflict.
@@ -17,6 +18,32 @@ DIR="$HOME/.claude"
 if [ -n "$(git -C "$DIR" ls-files --unmerged 2>/dev/null | head -1)" ] \
    || [ -d "$DIR/.git/rebase-merge" ] || [ -d "$DIR/.git/rebase-apply" ]; then
     echo "[claude-sync] ~/.claude has an unresolved conflict; skipping pull." >&2
+    exit 0
+fi
+
+# A pull-only device (git config dotclaude.role pull-only) never rebases or
+# autostashes: on main it only fast-forwards, on any other branch it only
+# fetches and says how far behind it is. See README "Pull-only devices".
+if [ "$(git -C "$DIR" config dotclaude.role 2>/dev/null)" = pull-only ]; then
+    if ! out=$(git -C "$DIR" fetch -q origin 2>&1); then
+        echo "[claude-sync] pull failed:" >&2
+        echo "$out" >&2
+        echo "[claude-sync] inspect with: git -C ~/.claude status" >&2
+        exit 0
+    fi
+    branch=$(git -C "$DIR" branch --show-current 2>/dev/null)
+    if [ "$branch" = main ]; then
+        if ! out=$(git -C "$DIR" merge --ff-only origin/main 2>&1); then
+            echo "[claude-sync] pull failed:" >&2
+            echo "$out" >&2
+            echo "[claude-sync] local edits to shared files block a fast-forward; see README \"Pull-only devices\"" >&2
+        fi
+    else
+        behind=$(git -C "$DIR" rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+        if [ "${behind:-0}" -gt 0 ]; then
+            echo "[claude-sync] on ${branch:-a detached HEAD}, $behind commits behind origin/main; run: git -C ~/.claude merge origin/main" >&2
+        fi
+    fi
     exit 0
 fi
 
