@@ -1,114 +1,108 @@
 # Design: pull-only devices (TASK-16)
 
-Status: proposal, revision 4, 2026-10-04. Replaces revisions 1 to 3, which listed findings
-instead of specifying changes. Evidence: `pull-only-research-1a.md`, `pull-only-research-1b.md`,
-and the experiments summarised in "Evidence" at the end.
+Status: proposal, revision 5, 2026-10-04. Revision 4 specified the changes file by file; an
+independent inspection of it (1 goal missed, 6 gaps, 3 wrong claims, 4 breaks, 4
+simplifications) is folded in here, and three of its four simplifications are taken. Evidence:
+`pull-only-research-1a.md`, `pull-only-research-1b.md`, and "Evidence" at the end.
 
 ## 1. Problem
 
 dotclaude assumes every machine both pulls and pushes. Two kinds of machine do not push:
 
 - the mac-mini, whose `~/.claude` only pulls (a cron job runs `scripts/sync-pull.sh` at 05:00)
-  and which already keeps a local layer: `CLAUDE.machine.md` and five untracked skills;
+  and already keeps a local layer: `CLAUDE.machine.md` and five untracked skills;
 - the company Mac (and future devices like it), which cannot push, pulls by hand, and may not be
   allowed to run hooks or scripts.
 
 Both need local customisation (work skills, extra instructions, sometimes an edit to a shared
-skill) that a pull never destroys. Today that works on the mac-mini only by convention: the five
-skill names are hard-coded in `sync-push.sh`, and nothing stops upstream from tracking a path a
-device uses locally. When upstream does, git overwrites an ignored local file without a word
-(observed).
+skill) that a pull never destroys. Today that holds on the mac-mini by convention only: its five
+skill names are hard-coded in `sync-push.sh`, and nothing records which paths belong to devices.
+When upstream starts tracking a path that a device keeps as an ignored file, git overwrites the
+device's file without a word (observed).
 
 ## 2. Goals and non-goals
 
-Goals:
-- G1. A device can add instructions, skills, output styles and settings without editing tracked
-  files, and no pull can conflict with or overwrite them.
-- G2. A device that does edit a shared file sees every conflict with upstream as a stop with
-  markers in the file, and resolves it with git alone.
+- G1. A device adds instructions, skills, output styles and settings without editing tracked
+  files, and no pull conflicts with or overwrites them.
+- G2. A device that edits a shared file sees each conflict with upstream as a stop with markers
+  in the file, and resolves it with git alone.
 - G3. Nothing on a device needs hooks or scripts; where hooks are allowed, they help.
 - G4. One setup for every pull-only device; the mac-mini fits the same model.
-- G5. Writer machines (the main machine) behave as today.
+- G5. Writer machines behave exactly as today.
 
-Non-goals: pushing from a device; delivering dotclaude when a company blocks
-`~/.claude/skills` (section 8); syncing a device's local layer anywhere.
+Non-goals: pushing from a device; delivering dotclaude when a company blocks `~/.claude/skills`
+(section 8); syncing a device's local layer anywhere.
 
 ## 3. Concepts
 
-- **Writer**: a machine whose `~/.claude` commits and pushes (sync-push on SessionEnd). Today:
-  the main machine.
-- **Pull-only device**: a machine whose `~/.claude` never pushes. Marked by one repository-local
-  git setting, `dotclaude.role = pull-only` (stored in `.git/config`, so pulls never touch it).
-  Today: the mac-mini (after opting in) and the company Mac.
-- **Local layer**: files a device adds at reserved paths. Upstream never tracks a reserved path,
-  and git ignores them all.
-- **Local edits**: commits that change shared files, kept on a branch `local` on the device. Only
-  needed when a device edits a shared file.
+- **Writer**: a machine whose `~/.claude` commits and pushes through `sync-push.sh` (today the
+  main machine). Nothing about writers changes.
+- **Pull-only device**: a machine whose `~/.claude` has the repository-local git setting
+  `dotclaude.role = pull-only`. It lives in `.git/config`, so no pull touches it. The scripts
+  read it to change behaviour (section 5.3); a machine without it is a writer.
+- **Local layer**: files a device adds at reserved paths, which `.gitignore` ignores and
+  upstream never tracks.
+- **Local edits**: commits that change shared files, on a branch named `local`. Needed only
+  when a device edits a shared file; the mac-mini never does.
 
 ## 4. The local layer
 
-### 4.1 Reserved paths
+### 4.1 Reserved paths, declared in `.gitignore`
 
-One tracked file, `scripts/reserved-paths.txt`, lists them as git pathspec globs, one per line,
-with a comment saying what each is for:
+`.gitignore` is the single list. Its new block, placed after the `!output-styles/**` line (the
+`!` allow lines would re-include them if it came first):
 
 ```
-CLAUDE.machine.md          # a device's own instructions; the shared CLAUDE.md imports it last
-rules/                     # a device's own rules (~/.claude/rules/*.md)
-settings.json              # per-machine settings
-statusline.local.sh        # a device's own statusline script
-skills/local-*             # a device's own skills
-output-styles/local-*      # a device's own output styles
-skills/adding-services     # mac-mini skills kept under their existing names
+# --- Device-local layer (README "Pull-only devices") ---
+# Paths a device keeps for itself. Never track or force-add anything here: a pull
+# would overwrite the device's file without a word.
+# Root files and rules/ are already ignored by "*" above; they are listed for the record.
+CLAUDE.machine.md
+statusline.local.sh
+rules/
+skills/local-*
+output-styles/local-*
+# The mac-mini's own skills, kept under the names its agents call.
+skills/adding-services
 skills/reading-x
 skills/recovering-gateway
 skills/restoring-media-mount
 skills/tracking-tasks
 ```
 
-The mac-mini's five skills keep their names because its AGENTS.md and agents call them by
-name; new local skills on any device use the `local-` prefix.
+No trailing slash on the `skills/` lines, so a symlinked skill matches too (tested, including
+the five mac-mini names as symlinks). `settings.json` is already ignored and documented in
+`.gitignore`; it stays where it is.
 
-### 4.2 Ignoring them
+Root-level files other than these two are also ignored by `*`, but a device must not keep its
+own files there: if upstream ever adds a file of the same name, the device's file is
+overwritten (observed with a force-added root file). Device files go only to the paths above.
 
-`.gitignore` already ignores the root files and `rules/` through its leading `*`. Two lines are
-added after the `!skills/**` and `!output-styles/**` lines, without a trailing slash so that a
-symlinked skill matches too (tested):
+### 4.2 Keeping the list honest
 
-```
-skills/local-*
-output-styles/local-*
-```
+`sync-push.sh` stages with `git add -A`, which skips ignored paths, so a writer cannot commit a
+reserved path by accident; only `git add -f` or a new `!` line in `.gitignore` could. The
+hard-coded `RESERVED` loop in `sync-push.sh` is removed, since `.gitignore` now covers it.
 
-The five mac-mini skill names move from "untracked, not ignored" to ignored as well (five lines),
-so `git status` is clean on the mac-mini and `git add -A` on a writer can never pick them up.
+`scripts/test-sync-push.sh` gains one case that guards against the two remaining ways in: for
+each line of the device block, `git check-ignore -q` on a sample path under it must succeed
+(catches a `!` line that re-includes it), and `git ls-files` must list nothing under it (catches
+a force-add). Tests run by hand; that is the level of enforcement this repository has today.
 
-### 4.3 Enforcing them
-
-`scripts/check-reserved.sh` reads the list and fails (exit 1, naming the path) when a reserved
-path is tracked or staged. It runs in three places:
-
-1. `sync-push.sh`, after `git add -A` and before committing; it replaces today's hard-coded
-   `RESERVED` loop. On failure it unstages and exits 0 with the message, as today.
-2. A tracked `.githooks/pre-commit` that calls it. Each writer clone sets
-   `git config core.hooksPath .githooks` once (the main machine's `~/.claude` and the mac-mini's
-   `~/dev/dotclaude`), so a hand commit is checked too.
-3. `scripts/test-sync-push.sh`, so the rule is part of the test suite.
-
-### 4.4 What goes where
+### 4.3 What goes where
 
 | a device wants to | it creates |
 |---|---|
-| add instructions or override shared ones | `~/.claude/CLAUDE.machine.md`, starting with "Where these rules conflict with the shared ones above, these win." Claude Code concatenates memory files and gives none precedence, so the text must say it |
-| add rules scoped to some files | `~/.claude/rules/<name>.md` with `paths:` frontmatter |
-| add a skill | `~/.claude/skills/local-<name>/SKILL.md` (or a symlink there) |
+| add or override instructions | `~/.claude/CLAUDE.machine.md`, starting with "Where these rules conflict with the shared ones above, these win." Claude Code concatenates memory files and ranks none, so the text has to say it |
+| add rules for some files only | `~/.claude/rules/<name>.md` with `paths:` frontmatter |
+| add a skill | `~/.claude/skills/local-<name>/SKILL.md`, or a symlink at that path |
 | add an output style | `~/.claude/output-styles/local-<name>.md` |
-| hide a shared skill | `"skillOverrides": {"<name>": "off"}` in `~/.claude/settings.json` (only the string form works; tested) |
-| use its own statusline | an untracked `~/.claude/statusline.local.sh`, set as `statusLine` in `settings.json` |
+| hide a shared skill | `"skillOverrides": {"<name>": "off"}` in `~/.claude/settings.json`; only this string form works (tested) |
+| use its own statusline | `~/.claude/statusline.local.sh`, set as `statusLine` in `settings.json` |
 
 ## 5. Updating a pull-only device
 
-### 5.1 Without local edits (the usual case)
+### 5.1 Without local edits (the usual case; the mac-mini always)
 
 The device stays on `main` and only fast-forwards:
 
@@ -116,55 +110,69 @@ The device stays on `main` and only fast-forwards:
 git -C ~/.claude pull --ff-only
 ```
 
-If hooks are allowed, the `SessionStart` hook does the same (5.3). `--ff-only` cannot create a
-conflict: when the device has changed a shared file, the pull refuses and names the file
-("Your local changes to the following files would be overwritten" or "Not possible to
-fast-forward"). That is the signal to use 5.2.
+A fast-forward cannot conflict. If the device has changed a shared file, the pull refuses:
+for an uncommitted change git names the file ("Your local changes to the following files would
+be overwritten by merge"); for a commit on `main` it says only "Not possible to fast-forward".
+Either way, nothing is lost, and 5.2 is the way on.
 
 ### 5.2 With local edits to shared files
 
-Once, the device moves its edits onto a branch:
+Once:
 
 ```sh
 git -C ~/.claude switch -c local
-git -C ~/.claude branch -u origin/main   # a new branch tracks nothing until told
-git -C ~/.claude config pull.rebase false
+git -C ~/.claude branch -u origin/main            # a new branch tracks nothing until told
 git -C ~/.claude config merge.conflictStyle zdiff3
 git -C ~/.claude commit -am "local: <what changed>"
-git -C ~/.claude branch -D main          # so `switch main` cannot hide the edits
+git -C ~/.claude branch -D main                   # so `switch main` cannot hide the edits
 ```
 
-From then on:
+Each update:
 
 ```sh
-git -C ~/.claude status --short          # commit any new edit first
+git -C ~/.claude status --short                   # commit any new edit first
 git -C ~/.claude fetch
 git -C ~/.claude merge origin/main
 ```
 
 When the merge stops:
 - `CONFLICT (content)`: the file shows `<<<<<<< HEAD` (this device), `||||||| <hash>` (the common
-  ancestor), and `>>>>>>> origin/main` (upstream). Edit to the wanted text, `git add <file>`,
+  ancestor) and `>>>>>>> origin/main` (upstream). Edit to the wanted text, `git add <file>`,
   `git commit --no-edit`.
-- `CONFLICT (modify/delete)`: `git rm <file>` takes upstream's deletion, `git add <file>` keeps the
-  file; then `git commit --no-edit`.
+- `CONFLICT (modify/delete)`: `git rm <file>` takes upstream's deletion, `git add <file>` keeps
+  the file; then `git commit --no-edit`.
 - `git merge --abort` returns to the state before the update.
 
-Merge, not rebase: a merge stops once per update and records the resolution in one commit; a
-rebase replays every local commit and can stop several times. `rerere` is not used: in the
-experiments it replayed a resolution in one run and recorded nothing in another.
+A merge stops once per update and keeps the resolution in one commit; a rebase replays each
+local commit and can stop several times. `rerere` is not used: in the experiments it replayed a
+resolution in one run and recorded nothing in another.
 
-### 5.3 What the scripts do on a pull-only device
+### 5.3 The scripts on a pull-only device
 
-| script | writer (role unset) | pull-only, on `main` | pull-only, on `local` |
-|---|---|---|---|
-| `sync-pull.sh` (SessionStart, or the mac-mini cron) | as today: `pull --rebase --autostash` | `pull --ff-only`; on refusal, print the files and "see README: local edits" | `fetch` only; print "N upstream commits; run git merge origin/main" |
-| `sync-push.sh` (SessionEnd) | as today | exit 0 at once | exit 0 at once |
-| `statusline.sh` | as today: unpushed count `⇡N` | `⇣N` behind origin/main as of the last fetch (no network call) | `local` plus `⇣N` |
+The role check is `[ "$(git -C "$DIR" config dotclaude.role)" = pull-only ]`. With the role unset
+every script runs exactly as today (G5).
 
-A device without hooks runs the commands in 5.1 or 5.2 by hand; nothing else changes for it.
-`--rebase --autostash` stays for writers, where it replays the writer's own uncommitted edits
-before its push.
+`sync-push.sh`: on a pull-only device, exit 0 before doing anything. No branch check for writers.
+
+`sync-pull.sh` on a pull-only device. All messages go to stderr with the existing
+`[claude-sync]` prefix, and the script always exits 0, as today.
+
+| state | action | message |
+|---|---|---|
+| on `main` | `git pull --ff-only` | none on success. On refusal: git's own output (which contains "would be overwritten by" when it names files), then `[claude-sync] pull failed: local edits to shared files block a fast-forward; see README "Pull-only devices"` |
+| on any other branch, or detached | `git fetch` only | `[claude-sync] on <branch>, N commits behind origin/main; run: git -C ~/.claude merge origin/main` when N > 0, where N is `git rev-list --count HEAD..origin/main` |
+| fetch or pull fails for another reason | nothing more | the existing `[claude-sync] pull failed:` block |
+
+The strings "would be overwritten by" and "pull failed" are kept because the mac-mini's
+`dotclaude-sync.sh` greps them from stderr.
+
+`statusline.sh` on a pull-only device: the `.claude ⇡N` segment (unpushed commits) is replaced
+by `.claude ⇣N` when `git rev-list --count HEAD..@{u}` is above 0, from the last fetch and with
+no network call; on a branch other than `main` it also shows `local`. The `CONFLICT` segment
+stays. `DIVERGED` never appears, because sync-push writes it and exits early here.
+
+`sync-pull.sh` and `statusline.sh` read `${CLAUDE_SYNC_DIR:-$HOME/.claude}`, as `sync-push.sh`
+already does, so tests can point them at a scratch clone.
 
 ## 6. Setting up a device
 
@@ -177,9 +185,11 @@ cd ~/.claude && git init -b main
 git remote add origin https://github.com/new-marty/dotclaude.git && git fetch origin
 git reset origin/main && git checkout-index -a
 mkdir -p ~/claude-before
-git diff --name-only | while read -r f; do mkdir -p ~/claude-before/"$(dirname "$f")"; cp -p "$f" ~/claude-before/"$f"; done
+git diff -z --name-only | while IFS= read -r -d '' f; do
+  mkdir -p ~/claude-before/"$(dirname "$f")" && cp -p "$f" ~/claude-before/"$f"
+done
 git restore . && cd -
-#   Move what you want to keep from ~/claude-before into the local layer (section 4.4).
+#   Move what you want to keep from ~/claude-before into the local layer (section 4.3).
 #   A skill of your own that shows as "?? skills/<name>/": rename it to skills/local-<name>.
 
 # Then, for both:
@@ -188,84 +198,85 @@ git -C ~/.claude branch -u origin/main
 cp -n ~/.claude/settings.example.json ~/.claude/settings.json
 ```
 
-Then edit `settings.json`: drop the `SessionEnd` sync-push hook (it would exit anyway, 5.3);
-keep the `SessionStart` sync-pull hook only if hooks are allowed; review
-`permissions.defaultMode` and the `skip…Prompt` keys against the company's rules.
+Then edit `settings.json`: remove the `SessionEnd` hook (it exits at once on a device anyway);
+keep the `SessionStart` hook only if hooks are allowed; review `permissions.defaultMode`,
+`skipDangerousModePermissionPrompt` and `skipAutoPermissionPrompt` against the company's rules.
 
 Self-check after setup and after each update: `/context` lists `CLAUDE.machine.md` under memory
 files, and `/skills` lists the shared skills and the `local-` ones.
 
-The device's commits on `local` use its git identity and signing settings. A company setting
-that requires signing makes them fail if the device has no key; signing them with a device key,
-or `git -C ~/.claude config commit.gpgsign false`, is a deliberate choice about commits that
-never leave the device.
+Commits on `local` use the device's git identity and signing settings. If company settings
+require signing and the device has no key, those commits fail; signing with a device key, or
+`git -C ~/.claude config commit.gpgsign false` for commits that never leave the device, is a
+deliberate choice about company policy.
 
 ## 7. Changes, file by file
 
 | file | change |
 |---|---|
-| `scripts/reserved-paths.txt` | new; the list in 4.1 |
-| `scripts/check-reserved.sh` | new; reads the list, checks `git ls-files` and the staged set |
-| `.githooks/pre-commit` | new; runs the check |
-| `.gitignore` | `skills/local-*`, `output-styles/local-*`, the five mac-mini skill names; track `.githooks/` |
-| `scripts/sync-push.sh` | exit when `dotclaude.role` is `pull-only` or the branch is not `main`; the check replaces the `RESERVED` loop |
-| `scripts/sync-pull.sh` | role-aware behaviour in 5.3 |
-| `statusline.sh` | role-aware segment in 5.3 |
-| `scripts/test-sync-push.sh` | cases for the role, the branch guard and the reserved check |
-| `scripts/test-pull-only.sh` | new; the scenarios in section 9 on scratch clones |
-| `README.md` | a "Pull-only devices" section (sections 4 to 6, short); the existing sentences on pull-only machines, the conflict advice (writers only), the "untracked skills" paragraph and the plugin paragraph that calls the repository private, reconciled |
-| mac-mini (`~/server`, separate task) | `git config dotclaude.role pull-only` in `~/.claude`; check that `dotclaude-sync.sh` still parses the messages it greps for |
+| `.gitignore` | the device block in 4.1 |
+| `scripts/sync-push.sh` | exit 0 at once on a pull-only device; remove the `RESERVED` loop |
+| `scripts/sync-pull.sh` | `CLAUDE_SYNC_DIR`; pull-only behaviour in 5.3 |
+| `statusline.sh` | `CLAUDE_SYNC_DIR`; pull-only segment in 5.3 |
+| `scripts/test-sync-push.sh` | cases: pull-only exits without committing; the device block is ignored and untracked |
+| `scripts/test-pull-only.sh` | new; the scenarios in section 9 |
+| `README.md` | new section "Pull-only devices": the concepts (3), the table in 4.3, the commands in 5.1, 5.2 and 6, and the self-check. Existing text: the sentence "A pull-only machine drops the SessionEnd hook and pulls whenever it likes" points to the new section; the conflict section says it is for writers; the paragraph on the mac-mini's six untracked skills says they are now ignored and points to the device block; the plugin paragraph's claim that the repository is private is corrected to public |
+| mac-mini, in `~/server` (separate task) | confirm `git -C ~/.claude status` is clean, then `git config dotclaude.role pull-only` in `~/.claude`; add "local edits to shared files" to the reasons `dotclaude-sync.sh` reports |
 
 ## 8. Failure modes
 
 | what happens | what the person sees | what to do |
 |---|---|---|
-| A device edits a shared file and pulls with `--ff-only` | the pull refuses and names the file | 5.2 |
-| Upstream adds a path a device uses without a reserved name | the pull refuses: "untracked working tree files would be overwritten" | rename to `local-…`, pull again |
-| A writer tries to commit a reserved path | sync-push or the pre-commit hook refuses and names it | rename upstream's file |
-| A device forgets to pull for weeks | statusline `⇣N` after any fetch; nothing without one | `git fetch` shows it; no reminder without hooks |
-| The company blocks `~/.claude/skills` (`strictPluginOnlyCustomization`) | `/skills` lacks the shared skills; no warning | out of scope; the plugin channel (`claude plugin install dotclaude@dotclaude`) is an untested fallback, and CLAUDE.md has no route then |
-| A company CLAUDE.md contradicts the local one | Claude may follow either | nothing in dotclaude can rank them |
+| A device edits a shared file, then pulls with `--ff-only` | the pull refuses (names the file, or "Not possible to fast-forward") | 5.2 |
+| Upstream adds a file under an allowed directory (`skills/`, `scripts/`, …) at a path a device uses without the `local-` prefix | the pull refuses: "untracked working tree files would be overwritten" | rename to `local-…`, pull again |
+| Upstream adds a root-level file with the same name as a device's own root file | the device's file is overwritten, no warning | prevented by keeping device files at the reserved paths only (4.1) |
+| Someone force-adds a reserved path or adds a `!` line for it | nothing at commit time; `test-sync-push.sh` fails | revert the commit |
+| A device forgets to pull for weeks | `⇣N` in the statusline after any fetch; nothing without a fetch | `git fetch`; no reminder exists without hooks |
+| The company blocks `~/.claude/skills` (`strictPluginOnlyCustomization`) | `/skills` lacks the shared skills, with no warning | out of scope; the plugin channel (`claude plugin install dotclaude@dotclaude`) is an untested fallback, and CLAUDE.md has no route then |
+| A company CLAUDE.md contradicts the device's | Claude may follow either | nothing in dotclaude can rank them |
 
 ## 9. Test plan
 
-`scripts/test-pull-only.sh` builds a bare upstream, a writer clone and a device clone in a temp
-directory and asserts:
+`scripts/test-pull-only.sh` builds a bare upstream, a writer clone and a device clone in a
+temporary directory, sets `CLAUDE_SYNC_DIR` for the device, and asserts:
 
-1. Local layer files at every reserved path survive a pull that changes shared files.
-2. A writer commit that adds a reserved path is refused by the check.
-3. `sync-pull.sh` with role `pull-only` on `main` fast-forwards; with an uncommitted shared edit
-   it refuses, prints the file, and leaves the edit in place.
-4. On `local`: a non-overlapping upstream change merges cleanly; a same-line change stops with
-   `UU` and the documented steps resolve it; a modify/delete stops with `UD`.
-5. `sync-push.sh` exits without committing on a pull-only device and on `local`.
-6. Writer behaviour is unchanged: the existing `test-sync-push.sh` cases still pass.
+1. Files at every reserved path survive a pull that changes shared files.
+2. `sync-pull.sh` with the role set, on `main`: fast-forwards; with an uncommitted edit to a
+   shared file that upstream also changed, refuses, keeps the edit, and prints "would be
+   overwritten by" and "pull failed" on stderr; exit 0 in both.
+3. On `local`: `sync-pull.sh` only fetches and prints the behind count; a manual
+   `git merge origin/main` merges a non-overlapping change cleanly, stops with `UU` on a
+   same-line change (resolved by the documented steps), and with `UD` on an upstream deletion.
+4. `sync-push.sh` with the role set exits 0 and creates no commit.
+5. With the role unset, the existing `test-sync-push.sh` cases pass unchanged.
 
-`statusline.sh` is checked by rendering it with sample input in each role.
+`statusline.sh` is rendered with sample input on a writer, a pull-only device on `main` behind
+by two commits, and one on `local`.
 
 ## 10. Decisions for Marty
 
-1. Mark devices with `git config dotclaude.role pull-only` (recommended: one line, survives
-   pulls, lets the scripts and statusline adapt) or keep scripts role-blind and tell devices
-   which hooks to remove.
+1. Mark devices with `git config dotclaude.role pull-only` (recommended: one line that survives
+   pulls and lets the scripts adapt) or keep scripts unaware and tell each device which hooks to
+   remove.
 2. The `local` branch only when a device edits a shared file (recommended: most devices only
-   add) or from day one on every device.
-3. Opt the mac-mini in now, as part of this task (recommended: it is the first pull-only device
-   and proves the model), or later.
+   add, and moving to it later is the five commands in 5.2) or on every device from the start.
+3. Opt the mac-mini in as part of this work (recommended: it is already a pull-only device) or
+   later.
 
 ## Evidence
 
-Experiments 2026-10-04 (git 2.50.1, Claude Code 2.1.288), on scratch repositories:
-- Untracked local files survive `pull --ff-only`; an ignored local file is overwritten when
+Experiments 2026-10-04 (git 2.50.1, Claude Code 2.1.288) on scratch repositories:
+- Untracked local files survive `pull --ff-only`. An ignored local file is overwritten when
   upstream starts tracking its path; an untracked, unignored one makes the pull abort instead.
-- On a local branch, merge stops with markers on a same-line conflict, merges silently
-  otherwise, and reports `UD` for an upstream deletion; renames carry local edits.
-- `pull --rebase --autostash` with a conflicting uncommitted edit exits 0, leaves a stash entry
-  and unrelated files staged.
+- With commits on `main`, `pull --ff-only` prints only "Not possible to fast-forward".
+- On a local branch, merge stops with markers on a same-line conflict, merges silently otherwise,
+  reports `UD` for an upstream deletion, and carries local edits across a rename.
+- `pull --rebase --autostash` with a conflicting uncommitted edit exits 0 and leaves a stash
+  entry and unrelated files staged.
 - A missing `@import` target does not fail a session; project-level `.claude/rules/` loads;
-  `skillOverrides` works with `"off"` and not with `{"visibility": "hidden"}`.
-- `.gitignore` lines for `skills/local-*` work only after `!skills/**` and without a trailing
-  slash.
-- Two independent inspections of revisions 1 and 2 re-ran the command sequences; their findings
-  are folded into this revision.
+  `skillOverrides` works with `"off"`, not with `{"visibility": "hidden"}`.
+- `skills/local-*` and the five mac-mini names as symlinks are ignored only when listed after
+  `!skills/**` without a trailing slash; `git add -A` then skips them.
+- `git diff --name-only` quotes non-ASCII paths; `-z` with `read -d ''` does not.
+- `.claude-plugin` ships tracked files only, so ignoring these paths does not change the plugin.
 Not tested: user-level `~/.claude/rules/`; the plugin fallback; a real company Mac.
