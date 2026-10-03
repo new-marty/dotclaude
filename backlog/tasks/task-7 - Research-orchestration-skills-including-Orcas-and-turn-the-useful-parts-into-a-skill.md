@@ -3,9 +3,11 @@ id: TASK-7
 title: >-
   Research orchestration skills, including Orca's, and turn the useful parts
   into a skill
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-server'
 created_date: '2026-10-03 08:39'
+updated_date: '2026-10-03 08:52'
 labels: []
 dependencies: []
 priority: medium

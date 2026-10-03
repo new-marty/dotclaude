@@ -1,9 +1,11 @@
 ---
 id: TASK-5
 title: Fold the first-time-reader writing research into the writing skills
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-server'
 created_date: '2026-10-03 08:39'
+updated_date: '2026-10-03 08:52'
 labels: []
 dependencies: []
 priority: high

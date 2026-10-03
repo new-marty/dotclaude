@@ -3,9 +3,11 @@ id: TASK-6
 title: >-
   Inventory the Japanese proofreading skills against yomiyasu and
   japanese-tech-writing
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-server'
 created_date: '2026-10-03 08:39'
+updated_date: '2026-10-03 08:52'
 labels: []
 dependencies: []
 priority: medium
