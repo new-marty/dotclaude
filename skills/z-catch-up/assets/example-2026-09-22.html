@@ -1,0 +1,196 @@
+<title>shop 復帰ノート</title>
+<style>
+  :root {
+    --bg:#ffffff; --fg:#1f2328; --mute:#59636e; --line:#d1d9e0; --line-soft:#e9edf1; --panel:#f6f8fa;
+    --done:#1a7f37; --wait:#9a6700; --mine:#0969da; --todo:#8c959f; --pr:#1a7f37; --merged:#8250df;
+    --done-bg:#dafbe1; --wait-bg:#fff8c5; --mine-bg:#ddf4ff; --track:#d0d7de;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#0d1117; --fg:#e6edf3; --mute:#9198a1; --line:#3d444d; --line-soft:#262c36; --panel:#151b23;
+    --done:#3fb950; --wait:#d29922; --mine:#4493f8; --todo:#6e7781; --pr:#3fb950; --merged:#ab7df8;
+    --done-bg:#12261e; --wait-bg:#2a2210; --mine-bg:#0f2540; --track:#3d444d;
+    color-scheme:dark;
+  } }
+  :root[data-theme="dark"] {
+    --bg:#0d1117; --fg:#e6edf3; --mute:#9198a1; --line:#3d444d; --line-soft:#262c36; --panel:#151b23;
+    --done:#3fb950; --wait:#d29922; --mine:#4493f8; --todo:#6e7781; --pr:#3fb950; --merged:#ab7df8;
+    --done-bg:#12261e; --wait-bg:#2a2210; --mine-bg:#0f2540; --track:#3d444d;
+    color-scheme:dark;
+  }
+  body { background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6; padding-block:28px 64px; padding-inline:20px; }
+  main { max-width:46rem; margin-inline:auto; }
+  a { color:inherit; text-decoration:none; } a:hover { text-decoration:underline; }
+  svg.oi { width:16px; height:16px; fill:currentColor; vertical-align:text-bottom; flex:none; }
+  svg.oi.s { width:14px; height:14px; }
+  .num { font-variant-numeric:tabular-nums; }
+
+  h1 { font-size:1.25rem; margin:0 0 2px; }
+  .meta { color:var(--mute); font-size:.8rem; display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .summary { margin:0 0 24px; padding:14px 16px; border:1px solid var(--line); border-left:4px solid var(--mine); border-radius:6px; display:grid; gap:6px; }
+  .summary .row { display:grid; grid-template-columns:3.2em 1fr; gap:10px; }
+  .summary .row b { color:var(--mute); font-size:.78rem; font-weight:700; letter-spacing:.04em; padding-top:3px; }
+  .summary .row.next b { color:var(--mine); }
+  .summary .row.next span { font-weight:600; }
+
+  section.epic { border:1px solid var(--line); border-radius:6px; margin-bottom:18px; overflow:hidden; }
+  .head { padding:12px 16px 12px; }
+  .title { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .title h2 { font-size:1.05rem; margin:0; }
+  .title .frac { font-weight:700; font-size:.95rem; }
+  .title .n { color:var(--mute); font-size:.78rem; }
+  .bar { display:flex; height:6px; border-radius:3px; overflow:hidden; background:var(--track); margin:8px 0 6px; }
+  .bar i { display:block; height:100%; }
+  .bar .d { background:var(--done); } .bar .w { background:var(--wait); } .bar .m { background:var(--mine); }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:.78rem; color:var(--mute); }
+  .legend span::before { content:""; display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px; vertical-align:1px; background:var(--track); }
+  .legend .d::before { background:var(--done); } .legend .w::before { background:var(--wait); } .legend .m::before { background:var(--mine); }
+  .verdict { margin:10px 0 0; }
+  .verdict .why { color:var(--mute); font-size:.88rem; display:block; margin-bottom:4px; }
+
+  .groups { border-top:1px solid var(--line); background:var(--panel); }
+  .g { padding:8px 16px 10px; border-top:1px solid var(--line-soft); }
+  .g:first-child { border-top:0; }
+  .g h3 { font-size:.74rem; letter-spacing:.06em; margin:0 0 4px; display:flex; gap:6px; align-items:center; }
+  .g.todo h3 { color:var(--mine); } .g.wait h3 { color:var(--wait); } .g.done h3 { color:var(--done); }
+  .g ul { list-style:none; margin:0; padding:0; }
+  .g li { display:grid; grid-template-columns:18px 1fr auto; gap:0 8px; align-items:start; padding:3px 0; }
+  .g li.next { background:var(--mine-bg); margin:0 -16px; padding-inline:16px; border-radius:4px; }
+  .st { width:14px; height:14px; margin-top:4px; }
+  .t .n { color:var(--mute); font-size:.78rem; margin-left:6px; }
+  .t .d { color:var(--mute); font-size:.82rem; display:block; }
+  .t .subs { display:flex; gap:4px 14px; flex-wrap:wrap; font-size:.82rem; color:var(--mute); margin-top:2px; }
+  .t .subs span { display:inline-flex; gap:4px; align-items:center; }
+  .r { display:flex; gap:10px; align-items:center; white-space:nowrap; font-size:.8rem; color:var(--mute); padding-top:3px; }
+  .chip { display:inline-flex; align-items:center; gap:4px; }
+  .chip.pr { color:var(--pr); } .chip.merged { color:var(--merged); } .chip.blocked { color:var(--mute); } .chip.next { color:var(--mine); font-weight:700; }
+  .g.done li { opacity:.7; } .g.done .t { font-size:.9rem; }
+  .status { font-size:.72rem; padding:0 6px; border-radius:999px; border:1px solid var(--line); color:var(--mute); }
+
+  .boxes { padding:10px 16px 12px; display:grid; gap:8px; border-top:1px solid var(--line); }
+  .box { padding:8px 12px; border-left:3px solid; border-radius:0 4px 4px 0; font-size:.88rem; }
+  .box b { display:block; font-size:.74rem; letter-spacing:.06em; margin-bottom:1px; }
+  .box.next { border-color:var(--mine); background:var(--mine-bg); } .box.next b { color:var(--mine); }
+  .box.drift { border-color:var(--wait); background:var(--wait-bg); } .box.drift b { color:var(--wait); }
+  .box ul { margin:2px 0 0; padding-left:1.1em; } .box li { padding:1px 0; }
+
+  .after { color:var(--mute); font-size:.85rem; margin:14px 0 0; }
+  footer { margin-top:20px; color:var(--mute); font-size:.76rem; }
+  footer .key { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:4px; }
+  footer .key span { display:inline-flex; gap:4px; align-items:center; }
+  @media (max-width:520px) { .g li { grid-template-columns:18px 1fr; } .r { grid-column:2; padding-top:0; flex-wrap:wrap; white-space:normal; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="s-todo" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="s-next" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="8" r="3" fill="currentColor"/></symbol>
+  <symbol id="s-wait" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2a6 6 0 0 1 0 12Z" fill="currentColor"/></symbol>
+  <symbol id="s-done" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M4.5 8.2l2.3 2.3 4.7-4.7" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pr" viewBox="0 0 16 16"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"/></symbol>
+  <symbol id="i-prdraft" viewBox="0 0 16 16"><path d="M3.25 1A2.25 2.25 0 0 1 4 5.372v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.251 2.251 0 0 1 3.25 1Zm9.5 14a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5ZM2.5 3.25a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0ZM3.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm9.5 0a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM14 7.5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Zm0-4.25a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z"/></symbol>
+  <symbol id="i-merge" viewBox="0 0 16 16"><path d="M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8.5-4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM5 3.25a.75.75 0 1 0 0 .005V3.25Z"/></symbol>
+  <symbol id="i-blocked" viewBox="0 0 16 16"><path d="M4.467.22a.749.749 0 0 1 .53-.22h6.006c.199 0 .389.079.53.22l4.247 4.247c.141.14.22.331.22.53v6.006a.749.749 0 0 1-.22.53l-4.247 4.247a.749.749 0 0 1-.53.22H4.997a.749.749 0 0 1-.53-.22L.22 11.533a.749.749 0 0 1-.22-.53V4.997c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.308v5.384L5.308 14.5h5.384l3.808-3.808V5.308L10.692 1.5ZM4 7.75A.75.75 0 0 1 4.75 7h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 4 7.75Z"/></symbol>
+  <symbol id="i-stack" viewBox="0 0 16 16"><path d="M7.122.392a1.75 1.75 0 0 1 1.756 0l5.003 2.902c.83.481.83 1.68 0 2.162L8.878 8.358a1.75 1.75 0 0 1-1.756 0L2.119 5.456a1.251 1.251 0 0 1 0-2.162ZM8.125 1.69a.248.248 0 0 0-.25 0l-4.63 2.685 4.63 2.685a.248.248 0 0 0 .25 0l4.63-2.685ZM1.601 7.789a.75.75 0 0 1 1.025-.273l5.249 3.044a.248.248 0 0 0 .25 0l5.249-3.044a.75.75 0 0 1 .752 1.298l-5.248 3.044a1.75 1.75 0 0 1-1.756 0L1.874 8.814A.75.75 0 0 1 1.6 7.789Zm0 3.5a.75.75 0 0 1 1.025-.273l5.249 3.044a.248.248 0 0 0 .25 0l5.249-3.044a.75.75 0 0 1 .752 1.298l-5.248 3.044a1.75 1.75 0 0 1-1.756 0l-5.248-3.044a.75.75 0 0 1-.273-1.025Z"/></symbol>
+</svg>
+
+<main>
+<h1>戻ってきた日の一枚</h1>
+<div class="meta"><span class="num">2026-09-22</span><span>acme/shop</span><span>hana-k</span><span>レビューの差し戻し: なし</span></div>
+
+<div class="summary">
+  <div class="row"><b>全体</b><span>フロントエンドのテストを書ける土台を作っている。ゲートと規約と薄い hook を片付ける Epic A、ディレクトリ構成を揃えて公開面を lint で縛る Epic B の二段。A が終わらないと B の最後が決まらない。</span></div>
+  <div class="row"><b>いま</b><span>A は全部手を離れ、最後の PR が通れば閉じる。B は前半 2 本の PR を出し切ってレビュー待ち、後半 2 本が自分に残っている。</span></div>
+  <div class="row next"><b>次</b><span>B の 3 本目、pages の階層整理。本文は 8 月の実測で、widgets の作業で基準と検査を変えたので、数え直してから子を切る。</span></div>
+</div>
+
+<section class="epic">
+  <div class="head">
+    <div class="title"><h2><a href="https://github.com/acme/shop/issues/212">Epic A　テストを書ける環境を整える</a></h2><span class="frac num">5 / 6</span><span class="n">#212</span></div>
+    <div class="bar" role="img" aria-label="6 本中 5 本 Done、1 本 In Review"><i class="d" style="width:83.3%"></i><i class="w" style="width:16.7%"></i></div>
+    <div class="legend"><span class="d num">Done 5</span><span class="w num">In Review 1</span><span class="m num">Todo 0</span></div>
+    <p class="verdict"><span class="why">カバレッジのゲートが正しい整理を罰し、規約が割れ、1 か所でしか使わない hook が 200 本以上あった。決める、減らす、固定する、の順に直す。</span>残っているのは hook 削除の最後の 1 本だけで、カートと注文の 9 本を移す PR がレビュー待ち。自分の作業はない。閉じたら hook の残数を数える。B の最後で要る。</p>
+  </div>
+  <div class="groups">
+    <div class="g wait">
+      <h3>IN REVIEW <span class="num">1</span></h3>
+      <ul>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/217">単一利用の custom hook を削除する</a><span class="n">#217 · 2 / 3</span><span class="subs"><span><svg class="oi s" style="color:var(--merged)"><use href="#i-merge"/></svg>小規模 7 グループ</span><span><svg class="oi s" style="color:var(--merged)"><use href="#i-merge"/></svg>商品と在庫</span><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>カートと注文 9 本 <span class="n">#251 · PR #318</span></span></span><span class="d">題名は「62 本」だが、数え直しと先行 PR（41 本）で残りは 9 本</span></span><span class="r"><span class="chip pr"><svg class="oi s"><use href="#i-pr"/></svg>1</span></span></li>
+      </ul>
+    </div>
+    <div class="g done">
+      <h3>DONE <span class="num">5</span></h3>
+      <ul>
+        <li><svg class="st" style="color:var(--done)"><use href="#s-done"/></svg><span class="t">カバレッジを CI の合否判定から外す<span class="n">#214</span></span><span class="r"><span class="chip merged"><svg class="oi s"><use href="#i-merge"/></svg>8/25</span></span></li>
+        <li><svg class="st" style="color:var(--done)"><use href="#s-done"/></svg><span class="t">構造とテストの規約を決める<span class="n">#215</span></span><span class="r"><span class="chip merged"><svg class="oi s"><use href="#i-merge"/></svg>8/27</span></span></li>
+        <li><svg class="st" style="color:var(--done)"><use href="#s-done"/></svg><span class="t">実装と対応しないテストを片付ける<span class="n">#216 · 3 / 3</span></span><span class="r"><span class="chip merged"><svg class="oi s"><use href="#i-merge"/></svg>3 · 9/3</span></span></li>
+        <li><svg class="st" style="color:var(--done)"><use href="#s-done"/></svg><span class="t">純粋関数を shared へ移す<span class="n">#218</span></span><span class="r"><span class="chip merged"><svg class="oi s"><use href="#i-merge"/></svg>9/9</span></span></li>
+        <li><svg class="st" style="color:var(--done)"><use href="#s-done"/></svg><span class="t">テストの配置と 1 対 1 対応を検査で守る<span class="n">#219</span></span><span class="r"><span class="chip merged"><svg class="oi s"><use href="#i-merge"/></svg>9/12</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="epic">
+  <div class="head">
+    <div class="title"><h2><a href="https://github.com/acme/shop/issues/213">Epic B　FSD の構成を揃えて公開面を宣言する</a></h2><span class="frac num">0 / 4</span><span class="n">#213</span></div>
+    <div class="bar" role="img" aria-label="4 本中 0 本 Done、2 本 In Review、2 本 Todo"><i class="w" style="width:50%"></i><i class="m" style="width:50%"></i></div>
+    <div class="legend"><span class="d num">Done 0</span><span class="w num">In Review 2</span><span class="m num">Todo 2</span></div>
+    <p class="verdict"><span class="why">段数と名前がばらけていて、どこが外向きか宣言できない。層ごとに揃えてから、セグメント粒度で公開面を宣言して lint で縛る。移動と import の書き換えだけ。順番は features と entities、widgets、pages、宣言。</span>前半 2 本は子に割って PR を全部出し、レビュー待ち。後半 2 本は手つかず。次は pages で、本文の実測が 8 月のものなので数え直しから入る。宣言は前の 3 本と A の hook 削除が閉じてから。</p>
+  </div>
+  <div class="groups">
+    <div class="g todo">
+      <h3>TODO <span class="num">2</span></h3>
+      <ul>
+        <li class="next"><svg class="st" style="color:var(--mine)"><use href="#s-next"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/222">pages の階層を揃える</a><span class="n">#222</span><span class="d">未着手、子なし。数え直してからグループ単位で子に割る。PR を出すのは widgets の取り込み後</span></span><span class="r"><span class="chip next">次</span><span class="status">Ready</span></span></li>
+        <li><svg class="st" style="color:var(--todo)"><use href="#s-todo"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/223">公開面を宣言して lint で縛る</a><span class="n">#223</span></span><span class="r"><span class="chip blocked"><svg class="oi s"><use href="#i-blocked"/></svg>上の 3 本と A の hook 削除の後</span><span class="status">Backlog</span></span></li>
+      </ul>
+    </div>
+    <div class="g wait">
+      <h3>IN REVIEW <span class="num">2</span></h3>
+      <ul>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/220">features と entities の階層を揃える</a><span class="n">#220 · 0 / 3</span><span class="subs"><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>カート Provider <span class="n">#331</span></span><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>在庫ポーリングを共通へ <span class="n">#334</span></span><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>残り 3 か所を畳む <span class="n">#309</span></span></span></span><span class="r"><span class="chip pr"><svg class="oi s"><use href="#i-pr"/></svg>3</span></span></li>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/221">widgets の階層を揃える</a><span class="n">#221 · 0 / 2</span><span class="subs"><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>境界検査の直し <span class="n">#352</span></span><span><svg class="oi s" style="color:var(--pr)"><use href="#i-pr"/></svg>平ら化 <span class="n">#371</span> <svg class="oi s"><use href="#i-stack"/></svg>#352 の上</span></span><span class="d">平ら化の PR は main 向きでないので、取り込んでも issue は自動で閉じない</span></span><span class="r"><span class="chip pr"><svg class="oi s"><use href="#i-pr"/></svg>2</span></span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="boxes">
+    <div class="box next"><b>次にやること</b>pages を数え直し、グループ単位で子に割る。最初の PR はブロックが 1 つしかないページ。</div>
+    <div class="box drift"><b>本文（8/18）とずれていること</b>
+      <ul>
+        <li>実測が 8 月時点。widgets で「ブロック 1 つなら階層を外す」基準を実際に使ったので、同じ基準で数え直す</li>
+        <li>widgets で境界検査の捕捉を変えた。pages でも検査が実態を捉えているか先に見る</li>
+        <li>既存越境の解消は #351（9/15）に切り出した。4 本目の本文には未反映</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="epic">
+  <div class="head"><div class="title"><h2>Epic の外</h2></div><p class="verdict" style="margin-top:4px">3 件とも手を離れている。自分の作業はない。</p></div>
+  <div class="groups">
+    <div class="g wait">
+      <ul>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/264">商品検索フィルタの型定義を shared に一本化</a><span class="n">#264</span></span><span class="r"><span class="chip pr"><svg class="oi s"><use href="#i-pr"/></svg>#297</span><span class="status">In Review</span></span></li>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/issues/226">決済 API クライアントのテスト追加</a><span class="n">#226</span><span class="d">止めている。構成見直しの提起に判断が出るまで着手しない</span></span><span class="r"><span class="chip" style="color:var(--mute)"><svg class="oi s"><use href="#i-prdraft"/></svg>#329 下書き</span><span class="status">In Progress</span></span></li>
+        <li><svg class="st" style="color:var(--wait)"><use href="#s-wait"/></svg><span class="t"><a href="https://github.com/acme/shop/pull/373">devcontainer の設定を入れる</a><span class="n">PR #373</span></span><span class="r"><span class="chip pr"><svg class="oi s"><use href="#i-pr"/></svg>PR</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<p class="after">その後: テストを増やす 4 本は Backlog。環境が整ってから。別リポジトリの open PR 3 本はこの流れと無関係。</p>
+
+<footer>
+  <div class="key">
+    <span style="color:var(--mine)"><svg class="oi s"><use href="#s-next"/></svg>次</span>
+    <span style="color:var(--todo)"><svg class="oi s"><use href="#s-todo"/></svg>Todo</span>
+    <span style="color:var(--wait)"><svg class="oi s"><use href="#s-wait"/></svg>In Review（手を離れている）</span>
+    <span style="color:var(--done)"><svg class="oi s"><use href="#s-done"/></svg>Done</span>
+    <span style="color:var(--pr)"><svg class="oi s"><use href="#i-pr"/></svg>PR あり</span>
+    <span style="color:var(--merged)"><svg class="oi s"><use href="#i-merge"/></svg>取り込み済み</span>
+    <span><svg class="oi s"><use href="#i-blocked"/></svg>前提あり</span>
+    <span><svg class="oi s"><use href="#i-stack"/></svg>PR の積み重ね</span>
+  </div>
+  出典: GitHub の issue と PR、計画文書 docs/plans/active/test-foundation。Ready や Backlog は Project の表記そのまま。
+</footer>
+</main>
