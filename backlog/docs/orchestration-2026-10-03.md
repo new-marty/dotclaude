@@ -6,10 +6,10 @@ A new session resumes from this file (progress table and briefs), not from memor
 
 | unit | stage | status | branch / commit | last inspection (dropped AC / bugs / scope creep) | by | date | note |
 |---|---|---|---|---|---|---|---|
-| TASK-8 | implement | running | | | subagent | 2026-10-03 | |
-| TASK-8 | verify | untouched | | | | | |
-| TASK-2 | implement | running | | | subagent | 2026-10-03 | |
-| TASK-2 | verify | untouched | | | | | |
+| TASK-8 | implement | done_with_concerns | main 702a551 (from 9b738ed) | | subagent | 2026-10-03 | concern: SessionEnd 1.5 s budget, timeout lives in settings.example.json (out of scope) |
+| TASK-8 | verify | done_with_concerns | 9b738ed | 0 / 0 / 1 minor | subagent | 2026-10-03 | SessionEnd default budget 1.5 s (docs confirmed); hook needs `timeout` in settings.example.json + each machine's settings.json — Marty's call |
+| TASK-2 | implement | done | main c6a0afc, 864f161, 0293e0f | | subagent | 2026-10-03 | concern: `backlog task edit --comment` not exercised |
+| TASK-2 | verify | done_with_concerns | 1b34287 | 0 / 0 / 0; 2 fix-before-merge, 5 minor | subagent | 2026-10-03 | --comment stamps a date (BACKLOG.md wrong); detection misses .backlog/ and root config. Fix round 1 (90a7162, 64f32a5) re-checked by orchestrator: all 5 items fixed, no new damage |
 | TASK-1 | — | held | | | | | touches sync-push.sh (RESERVED list); needs ~/server changes and a deliberate mac-mini switch with Marty present |
 | TASK-3 | — | held | | | | | needs Marty's main machine |
 
