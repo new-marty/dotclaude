@@ -25,15 +25,22 @@ parallel parts than research. Split only when all of these hold:
 - Each unit's result can be checked by something other than the agent that produced it.
 
 Estimate the cost before launching. Anthropic measured about 15x the tokens of a chat for a
-multi-agent run. Write down units x stages x rough size, plus any paid backend, and tell the
-person the ceiling. If it is large, say what it buys.
+multi-agent run. Write down units x stages x rough size, counting the verifier and fix stages
+and any paid backend, and put the ceiling as a number in the same message that proposes the
+split, before anything launches. If it is large, say what it buys. Give a figure per unit, not
+"tens of times a chat": in one run, one of four units cost more than ten times as much as each
+of the others.
 
 Pilot before scaling. Run 1 to 3 units through every stage, then show the person the results
 and the success criterion in plain words: what counts as better, how it was measured. Show a
 real before and after from the pilot, not only the policy; a person cannot judge a rule they
 have not seen applied. Wait for agreement before the full run. A document rewrite once ran
 without a clear goal: of 12 rewrites, only 4 were judged clearly easier to read. The pilot is
-the check against that.
+the check against that. When units differ in size or risk, pilot the one that changes security,
+deletion or behaviour across repositories, else the largest; never just the cheapest. That pilot
+costs more, and it is still cheaper than finding its defect after the full run: one run
+launched four units together, and its security patch ran an hour, then failed verification on
+a regression.
 
 Check the premise before the pilot. A job that was planned earlier may have been overtaken by
 decisions made since; read the task and what changed, and say so before running the old plan.
@@ -55,7 +62,15 @@ Each brief names:
 
 - Target: the files or component in scope.
 - Change: the concrete result to produce, and the purpose, so the agent judges edge cases.
-- Constraints: invariants and do-not-touch boundaries.
+- Constraints: invariants and do-not-touch boundaries. Name the files next to the target that
+  may need a matching change; the agent reports them and does not edit them. A needed change
+  to `settings.example.json` was once found only by the verifier.
+- What must survive: when the unit removes, replaces, moves or summarises something, list what
+  may not be lost (dates, who decided, numbers, commands, the references that point at it) and
+  how to confirm a replacement still works (for an alert path: a test alert that the person
+  receives). Across repositories, say which side's commit waits for the other. Briefs without
+  this have dropped task numbers from a rewrite, routed alerts to a check nobody was notified
+  of, and left a live symlink dangling between two commits.
 - Owned paths: the only paths this agent may write.
 - Observable acceptance: the test, count or output that shows it is done.
 - Output format: what to return, in what shape.
@@ -70,6 +85,9 @@ Add the rules every agent follows:
   hard-code a name in the brief; an agent on a different model would sign falsely.
 - End with one status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT or BLOCKED (obra/superpowers).
   Concerns and blockers carry a reason.
+
+Fix rounds and follow-ups point at the same brief file. A fix prompt written ad hoc once left
+out the stash ban, and that agent ran `git stash` in the shared tree.
 
 Give one agent per stage per unit. An agent that built the list should not check it, and an
 agent that wrote the draft should not inspect it. Brief stages that are separate jobs
@@ -88,23 +106,42 @@ it exited.
 
 When an agent settles, decide at once: reuse it for a follow-up, keep it, or release it.
 
+While an agent owns a file, do not edit that file yourself; send the fix to the agent. An
+orchestrator and its agent once both edited one code comment, and the second edit undid part of
+the first.
+
 Report to the person at milestones: the pilot, each finished batch, any failure, any cost
 surprise. One line each, with counts. When a milestone needs the person to decide something,
-ask one question at a time, with an example of what each option would produce.
+ask one question at a time, with an example of what each option would produce. When the person
+asks something mid-run, answer it before the next launch or report. Once, four more agents
+were launched while the person's question sat unanswered, and they had to ask again.
 
 ## 4. Verify
 
 The agent's own report is a claim. Check it.
 
 - Use an independent verifier. It sees only the original and the result, not the working files,
-  the fact lists or the producer's notes. Anything else lets it inherit the producer's mistakes.
-- Give it a counted checklist, and the same checklist every time. Count each kind of defect:
-  dropped, weakened, added, changed in meaning, form broken. Inspectors that count differently
-  make the numbers useless. Tell it to be strict; earlier inspections undercounted.
-- Machine checks (tests, linters, diff scripts) come first and are never a substitute. Run the
-  inspection even when they pass.
-- Fixes get re-verified. A fix commit has introduced new damage before. Re-inspect the fix diff
-  narrowly, and count the result again.
+  the fact lists, or the producer's notes and claims, so its prompt gives the target and the
+  purpose and does not quote the producer. Anything else lets it inherit the producer's
+  mistakes. Verifier prompts that quoted "it claims to add..." once steered what was checked.
+- Give it a counted checklist, and the same checklist for every unit, kept in one brief file.
+  Count each kind of defect: dropped, weakened, added, changed in meaning, form broken.
+  Inspectors that count differently make the numbers useless; one run gave each unit's verifier
+  its own list, and the counts could not be compared. Tell it to be strict; earlier inspections
+  undercounted.
+- Machine checks (tests, linters, parsers for frontmatter and JSON, diff scripts) come first and
+  are never a substitute. Run the inspection even when they pass. A skill's frontmatter once
+  passed a read-through and then failed YAML parsing.
+- Fixes get re-verified. A fix commit has introduced new damage before. Give the fix diff to a
+  verifier, narrowly, and count the result again. If you only read it yourself, that is a
+  stopgap: the table says so and lists the checks nobody re-ran. A table once said "all 5
+  items fixed" after a read, while the fixed commands had never been run.
+- Your own edits are units too. A change you make after verification gets its own check, or
+  the table marks it not verified. One orchestrator added a hook timeout after the verifiers
+  had finished, and only a JSON parse ever checked it.
+- A unit that rewrites or restructures an existing file gets the dropped-facts check against
+  the old version, also when it is one of the small extra units run beside the main batch. Two
+  such units were once closed on the producer's report and a diffstat alone.
 - Cap the fix rounds, for example 3, then hand the remainder to the person with the findings
   (obra/superpowers caps its loop the same way). If the original itself is wrong or
   contradicts itself, report that and do not repair it.
@@ -116,15 +153,21 @@ to read; say both.
 ## 5. Record
 
 Keep one table for the whole job, one row per unit, as a file in the repository or the
-agreed workspace. Columns: unit, status, commit, finding counts from the last inspection, who or
-what produced it, date, note. Update a unit's row in the same commit as its result, so the table
-and the work never disagree. Units not started stay in the table, marked untouched.
+agreed workspace. Columns: unit, status, commit, finding counts from the last inspection (the
+five kinds above; a table with its own three columns once could not hold the verifier's
+counts), who or what produced it (agent and model, since "subagent" alone cannot be traced),
+date, note. Set a unit's status as soon as its agent reports, and keep it short of done until
+the result is verified and committed; one row stayed "running" after its agent had reported.
+Write its commit and counts in the same commit as its result, so the table and the work never
+disagree; when the work lands by merge or cherry-pick, cite the landed hash. Units not started
+stay in the table, marked untouched.
 
 A new session resumes from this table and the brief files, not from memory of the last session.
 Say so in the table's header or next to it.
 
-Record each ruling as decision, reason, and what it costs if wrong. Rulings made in conversation
-are lost otherwise.
+Record each ruling as decision, reason, and what it costs if wrong, including the answers the
+person gives mid-run. Rulings made in conversation are lost otherwise; a hook timeout the
+person approved mid-run once reached neither the table nor the rulings.
 
 Report only what was counted. If a figure comes from a sample, say the sample size. If you did
 not run a check, write "not verified". A run once reported zero drops from a method that could
@@ -132,9 +175,17 @@ not see some kinds of drop; the number was true of the method, not of the docume
 
 ## 6. Close out
 
-- Wait until every agent has settled. Enumerate them from real state, not from your memory of
-  what you launched.
-- Hand off or release each one. Nothing keeps running unowned.
+- Wait until every agent has settled. Enumerate them from real state (the agent or session
+  list, `git worktree list`), not from your memory of what you launched. For each worktree,
+  confirm its work has landed and nothing in it is uncommitted, then ask the person before
+  removing it, or write down who removes it. One run left two behind.
+- Hand off or release each one. Nothing keeps running unowned. Do not end the session while a
+  fix round is still running; if you must, hand off each running agent, or stop it with the
+  person's agreement, and record which. One agent kept editing files for 17 minutes after its
+  orchestrator's final message.
+- A handoff is complete only after you have read the other session's state back (it is alive
+  and has the brief), not when the transport reports the text accepted. One handoff was
+  reported done although its text went to a terminal that had already exited.
 - Report per unit: outcome, the evidence behind it (counts, commit hash), and what is still
   open, with the cost against the ceiling.
 - Finish with one table the person can read in a minute: done, done with caveats, not started.

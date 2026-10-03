@@ -16,7 +16,8 @@ each brief states.
 | TASK-10 | close | done | d66f660 | | orchestrator | 2026-10-03 | header + README; check-upstream rc=0 from ~/.claude. Not yet seen in a real morning run |
 | TASK-12 | — | held | | | | | only Marty's main machine (macbook-pro) registers sync-push; it is offline. mac-mini registers no sync-push hook |
 | TASK-3 | — | held | | | | | needs macbook-pro (offline) |
-| TASK-7 AC#3 | — | held | | | | | Marty picked the handbook rewrite (~/server T-446, another session) as the real use |
+| TASK-7 AC#3 | usage review x4 | done | | | 4 subagents (Opus 5.5) | 2026-10-03 | transcripts: server 9e32fe00 (stopped at §1, no proposals), dotclaude 1e9a57ec (7), server 08e1b18f (7), server cd07889c (7); about 350k subagent tokens |
+| TASK-7 AC#3 | skill edit | done_with_concerns | this commit | round 1: 0 / 0 / 7 / 4 / 0; round 2: 0 / 0 / 4 / 1 / 0 | orchestrator + 2 verifier subagents | 2026-10-03 | round 3 (incidents for the 4 additions, pilot tie, status timing, rewrap) read by the orchestrator only: stopgap, not independently re-verified |
 
 ## Rulings
 
@@ -59,3 +60,21 @@ Read the task: `bl show T-459` (run from any directory except ~/server; do not `
 - A cross-repo move needs an order in the brief: the ~/server commit that deleted `skills/browsing-web` landed before the dotclaude push, so the live symlink dangled for about 20 minutes. Tell the implementer which side waits for the switch.
 - Ask implementers to parse SKILL.md frontmatter with a YAML loader. The unquoted `: ` passed review by eye and was caught only by the verifier.
 - Moving a skill out of a repo can strand its pointers in canonical files. Have the brief name `grep` over canonical files and require the proposal in the same unit.
+
+## Brief: TASK-7 AC#3 usage review (one agent per session transcript)
+
+Purpose: find out how `skills/z-orchestrate/SKILL.md` (read it first, in /Users/gary/dev/dotclaude) fared on real work, so it can be adjusted from what happened.
+
+- Input: one main session transcript (JSONL, large: use `jq` to extract user messages, assistant text and tool_use inputs; do not cat it whole). Its subagent transcripts sit in `<session-id>/subagents/` next to it; read them only where needed.
+- Read-only. Do not edit or commit anything.
+- Report:
+  1. The job: what was orchestrated, how many units and stages, which mechanism (Agent tool, Workflow, background sessions).
+  2. For each section of the skill (1 decide, 2 briefs, 3 run, 4 verify, 5 record, 6 close out): followed, deviated, or not reached. Give evidence (a short quote or tool call, with its timestamp).
+  3. What went wrong or cost extra (duplicated agents, conflicts, unverified claims, lost state, wasted tokens, the person correcting the agent), with evidence.
+  4. Candidate changes to the skill text: each one names the section, the change, and the incident it comes from. Only changes that would have prevented or shortened a real incident in this transcript; no general advice.
+- End with DONE, DONE_WITH_CONCERNS or BLOCKED.
+
+## Rulings (TASK-7 AC#3)
+
+- The four transcripts that invoked z-orchestrate count as the real use for AC#3, in place of the handbook rewrite alone. Reason: Marty said several sessions had tried to use it. Cost if wrong: the handbook rewrite may show more; TASK-13 reviews skills again from use.
+- Only changes backed by an incident in a transcript or in this run went into the skill. Not taken: write milestone reports in the person's language (Marty rejected a memory note for it; CLAUDE.md covers language), "or the tracker's own records" in place of the table (no incident).
