@@ -3,11 +3,11 @@ id: TASK-7
 title: >-
   Research orchestration skills, including Orca's, and turn the useful parts
   into a skill
-status: In Progress
+status: Done
 assignee:
   - '@claude-server'
 created_date: '2026-10-03 08:39'
-updated_date: '2026-10-03 10:08'
+updated_date: '2026-10-03 13:02'
 labels: []
 dependencies: []
 priority: medium
@@ -28,11 +28,13 @@ Work: read Orca's orchestration skill and at least two published orchestration s
 <!-- AC:BEGIN -->
 - [x] #1 Orca's orchestration skill and at least two outside sources were read, with what each recommends and where it fits
 - [x] #2 A skill exists in skills/ that covers when to orchestrate, how to brief and verify agents, and how to record progress, citing its sources
-- [ ] #3 The skill was used once on a real task and adjusted from what happened
+- [x] #3 The skill was used once on a real task and adjusted from what happened
 <!-- AC:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-03: z-orchestrate written (3ab4861). AC#3: Marty chose the mac-mini handbook rewrite (44 documents left) as the first real use; pilot 1-3 documents and show before/after before scaling.
+
+2026-10-03: AC#3 from use. Found the four sessions that invoked the skill (jq over transcripts), one read-only agent per transcript, plus this run (run2). Incident-backed changes applied (74e7a2b); two independent inspections (round 1: 0 dropped / 0 weakened / 7 added / 4 meaning; round 2: 0 / 0 / 4 / 1), round 3 read by the orchestrator only. Periodic re-review filed as TASK-13.
 <!-- SECTION:NOTES:END -->
