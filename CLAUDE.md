@@ -62,6 +62,7 @@ and never force-push.
 
 - Read `z-writing-for-readers` before writing anything a reader outside this session will
   see: documentation, READMEs, design documents, PR descriptions, commit messages, issues.
+  Its "Text for agents" section also covers what agents read: CLAUDE.md, SKILL.md, memory.
 - After the draft, run the pass for its language. English: `z-humanizer`. Japanese:
   `z-natural-japanese` (the constitution before writing, its `lint.py` on the draft) and
   then `z-japanese-proofreading`. Neither pass applies to the other language.

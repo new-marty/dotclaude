@@ -388,6 +388,10 @@ apply to Japanese; `z-natural-japanese` and `z-japanese-proofreading` cover that
 When another skill (`z-create-pr`, `z-write-task`, `z-review-finding`, `z-catch-up`)
 produces the text, use embedded mode and return only the final text.
 
+This pass does not decide what the text contains. `z-writing-for-readers` decided what
+to keep, what to move elsewhere and how to write record numbers; do not restore details or
+identifiers it left out. "Keep every supported claim" in step 2 applies to what is left.
+
 Three things override the patterns above:
 
 - A template the repository or a skill prescribes wins over §19 and §20. A pull request

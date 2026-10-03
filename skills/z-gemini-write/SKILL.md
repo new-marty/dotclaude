@@ -42,8 +42,10 @@ loop stops at the cap set on openrouter.ai.
 
 ### 1. Settle the content
 
-Put every fact, number, condition, and conclusion into bullet points or an outline, in
-the order the reader should meet them. Gemini is told not to add anything, so what is
+First decide what the reader needs for their purpose (`z-writing-for-readers`); leave
+the rest out or link to it, and turn internal record numbers into words as that skill
+says. Then put every fact, number, condition, and conclusion that remains into bullet
+points or an outline, in the order the reader should meet them. Gemini is told not to add anything, so what is
 missing here stays missing. Save it to a file in the scratchpad directory.
 
 Write a brief next to it: who reads the text, what it is for, where it will live (README
