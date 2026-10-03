@@ -1,6 +1,7 @@
 ---
 name: browsing-web
-description: Operates a real web browser through the agent-browser CLI: opening pages that need JavaScript, clicking and filling forms, taking screenshots, and staying logged in to sites across sessions. Use whenever a task needs a page that WebFetch cannot handle (client-rendered, interactive, or behind a login), or when asked to "open this in a browser", check a site visually, or do something on a website.
+description: >-
+  Operates a real web browser through the agent-browser CLI: opening pages that need JavaScript, clicking and filling forms, taking screenshots, and staying logged in to sites across sessions. Use whenever a task needs a page that WebFetch cannot handle (client-rendered, interactive, or behind a login), or when asked to "open this in a browser", check a site visually, or do something on a website.
 ---
 
 # browsing-web
