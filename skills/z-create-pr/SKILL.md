@@ -34,7 +34,7 @@ allowed-tools: Bash(git *), Bash(gh pr *), Bash(gh api *), Read, Glob, Grep
   only, words the reader already has, about 30 characters in Japanese. **A bad issue title
   does not get inherited.** Rewrite it here, and say so, so the issue can be fixed too.
 - **Never put the issue number in the title.** A squash merge appends the pull request's own
-  number, so a title ending in `(#5898)` merges as `... (#5898) (#5930)` and neither number
+  number, so a title ending in `(#123)` merges as `... (#123) (#130)` and neither number
   can be told from the other. `Closes` already carries it.
 - No titles that mean nothing without context, like "Fix bug", "Updates", or "Phase 1". Name
   the change, not the area it sits in. "Update CSS" leaves the reader to open the diff.

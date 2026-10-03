@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Seven paths travel between machines; `settings.json` stays home
+## Nine paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -19,6 +19,8 @@ handful of files that are configuration.
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
+| `LICENSE` | MIT, for what was written here |
+| `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the
 machine where Orca runs, Orca writes thirteen hooks into it; the headless Mac mini runs
@@ -134,8 +136,8 @@ Your pre-pull state is also in `git -C ~/.claude stash list` if you want to comp
 
 ## A new machine needs the bootstrap script and one copy
 
-`chezmoi init --apply git@github.com:<you>/dotfiles.git` runs
-`run_once_before_bootstrap-dotclaude.sh` from the dotfiles repository, which turns the
+`chezmoi init --apply` on the (private) dotfiles repository runs its
+`run_once_before_bootstrap-dotclaude.sh`, which turns the
 existing `~/.claude` into this repository in place. A plain `git clone` fails because the
 Claude Code installer has already created `~/.claude/downloads/` and friends. Files that
 already exist are left alone; where they differ from the remote they show up in
@@ -168,3 +170,9 @@ A skill taken from another repository keeps its source URL and license in a comm
 the top of `SKILL.md`, and that comment says where upstream ends and local edits begin.
 `ADOPTIONS.md` is the index over all of them, including the ones looked at and declined.
 When you adopt or decline something, add the row there in the same commit.
+
+## License
+
+MIT for what was written here; see `LICENSE`. Adopted files keep their upstream license,
+named in their header comment. `THIRD_PARTY_NOTICES.md` holds those licenses and
+copyright lines in full.
