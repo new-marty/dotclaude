@@ -3,9 +3,9 @@ id: TASK-10
 title: Notice upstream changes to the skills we adopted
 status: In Progress
 assignee:
-  - '@claude-server'
+  - '@claude-dotclaude'
 created_date: '2026-10-03 10:08'
-updated_date: '2026-10-03 10:27'
+updated_date: '2026-10-03 11:31'
 labels: []
 dependencies: []
 priority: medium
@@ -28,4 +28,6 @@ On 2026-10-03 the inventory found japanese-tech-writing had changed on 2026-09-0
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-03: scripts/check-upstream.sh and scripts/upstream.tsv added (on demand, not scheduled). First run: yomiyasu, the japanese-tech-writing gist and natural-japanese current; z-humanizer changed upstream (9862685 -> 225a6f3), not yet reviewed. Open: where it runs on a schedule (SessionStart hook, each machine's sync job, or by hand monthly) — Marty's call.
+
+2026-10-03 Marty decided: run it every morning on the mac-mini in daily-maintenance, after the dotclaude sync; a change goes to Telegram each morning until upstream.tsv is updated. Wiring is ~/server work, filed there as T-459. Close this when T-459 reports done (then drop 'Run by hand; nothing schedules it.' from check-upstream.sh).
 <!-- SECTION:NOTES:END -->
