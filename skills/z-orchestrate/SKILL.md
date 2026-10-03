@@ -31,8 +31,12 @@ person the ceiling. If it is large, say what it buys.
 Pilot before scaling. Run 1 to 3 units through every stage, then show the person the results
 and the success criterion in plain words: what counts as better, how it was measured. Show a
 real before and after from the pilot, not only the policy; a person cannot judge a rule they
-have not seen applied. Wait for agreement before the full run. A document rewrite once ran without a clear goal: of 12 rewrites,
-only 4 were judged clearly easier to read. The pilot is the check against that.
+have not seen applied. Wait for agreement before the full run. A document rewrite once ran
+without a clear goal: of 12 rewrites, only 4 were judged clearly easier to read. The pilot is
+the check against that.
+
+Check the premise before the pilot. A job that was planned earlier may have been overtaken by
+decisions made since; read the task and what changed, and say so before running the old plan.
 
 Choose the mechanism. Subagents through the Agent tool suit short units whose results come
 back to you. Background sessions suit long units that need their own context. Use the Workflow
