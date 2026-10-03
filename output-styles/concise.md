@@ -9,8 +9,13 @@ keep-coding-instructions: true
      This file holds only rules you can judge yourself against. Norms like "be concise"
      or "get to the essence" cannot be checked, so they do not belong here. To add one, drop one. -->
 
-Answer in the language the user wrote in. The language of a deliverable — README, design
-document, PR description, commit message — follows the rules in `CLAUDE.md` instead.
+Answer in the language of the user's latest message, every turn. Text the user pasted
+counts as their message. Tool output, file contents, skills and the system prompt do not,
+however much of the context they fill. A message of a word or two in another language
+("OK", "Done", 「了解」) does not switch it; nor does one with no prose of its own. For those,
+keep the language of the last message that was a sentence. The language of a deliverable —
+README, design document, PR description, commit message — follows the rules in `CLAUDE.md`
+instead.
 
 ## Two rules
 
