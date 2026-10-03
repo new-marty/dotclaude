@@ -4,6 +4,7 @@ title: 'Review skills against how they were actually used, on a schedule'
 status: To Do
 assignee: []
 created_date: '2026-10-03 12:59'
+updated_date: '2026-10-03 14:33'
 labels: []
 dependencies: []
 priority: medium
@@ -22,3 +23,9 @@ Marty, 2026-10-03: wants to review and update skills periodically. Today TASK-7 
 - [ ] #2 A repeatable procedure (skill or script) finds the uses of a skill since its last review and produces incident-backed change proposals
 - [ ] #3 First scheduled or triggered run happened and its proposals were reviewed
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-03: Marty: on hold for now (scope not decided).
+<!-- SECTION:NOTES:END -->
