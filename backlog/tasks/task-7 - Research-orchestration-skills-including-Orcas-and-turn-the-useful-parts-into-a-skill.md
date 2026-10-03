@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude-server'
 created_date: '2026-10-03 08:39'
-updated_date: '2026-10-03 08:52'
+updated_date: '2026-10-03 10:08'
 labels: []
 dependencies: []
 priority: medium
@@ -26,7 +26,13 @@ Work: read Orca's orchestration skill and at least two published orchestration s
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Orca's orchestration skill and at least two outside sources were read, with what each recommends and where it fits
-- [ ] #2 A skill exists in skills/ that covers when to orchestrate, how to brief and verify agents, and how to record progress, citing its sources
+- [x] #1 Orca's orchestration skill and at least two outside sources were read, with what each recommends and where it fits
+- [x] #2 A skill exists in skills/ that covers when to orchestrate, how to brief and verify agents, and how to record progress, citing its sources
 - [ ] #3 The skill was used once on a real task and adjusted from what happened
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-03: z-orchestrate written (3ab4861). AC#3: Marty chose the mac-mini handbook rewrite (44 documents left) as the first real use; pilot 1-3 documents and show before/after before scaling.
+<!-- SECTION:NOTES:END -->

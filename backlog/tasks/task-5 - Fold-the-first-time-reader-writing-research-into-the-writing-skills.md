@@ -1,11 +1,11 @@
 ---
 id: TASK-5
 title: Fold the first-time-reader writing research into the writing skills
-status: In Progress
+status: Done
 assignee:
   - '@claude-server'
 created_date: '2026-10-03 08:39'
-updated_date: '2026-10-03 08:52'
+updated_date: '2026-10-03 10:08'
 labels: []
 dependencies: []
 priority: high
@@ -24,7 +24,13 @@ Work: write these principles into the machine-independent writing skills, mainly
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 z-writing-for-readers states the principles above, citing the research by what it is (not by ID) with sources
-- [ ] #2 The other writing skills were checked against the principles, and any contradiction was fixed or recorded with a reason
-- [ ] #3 The skills say how agent-facing text (memory, SKILL.md, CLAUDE.md) differs from documents written for people, with the reason
+- [x] #1 z-writing-for-readers states the principles above, citing the research by what it is (not by ID) with sources
+- [x] #2 The other writing skills were checked against the principles, and any contradiction was fixed or recorded with a reason
+- [x] #3 The skills say how agent-facing text (memory, SKILL.md, CLAUDE.md) differs from documents written for people, with the reason
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+z-writing-for-readers now has rules for titles and openings (title says the subject; open only with assumed knowledge and what is left out), record numbers by kind of document (words + link in explanations; number + a few words in records, runbooks and agent text), abstraction limits, one purpose per document, a reader test, and a Text for agents section. Sources in references/sources.md (no style guide covers internal IDs; that rule is Marty's). Checked z-natural-japanese, z-japanese-proofreading, z-cognitive-rhythm-writing, z-gemini-write and z-humanizer; conflicts fixed in their local sections. Not done: a reader test of the new rules on a real document. Commit 57a1168.
+<!-- SECTION:FINAL_SUMMARY:END -->

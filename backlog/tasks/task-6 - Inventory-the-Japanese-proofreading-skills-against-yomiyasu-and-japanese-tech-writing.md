@@ -3,11 +3,11 @@ id: TASK-6
 title: >-
   Inventory the Japanese proofreading skills against yomiyasu and
   japanese-tech-writing
-status: In Progress
+status: Done
 assignee:
   - '@claude-server'
 created_date: '2026-10-03 08:39'
-updated_date: '2026-10-03 08:52'
+updated_date: '2026-10-03 10:08'
 labels: []
 dependencies: []
 priority: medium
@@ -26,7 +26,13 @@ Read the candidates before adopting anything (the mac-mini rule: read a skill's 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Each candidate and each of our Japanese writing skills has a row: what it fixes, overlap with the others, and a decision (adopt, merge, leave, retire) with the reason
-- [ ] #2 The comparison ran the skills on the same documents, and the before/after is kept with the decision
-- [ ] #3 Adopted or merged parts are in the repo with their licence and upstream notice recorded in ADOPTIONS.md and THIRD_PARTY_NOTICES.md
+- [x] #1 Each candidate and each of our Japanese writing skills has a row: what it fixes, overlap with the others, and a decision (adopt, merge, leave, retire) with the reason
+- [x] #2 The comparison ran the skills on the same documents, and the before/after is kept with the decision
+- [x] #3 Adopted or merged parts are in the repo with their licence and upstream notice recorded in ADOPTIONS.md and THIRD_PARTY_NOTICES.md
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Compared yomiyasu, japanese-tech-writing, upstream natural-japanese, z-japanese-proofreading and a first-time-reader draft on three real documents (research memo, decision log, runbook). Decisions (Marty, 2026-10-03): keep the skills separate with owners — natural-japanese keeps its constitution and lint unchanged, z-japanese-proofreading owns how prose is fixed and wins on conflict; rules are consolidated locally, tools stay upstream, upstream versions recorded in ADOPTIONS.md. Added yomiyasu's meaning check and three rules from japanese-tech-writing's 2026-09-09 revision. yomiyasu as a whole declined (typography rules clash; asks to disable other skills). Before/after runs are kept in the private mac-mini repo (research/2026-10-03-dotclaude-writing-skills) because they quote that machine's documents; dotclaude is public. Commits 2c1474c, c1ad94d.
+<!-- SECTION:FINAL_SUMMARY:END -->
