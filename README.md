@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Nine paths travel between machines; `settings.json` stays home
+## Eight paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -19,7 +19,6 @@ handful of files that are configuration.
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
-| `LICENSE` | MIT, for what was written here |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the
@@ -170,9 +169,3 @@ A skill taken from another repository keeps its source URL and license in a comm
 the top of `SKILL.md`, and that comment says where upstream ends and local edits begin.
 `ADOPTIONS.md` is the index over all of them, including the ones looked at and declined.
 When you adopt or decline something, add the row there in the same commit.
-
-## License
-
-MIT for what was written here; see `LICENSE`. Adopted files keep their upstream license,
-named in their header comment. `THIRD_PARTY_NOTICES.md` holds those licenses and
-copyright lines in full.

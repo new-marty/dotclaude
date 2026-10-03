@@ -1,8 +1,8 @@
 # Third-party notices
 
-Most of this repository is under the MIT License in `LICENSE`. The files below derive from
-other work and stay under that work's license. Each of them also names its source and
-license in a comment at the top. `ADOPTIONS.md` records what was changed.
+The files below derive from other work and stay under that work's license. Each of them
+also names its source and license in a comment at the top. `ADOPTIONS.md` records what
+was changed.
 
 ## blader/humanizer
 

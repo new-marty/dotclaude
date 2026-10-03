@@ -9,7 +9,6 @@
 !.gitignore
 !README.md
 !ADOPTIONS.md
-!LICENSE
 !THIRD_PARTY_NOTICES.md
 !CLAUDE.md
 # settings.json itself is per machine: Orca and other tools inject hooks into it,
