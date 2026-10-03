@@ -35,7 +35,7 @@ git -C "$DIR" add -A
 # Another machine keeps skills under these names as untracked symlinks to its own
 # checkouts. If this repository ever tracked a directory with one of these names,
 # that machine's pull would swap its symlink for our copy without a word. Refuse.
-RESERVED="adding-services browsing-web reading-x recovering-gateway restoring-media-mount tracking-tasks"
+RESERVED="adding-services reading-x recovering-gateway restoring-media-mount tracking-tasks"
 for name in $RESERVED; do
     if git -C "$DIR" diff --cached --name-only | grep -q "^skills/$name\(/\|$\)"; then
         echo "[claude-sync] skills/$name is reserved for another machine's local skill; not committing." >&2

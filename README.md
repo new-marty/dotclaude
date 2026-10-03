@@ -13,7 +13,7 @@ handful of files that are configuration.
 | Path | Contents |
 | --- | --- |
 | `CLAUDE.md` | Instructions applied to every project |
-| `skills/` | Skills, all prefixed `z-` |
+| `skills/` | Skills, prefixed `z-` except `browsing-web` |
 | `output-styles/` | How answers are written |
 | `scripts/` | What the hooks run |
 | `statusline.sh` | The statusline |
@@ -34,7 +34,7 @@ by hand.
 Two more things live under `skills/` without being tracked. Orca symlinks four of its own
 skills there (`computer-use`, `find-skills`, `orca-cli`, `orchestration`), and claude.ai
 syncs a bundle into `skills/synced/` and moves deleted skills into `skills/.trash/`. Both
-are per machine, both are ignored. The Mac mini also keeps six skills of its own under
+are per machine, both are ignored. The Mac mini also keeps five skills of its own under
 `skills/` as untracked symlinks; `sync-push.sh` refuses to commit a directory with one of
 those names, because a tracked copy would silently replace the symlink there.
 
