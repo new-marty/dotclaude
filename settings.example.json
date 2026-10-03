@@ -35,7 +35,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/scripts/sync-push.sh"
+            "command": "~/.claude/scripts/sync-push.sh",
+            "timeout": 30
           }
         ]
       }
