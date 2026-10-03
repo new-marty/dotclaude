@@ -4,8 +4,10 @@ title: Support pull-only devices with local customisations
 status: To Do
 assignee: []
 created_date: '2026-10-03 15:01'
+updated_date: '2026-10-03 15:46'
 labels: []
-dependencies: []
+dependencies:
+  - TASK-17
 priority: high
 ordinal: 16000
 ---
