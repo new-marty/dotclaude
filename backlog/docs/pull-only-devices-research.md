@@ -22,7 +22,7 @@ About 4 agents (2 desk research, 1 experiment, 1 design inspection), about 600k 
 
 | unit | stage | status | output | by | date | note |
 |---|---|---|---|---|---|---|
-| A general approaches | 1 desk research | running | | subagent | 2026-10-04 | |
+| A general approaches | 1 desk research | done_with_concerns | pull-only-research-1a.md | subagent (Opus 5.5) | 2026-10-04 | top: overlay for additions + local branch merged with rerere for shared-file edits |
 | B Claude Code mechanics | 1 desk research | running | | subagent | 2026-10-04 | |
 | experiments | 2 | untouched | | | | after A and B |
 | design document | 3 | untouched | | orchestrator | | |
