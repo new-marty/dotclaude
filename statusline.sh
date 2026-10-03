@@ -111,6 +111,10 @@ if [ -d "$HOME/.claude/.git" ]; then
     else
         ahead=$(git -C "$HOME/.claude" rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
         [ "${ahead:-0}" -gt 0 ] && CLAUDE_SYNC=" ${sep} ${C_YELLOW}.claude ⇡${ahead}${R}"
+        # sync-push.sh leaves this marker when it could not rebase or push.
+        if [ -f "$HOME/.claude/.git/claude-sync-diverged" ]; then
+            CLAUDE_SYNC=" ${sep} ${BOLD}${C_RED}⚠ .claude DIVERGED${R}"
+        fi
     fi
 fi
 

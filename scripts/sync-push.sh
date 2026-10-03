@@ -6,7 +6,8 @@
 # and OAuth tokens are ignored there and never reach the remote.
 set -uo pipefail
 
-DIR="$HOME/.claude"
+# CLAUDE_SYNC_DIR exists so tests can run against a scratch clone.
+DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 [ -d "$DIR/.git" ] || exit 0
 
 # Serialise concurrent sessions. mkdir is atomic on every filesystem macOS ships.
@@ -51,10 +52,44 @@ if ! git -C "$DIR" diff --cached --quiet; then
 $files"
 fi
 
+# The marker tells the statusline that the last push did not land for a reason
+# only a human can fix. A successful push removes it.
+MARK="$DIR/.git/claude-sync-diverged"
+
+# SessionEnd shows stderr to the user only when the hook exits 2 (hooks docs,
+# "Exit code 2 behavior per event"); stdout and exit 0 stay in the debug log.
+# So a failure the user must act on ends with exit 2.
+diverged() {
+    echo "[claude-sync] $1" >&2
+    echo "[claude-sync] inspect with: git -C ~/.claude log --oneline origin/main..HEAD" >&2
+    echo "$1" > "$MARK"
+    exit 2
+}
+
+# Another machine may have pushed since this session started. Replay our commits
+# on top of it; a plain push would be rejected as non-fast-forward. An offline
+# fetch is not an error here: the push below fails the same way and the
+# statusline shows the unpushed count.
+if git -C "$DIR" fetch -q origin main 2>/dev/null; then
+    if ! git -C "$DIR" merge-base --is-ancestor origin/main HEAD 2>/dev/null; then
+        if ! out=$(git -C "$DIR" rebase origin/main 2>&1); then
+            git -C "$DIR" rebase --abort >/dev/null 2>&1
+            echo "$out" >&2
+            diverged "rebase onto origin/main conflicted; local commits were not pushed (tree restored)."
+        fi
+    fi
+fi
+
 # An offline machine or a locked SSH agent makes this fail. That is recoverable:
 # the commits stay local and the statusline reports how many are unpushed.
-if ! out=$(git -C "$DIR" push origin HEAD:main 2>&1); then
-    echo "[claude-sync] push failed:" >&2
+if out=$(git -C "$DIR" push origin HEAD:main 2>&1); then
+    rm -f "$MARK"
+else
     echo "$out" >&2
+    case "$out" in
+        *"non-fast-forward"*|*"fetch first"*|*rejected*)
+            diverged "push rejected: origin/main moved during the push." ;;
+        *) echo "[claude-sync] push failed (see above); commits stay local." >&2 ;;
+    esac
 fi
 exit 0

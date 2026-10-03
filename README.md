@@ -100,6 +100,7 @@ sequenceDiagram
     P->>G: mkdir .git/claude-sync.lock (one session at a time)
     P->>G: git add -A (only what .gitignore allows)
     P->>G: commit "Sync Claude Code configuration from <host>"
+    P->>R: git fetch, rebase onto origin/main (abort on conflict)
     P->>R: git push origin HEAD:main
     R-->>CC: statusline shows "⇡N" until the push lands
 ```
@@ -140,6 +141,10 @@ split the same way.
 The end of the first line is the sync state, and it is empty when all is well. `.claude ⇡N`
 means N commits have not reached GitHub: the SSH agent is locked, the network is down, or
 the remote moved ahead. `⚠ .claude CONFLICT` means the last pull stopped on a conflict.
+`⚠ .claude DIVERGED` means the last push found the other machine's commits and could not
+rebase onto them without a conflict (or was rejected anyway); the rebase was aborted, the
+commits are still local, and the marker `.git/claude-sync-diverged` stays until a push lands.
+`sync-push.sh` also exits 2 then, which is how a SessionEnd hook gets its stderr shown.
 
 ## A conflict stops both hooks until you resolve it by hand
 
