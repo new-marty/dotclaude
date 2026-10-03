@@ -1,9 +1,11 @@
 ---
 id: TASK-2
 title: Make z-write-task and z-start-task follow the project's tracker
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-dotclaude'
 created_date: '2026-10-03 08:36'
+updated_date: '2026-10-03 11:54'
 labels: []
 dependencies: []
 priority: medium

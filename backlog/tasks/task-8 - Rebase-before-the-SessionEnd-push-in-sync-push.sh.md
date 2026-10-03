@@ -1,9 +1,11 @@
 ---
 id: TASK-8
 title: Rebase before the SessionEnd push in sync-push.sh
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-dotclaude'
 created_date: '2026-10-03 08:59'
+updated_date: '2026-10-03 11:54'
 labels: []
 dependencies: []
 priority: medium
