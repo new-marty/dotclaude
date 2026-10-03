@@ -64,7 +64,8 @@ Add the rules every agent follows:
 
 - Return findings as text. Some subagents cannot write report files; the orchestrator saves them.
 - Commit only your own paths (`git commit -m ... -- <paths>`), never `git add -A` or `commit -a`,
-  because the working tree is shared. Retry on an index lock.
+  because the working tree is shared. Retry on an index lock. Never run `git stash`, `checkout`
+  or `reset` there either: they move other agents' uncommitted work.
 - Sign commits with the model you ran on, as your own session instructions state. Do not
   hard-code a name in the brief; an agent on a different model would sign falsely.
 - End with one status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT or BLOCKED (obra/superpowers).
