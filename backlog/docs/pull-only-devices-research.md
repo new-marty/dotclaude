@@ -120,3 +120,37 @@ or ~/.claude except the one allowed test in X4.
 - Output: per experiment, the commands and the trimmed real output, then a table "approach ×
   (clean pull / same-line conflict / new upstream file at a local path / effort / what the user
   sees)". Mark what you did not run. Return as text. End with a status.
+
+## Implementation (TASK-16), agreed 2026-10-04
+
+| unit | stage | status | commit | last inspection (dropped / weakened / added / changed / form) | by | date | note |
+|---|---|---|---|---|---|---|---|
+| TASK-16 | implement | running | | | subagent, worktree | 2026-10-04 | |
+| TASK-16 | verify | untouched | | | | | independent |
+| mac-mini opt-in | — | filed | | | | | ~/server T-479, after this lands |
+
+### Brief: TASK-16 implement
+
+The specification is `backlog/docs/design-pull-only-devices.md` (revision 6, agreed). Implement
+section 7 exactly; where the design leaves a detail open, choose the simplest option that keeps
+G1 to G5 and say what you chose in the report.
+
+- Target and owned paths: `.gitignore`, `scripts/sync-push.sh`, `scripts/sync-pull.sh`,
+  `statusline.sh`, `scripts/test-sync-push.sh`, `scripts/test-pull-only.sh` (new), `README.md`.
+  Nothing else; in particular not `backlog/`, not `settings.example.json`, not `skills/`.
+- Constraints: with `dotclaude.role` unset every script behaves byte-for-byte as before (G5); keep
+  the stderr strings "would be overwritten by" and "pull failed" (the mac-mini's cron greps them);
+  macOS bash 3.2 and BSD tools; never run anything against the real `~/.claude` (use
+  `CLAUDE_SYNC_DIR` and scratch clones). The guard hook on this machine refuses commands that
+  contain paths shaped like `~/.claude/settings.json`; use scratch paths in tests, never work
+  around the guard. README is English; follow `skills/z-writing-for-readers` ("Text for agents"
+  where it applies) and run `z-humanizer` on new prose.
+- What must survive: every existing README fact that is still true; the mac-mini's five skills
+  (they become ignored, not deleted); the existing `test-sync-push.sh` cases.
+- Observable acceptance: `bash scripts/test-sync-push.sh` and `bash scripts/test-pull-only.sh`
+  pass (paste the output); `bash -n` on every changed script; `git check-ignore -v` output for
+  each path in the design's 4.1 block plus `skills/z-a/rules/x.md` (must not be ignored);
+  `statusline.sh` rendered with the sample input from design section 9 in the three roles.
+- Output: what changed per file, choices made where the design was open, the outputs above,
+  commit hashes (commit only your paths, Conventional Commits, your own Co-Authored-By line),
+  status. Do not push.
