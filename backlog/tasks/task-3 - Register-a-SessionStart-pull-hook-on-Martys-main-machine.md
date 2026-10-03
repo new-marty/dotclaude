@@ -4,7 +4,7 @@ title: Register a SessionStart pull hook on Marty's main machine
 status: To Do
 assignee: []
 created_date: '2026-10-03 08:36'
-updated_date: '2026-10-03 14:41'
+updated_date: '2026-10-03 14:50'
 labels: []
 dependencies: []
 priority: low
@@ -30,4 +30,6 @@ Marty's main machine has no SessionStart pull hook for ~/.claude; it pulls manua
 2026-10-03: macbook-pro offline in Tailscale; needs Marty at that machine.
 
 2026-10-03: the main machine's session reports sync-pull.sh is already registered on SessionStart there (AC#1, reported, not seen from the mac-mini). README sentence fixed in this commit (AC#3). Same session reported that its ~/.claude lacks backlog/ and the README sentence, both on origin/main since 17:36-17:37 (7a1b629, 1ea9625): its ~/.claude looks stuck before them, so the pull may be failing there. AC#2 open: this commit is the test push.
+
+2026-10-03 correction: the main machine's pull was not failing. Its session started at 17:09, before 7a1b629 (17:36); HEAD was f6802ea, 45 behind, no local-only commits, no claude-sync-diverged marker. A manual sync-pull.sh exited 0 and reached 77a469b. AC#2 still needs a new session there that pulls this commit on its own.
 <!-- SECTION:NOTES:END -->
