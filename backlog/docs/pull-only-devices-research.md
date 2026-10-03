@@ -24,9 +24,9 @@ About 4 agents (2 desk research, 1 experiment, 1 design inspection), about 600k 
 |---|---|---|---|---|---|---|
 | A general approaches | 1 desk research | done_with_concerns | pull-only-research-1a.md | subagent (Opus 5.5) | 2026-10-04 | top: overlay for additions + local branch merged with rerere for shared-file edits |
 | B Claude Code mechanics | 1 desk research | done_with_concerns | pull-only-research-1b.md | subagent (Opus 5.5) | 2026-10-04 | layer works with today's .gitignore; no overlay for shared files; strictPluginOnlyCustomization is the main company risk |
-| experiments | 2 | running | | subagent | 2026-10-04 | X1 overlay, X2 local branch + rerere, X3 today's autostash, X4 Claude Code checks |
-| design document | 3 | untouched | | orchestrator | | |
-| design inspection | 4 | untouched | | | | independent |
+| experiments | 2 | done_with_concerns | results table in design-pull-only-devices.md | subagent (Opus 5.5) + orchestrator (X4) | 2026-10-04 | X4 blocked by this machine's guards for the subagent; orchestrator re-ran it in scratch projects (project-level rules and settings.local.json); user-level ~/.claude/rules not tested |
+| design document | 3 | done | design-pull-only-devices.md | orchestrator (Opus 5.5) | 2026-10-04 | |
+| design inspection | 4 | running | | subagent | 2026-10-04 | independent |
 
 ## Brief: Stage 1A, general approaches
 
