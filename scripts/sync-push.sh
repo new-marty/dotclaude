@@ -11,7 +11,11 @@ DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 [ -d "$DIR/.git" ] || exit 0
 
 # A pull-only device never pushes (README "Pull-only devices").
-[ "$(git -C "$DIR" config dotclaude.role 2>/dev/null)" = pull-only ] && exit 0
+role=$(git -C "$DIR" config dotclaude.role 2>/dev/null || true)
+[ "$role" = pull-only ] && exit 0
+if [ -n "$role" ]; then
+    echo "[claude-sync] unknown dotclaude.role '$role'; treating this machine as a writer" >&2
+fi
 
 # Serialise concurrent sessions. mkdir is atomic on every filesystem macOS ships.
 LOCK="$DIR/.git/claude-sync.lock"

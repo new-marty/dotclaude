@@ -24,7 +24,11 @@ fi
 # A pull-only device (git config dotclaude.role pull-only) never rebases or
 # autostashes: on main it only fast-forwards, on any other branch it only
 # fetches and says how far behind it is. See README "Pull-only devices".
-if [ "$(git -C "$DIR" config dotclaude.role 2>/dev/null)" = pull-only ]; then
+role=$(git -C "$DIR" config dotclaude.role 2>/dev/null || true)
+if [ -n "$role" ] && [ "$role" != pull-only ]; then
+    echo "[claude-sync] unknown dotclaude.role '$role'; treating this machine as a writer" >&2
+fi
+if [ "$role" = pull-only ]; then
     if ! out=$(git -C "$DIR" fetch -q origin 2>&1); then
         echo "[claude-sync] pull failed:" >&2
         echo "$out" >&2
@@ -33,7 +37,7 @@ if [ "$(git -C "$DIR" config dotclaude.role 2>/dev/null)" = pull-only ]; then
     fi
     branch=$(git -C "$DIR" branch --show-current 2>/dev/null)
     if [ "$branch" = main ]; then
-        if ! out=$(git -C "$DIR" merge --ff-only origin/main 2>&1); then
+        if ! out=$(git -C "$DIR" -c advice.diverging=false merge --ff-only origin/main 2>&1); then
             echo "[claude-sync] pull failed:" >&2
             echo "$out" >&2
             echo "[claude-sync] local edits to shared files block a fast-forward; see README \"Pull-only devices\"" >&2

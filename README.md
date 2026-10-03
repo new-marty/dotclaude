@@ -61,7 +61,7 @@ flowchart LR
         n_dev["~/dev/dotclaude<br/>separate clone for development"]
     end
     m_cfg -- "SessionEnd: sync-push.sh<br/>add · commit · push" --> main
-    main -- "SessionStart: sync-pull.sh<br/>pull --rebase --autostash" --> m_cfg
+    main -- "SessionStart: sync-pull.sh<br/>pull --rebase --autostash<br/>(writers; devices fast-forward)" --> m_cfg
     main -- "05:00 cron: git pull" --> n_cfg
     n_dev -- "push, on request" --> main
 ```
@@ -90,6 +90,7 @@ sequenceDiagram
     participant P as sync-pull.sh
     participant G as .git
     participant R as origin/main
+    Note over P,R: writer path; a pull-only device fetches and fast-forwards instead
     CC->>P: SessionStart hook
     P->>G: rebase in progress or unmerged files?
     alt conflict left from an earlier run
@@ -111,7 +112,8 @@ sequenceDiagram
 The pull uses `--autostash`, so edits you made on this machine before the session are
 shelved, the remote commits come in underneath, and the edits are put back on top. If
 putting them back conflicts, the rebase stops there and both hooks refuse to touch the
-repository until you resolve it (below).
+repository until you resolve it (below). A pull-only device does not autostash; it only
+fast-forwards (see [Pull-only devices](#pull-only-devices)).
 
 The push takes a lock by creating a directory, because two sessions can end at the same
 moment. The second one to arrive exits without committing; its changes wait for the next
@@ -197,8 +199,8 @@ Keep device files at these paths only. A root-level file with any other name is 
 but if upstream ever adds a file of that name, the pull overwrites the device's copy without
 a word. Never `git add -f` a path in this list: the same overwrite happens in the other
 direction. `scripts/test-sync-push.sh` fails if one of them becomes tracked or stops being
-ignored. `CLAUDE.md` ends with `@~/.claude/CLAUDE.machine.md`, so the file loads when it exists, and a
-missing one does not fail a session.
+ignored. `CLAUDE.md` ends with `@~/.claude/CLAUDE.machine.md`, so the file loads when it
+exists, and a missing one does not fail a session.
 
 ### Updating without local edits
 
@@ -335,8 +337,8 @@ cp -n settings.example.json settings.json
 one plugin, `dotclaude`. The plugin's root is the repository root, so claude.ai finds the
 skills in `skills/` and no file has to move. Add the repository once on claude.ai under
 Customize > Plugins > Add > Add marketplace (the repository is public), and turn on Sync
-automatically so that pushes to `main` reach the account. [Plugins](https://claude.com/docs/plugins/overview) in the Claude docs has the
-steps.
+automatically so that pushes to `main` reach the account.
+[Plugins](https://claude.com/docs/plugins/overview) in the Claude docs has the steps.
 
 Only `skills/` takes effect there. Chat on the web, in the desktop app and in the mobile
 apps loads a plugin's skills and ignores its output styles and hooks, and `CLAUDE.md` is

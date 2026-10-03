@@ -139,3 +139,17 @@ case "$out" in *"local"*) fail "6: device on main shows local: $out" ;; esac
 g "$T/e" switch -q -c local; g "$T/e" branch -q -u origin/main
 out=$(line1 "$T/e"); case "$out" in *".claude local ⇣2"*) ;; *) fail "6: device on local: $out" ;; esac
 echo "ok 6: statusline segments for writer, device on main, device on local"
+
+# 7. A diverged main refuses without git's rebase/merge hints, and an unknown role warns.
+git clone -q "$T/up.git" "$T/f"
+g "$T/f" config dotclaude.role pull-only
+echo fl > "$T/f/skills/z-a/f.md"; g "$T/f" add -A; g "$T/f" commit -qm f
+echo up7 > "$T/w/skills/z-a/up7.md"; commit_push upstream-7
+rc=0; CLAUDE_SYNC_DIR="$T/f" "$HERE/sync-pull.sh" 2>"$T/err" || rc=$?
+[ "$rc" = 0 ] || fail "7: exit $rc"
+has "pull failed" || fail "7: no 'pull failed'"
+! has "hint:" || fail "7: git advice leaked: $(cat "$T/err")"
+g "$T/f" config dotclaude.role bogus
+rc=0; CLAUDE_SYNC_DIR="$T/f" "$HERE/sync-pull.sh" 2>"$T/err" || rc=$?
+has "unknown dotclaude.role 'bogus'; treating this machine as a writer" || fail "7: no unknown-role warning"
+echo "ok 7: diverged main prints no git hints; unknown role warns"

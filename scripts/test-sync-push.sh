@@ -49,6 +49,16 @@ rc=0; CLAUDE_SYNC_DIR="$T/c" "$SCRIPT" 2>"$T/err" || rc=$?
 [ ! -s "$T/err" ] || fail "pull-only device printed something"
 echo "ok 3: pull-only exits 0, no commit, no push"
 
+# Case 3b: an unknown role warns once on stderr and behaves as a writer.
+echo u1 > "$T/c/scripts/u.sh"
+g "$T/c" config dotclaude.role pullonly
+rc=0; CLAUDE_SYNC_DIR="$T/c" "$SCRIPT" 2>"$T/err" || rc=$?
+[ "$rc" = 0 ] || fail "case 3b exit $rc"
+[ "$(grep -c "unknown dotclaude.role 'pullonly'" "$T/err")" = 1 ] || fail "no single warning"
+[ "$(g "$T/remote.git" show main:scripts/u.sh)" = u1 ] || fail "unknown role did not push as a writer"
+g "$T/c" config --unset dotclaude.role
+echo "ok 3b: unknown role warns and acts as a writer"
+
 # Case 4: the device block of .gitignore holds. For each path in it, a sample path
 # must be ignored (catches a "!" line that re-includes it) and nothing under it may
 # be tracked (catches a force-add). This repository's own .gitignore is checked.
