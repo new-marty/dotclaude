@@ -24,6 +24,10 @@
 !scripts/**
 !output-styles/**
 
+# The task list for this repository (Backlog.md), one markdown file per task.
+!backlog/
+!backlog/**
+
 # Skills claude.ai syncs down per account, under a directory named by the account
 # id. Runtime state, rewritten on every sync; another machine has its own copy.
 skills/synced/
