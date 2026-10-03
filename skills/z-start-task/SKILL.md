@@ -1,8 +1,8 @@
 ---
 name: z-start-task
-description: Start from "which task are we doing?" by reading the plan documents against the issues, agree on scope and design through back-and-forth, then go on to create the branch, review the design, implement, and self-review. Use it whenever the intent is to pick up work — "what should I work on next", "let us start a task", "pick up that issue", 「次何やる?」「タスク始めたい」「Issue に着手したい」「リファクタリングの続きをやろう」
-argument-hint: "[plan directory or issue number] [extra instructions](optional)"
-allowed-tools: Bash(git *), Bash(gh issue *), Bash(gh pr *), Bash(gh repo *), Read, Edit, Write, Glob, Grep
+description: Start from "which task are we doing?" by reading the plan documents against the tracked tasks, agree on scope and design through back-and-forth, then go on to create the branch, review the design, implement, and self-review. Use it whenever the intent is to pick up work — "what should I work on next", "let us start a task", "pick up that issue", 「次何やる?」「タスク始めたい」「Issue に着手したい」「リファクタリングの続きをやろう」
+argument-hint: "[plan directory or task or issue number] [extra instructions](optional)"
+allowed-tools: Bash(git *), Bash(backlog *), Bash(gh issue *), Bash(gh pr *), Bash(gh repo *), Read, Edit, Write, Glob, Grep
 ---
 
 Go from choosing the task to finished, self-reviewed work, building agreement at each step.
@@ -13,7 +13,7 @@ verification commands, development flow. Look them up in step 0 every time.
 
 1. The conversation starts from "which task are we doing?". Never start working straight away.
 2. Agreement is staged, coarse to fine. Write the opening of each stage at the level "How to explain" describes, and move to the finer discussion only once you have agreement.
-3. Do not trust an issue as a specification. The plan documents and the current code are what is real. When an issue and reality disagree, suspect the issue and propose rewriting it.
+3. Do not trust a task or issue as a specification. The plan documents and the current code are what is real. When a task and reality disagree, suspect the task and propose rewriting it.
 4. Do not skip the agreement checkpoints. The order is: agree on the task → explain the whole picture and grill → branch → design approval → implementation. Do not do the next stage's work before you have approval.
 5. For every proposal the user makes, write at least one alternative or one reason against it. When you have none, say "no objections" explicitly. Never reply with agreement alone.
 
@@ -40,10 +40,15 @@ Write the whole picture assuming the reader has read neither the issue nor the p
 
 Before starting the conversation, settle how work is actually done in this repository.
 
-- Repository name: `gh repo view --json nameWithOwner -q .nameWithOwner`
-- Base branch: look at the base of recently merged PRs (`gh pr list --state merged --limit 5 --json baseRefName`). Do not assume `main`. Ask the user when it is unclear.
+- Tracker: find where this project keeps its tasks, with the first rule that matches. Say which one you found, and why, in step 2
+  1. `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md` names a tracker or a task procedure. That rule wins; use the commands it gives in place of the ones below
+  2. `backlog/config.yml` exists and `backlog` runs: Backlog.md
+  3. `gh repo view` succeeds: GitHub Issues
+  4. None of these: ask where the tasks live
+- Repository name, when the tracker or the PRs are on GitHub: `gh repo view --json nameWithOwner -q .nameWithOwner`
+- Base branch: look at the base of recently merged PRs (`gh pr list --state merged --limit 5 --json baseRefName`) or, without a GitHub remote, at `git branch -r` and the default branch. Do not assume `main`. Ask the user when it is unclear.
 - Plan documents: look in `docs/plans/`, `docs/specs/`, `plans/`, `ROADMAP.md`, and the like. If a README, INDEX, or audit file holds the overall picture, start from that.
-- Development flow documents: read `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, and any flow documents under `docs/`. Where they define issue status handling, branch naming, or how to request review, they take precedence over the steps in this skill.
+- Development flow documents: read `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, and any flow documents under `docs/`. Where they define task status handling, branch naming, or how to request review, they take precedence over the steps in this skill.
 - Verification commands: identify what has to pass before pushing, from `Taskfile.yml`, `Makefile`, the scripts in `package.json`, and the CI configuration (`.github/workflows/`).
 - Tools for exploring the code: use an index such as GitNexus where the environment has one, and Grep and Glob otherwise.
 
@@ -52,23 +57,28 @@ Where a premise you established might differ from what the user believes — the
 ### 1. Take stock
 
 - Read the plan documents and grasp what the plan is trying to do
-- Fetch what has been filed and what is in flight:
+- Fetch what has been filed and what is in flight. List the tasks with the command for the tracker found in step 0, then the PRs and branches:
   ```
+  # Backlog.md: list, then read one (description, criteria, comments)
+  backlog task list --plain
+  backlog task view <id> --plain
+  # GitHub Issues
   gh issue list --state all --limit 100
+  # PRs, when the project has a GitHub remote, and branches
   gh pr list
   git branch -a
   ```
-- Build a picture of how far things have got, from open and closed issues, PRs in flight, and existing branches
+- Build a picture of how far things have got, from open and closed tasks, PRs in flight, and existing branches
 
-When `$ARGUMENTS` carries a plan directory or an issue number, narrow to that; otherwise draw candidates from the whole plan. Respect any extra instructions after the number.
+When `$ARGUMENTS` carries a plan directory or a task or issue number, narrow to that; otherwise draw candidates from the whole plan. Respect any extra instructions after the number.
 
 ### 2. Discuss the task
 
 - Put "which task are we doing?" to the user with AskUserQuestion. Format:
   - Two or three sentences of the whole picture first: what this plan is trying to do. Do not assume the user holds the whole picture
-  - At most three candidates. For each: what the issue does in one line, how it sits against dependencies and PRs in flight, and your recommendation with its reason
-- Share here anything the plan-against-issues comparison turned up: gaps never filed, work tracked twice, drift from the plan, a change in urgency. When issues need rewriting, propose that before picking up a task
-- When filing or rewriting an issue, make the body say what happens if it is left alone (an incident, a longer lead time), and make the acceptance criteria verifiable
+  - At most three candidates. For each: what the task does in one line, how it sits against dependencies and PRs in flight, and your recommendation with its reason
+- Share here anything the plan-against-issues comparison turned up: gaps never filed, work tracked twice, drift from the plan, a change in urgency. When tasks need rewriting, propose that before picking up a task
+- When filing or rewriting a task, make the body say what happens if it is left alone (an incident, a longer lead time), and make the acceptance criteria verifiable
 
 ### 3. Explain the whole picture and grill it into shape
 
@@ -79,11 +89,11 @@ This is where agreement is won. Do not skip this stage and start working. Do not
    - How the current code or operation works, and where the problem is
    - What will be different when it is done (from the user's side, and from the code's side)
 
-   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user. Read the issue's comments too (`gh issue view <n> --comments`): a findings comment left at filing records what was already investigated. Use it as leads to verify against the code, not as a decision
+   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user. Read the task's comments too (`gh issue view <n> --comments`, or `backlog task view <id> --plain`, which includes them): a findings comment left at filing records what was already investigated. Use it as leads to verify against the code, not as a decision
 2. Give "what we are doing" and "what we are not doing", two or three lines each
 3. Call `z-grilling`. Ask at least one question on each of five things: the boundary of the scope, consistency with existing behavior, whether data migration is needed, how errors are handled, and how far the tests go. Anything not asked here comes back as rework after implementation
 4. Where the grilling exposed a mismatch, rewrite "what we are doing / what we are not doing" and agree again
-5. If a development flow document found in step 0 defines issue status handling, change the status here to mark the work started
+5. Mark the work started when the tracker or a flow document found in step 0 calls for it. In Backlog.md: `backlog task edit <id> -s "In Progress"`, and `-a @name` when the project assigns owners. On GitHub, only where a flow document defines a status to set. A document that defines its own status handling wins
 
 ### 4. Create the branch in a worktree
 
@@ -124,6 +134,6 @@ This is where agreement is won. Do not skip this stage and start working. Do not
 - Do not create a PR automatically
 - Do not force push. Fix an already-pushed branch with an additional commit
 - Where commit signing uses 1Password, a locked vault fails with `failed to write commit object`. Ask for it to be unlocked and retry
-- When an issue is too large, propose splitting it before proceeding
+- When a task is too large, propose splitting it before proceeding
 - Do not commit or push directly to a protected branch
 - Create branches in a worktree (step 4). Keep the base branch checkout free for any other task at any time

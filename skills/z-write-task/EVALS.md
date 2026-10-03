@@ -23,7 +23,7 @@ Each case fails if any check fails. The checks are all decidable by reading the 
       filed silently and not filed as issues of their own
 - [ ] "40 a month" appears rounded with a date, or not at all
 - [ ] The title reads as an outcome, not as an instruction to build something
-- [ ] Approval is asked for before `gh issue create` runs
+- [ ] Approval is asked for before the tracker's create command runs
 
 Failure looks like: a Design section in the body; three issues filed at once.
 
@@ -69,7 +69,7 @@ Failure looks like: three Tasks split by layer; an ordinal such as `(1/3)` in a 
       the BOM fix as a candidate with what confirmed it, and Shift_JIS as ruled out with
       its reason
 - [ ] `export/csv.ts` and `toCsv` appear in the comment, not in the body
-- [ ] After approval, the comment is posted right after `gh issue create`
+- [ ] After approval, the comment is posted right after the item is created
 
 Failure looks like: a body that restates the original report and nothing else, with the
 cause and the fix gone; or the fix written into the body as the plan.

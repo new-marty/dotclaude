@@ -1,7 +1,7 @@
 ---
 name: z-write-task
-description: Write an Epic, Story, Bug, or Task and file it on GitHub, so that a person can follow the work from the title alone and whoever picks it up later still decides the design from the code. Use it whenever the intent is to create or reshape work items — "file an issue", "turn this into a ticket", "break this story down", "write this up as an epic", 「Issue にして」「チケット切って」「タスクに分解して」「Epic を作りたい」. Use it as well when someone hands over a rough request and expects work items out of it, even if they never say the word issue. Not for writing the code, not for picking up work that already exists (`z-start-task`), and not for the pull request description (`z-create-pr`).
-allowed-tools: Bash(gh issue *), Bash(gh search *), Bash(gh api *), Bash(git *), Read, Glob, Grep
+description: Write an Epic, Story, Bug, or Task and file it in the project's own tracker (Backlog.md, a tracker its CLAUDE.md names, or GitHub Issues), so that a person can follow the work from the title alone and whoever picks it up later still decides the design from the code. Use it whenever the intent is to create or reshape work items — "file an issue", "turn this into a ticket", "break this story down", "write this up as an epic", 「Issue にして」「チケット切って」「タスクに分解して」「Epic を作りたい」. Use it as well when someone hands over a rough request and expects work items out of it, even if they never say the word issue. Not for writing the code, not for picking up work that already exists (`z-start-task`), and not for the pull request description (`z-create-pr`).
+allowed-tools: Bash(backlog *), Bash(gh issue *), Bash(gh search *), Bash(gh api *), Bash(git *), Read, Glob, Grep
 ---
 
 # Write a work item
@@ -23,6 +23,25 @@ where the investigation ended, not from the request it started with.
 Nothing in this file is a gate on starting work. A checklist that has to be fully satisfied
 before anyone may begin turns into pre-work that goes stale before it is used, which is the
 failure this skill exists to prevent.
+
+## Which tracker
+
+Settle this once, before step 1, with the first rule that matches:
+
+1. **The project says.** `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md` names a tracker or a
+   filing procedure. That rule wins over everything below. Follow it, and where it names
+   a CLI or a document, use that in place of the commands in this skill.
+2. **Backlog.md.** `backlog/config.yml` exists and the `backlog` command runs. Use
+   `BACKLOG.md` for the commands.
+3. **GitHub Issues.** Neither of the above, and `gh repo view` succeeds. Use `GITHUB.md`.
+4. **None of these.** Ask where the item should go. Do not guess.
+
+Say which tracker you found, and by which rule, in the approval at step 6. A repository
+can have both `backlog/` and GitHub issues; rule 2 comes first because that is where its
+work is tracked.
+
+The rest of this file is written in terms of the levels, the body and the findings. The
+tracker file says how each maps onto its fields, and which parts have no equivalent.
 
 ## The three levels
 
@@ -46,15 +65,16 @@ the burden of proof described under Splitting.
 ## Recording the level in the tracker
 
 The levels above are promises. The type field is where they are recorded, and the two
-vocabularies do not line up: each GitHub organization defines its own set, and Story and
-Chore are usually absent from it. Read the set before filing:
+vocabularies do not line up: a tracker defines its own set, and Story and Chore are
+usually absent from it. Read the set before filing. In Backlog.md it is the `--type`
+list in `backlog task create --help`. On GitHub each organization defines its own:
 
 ```sh
 gh api /orgs/<org>/issue-types --jq '.[] | [.name, .description] | @tsv'
 ```
 
-Map by what the item does, not by what the level is called. Where an organization offers
-Epic, Task, Bug and Feature:
+Map by what the item does, not by what the level is called. Where the tracker offers
+Epic, Task, Bug and Feature (`BACKLOG.md` has the Backlog.md mapping):
 
 | Level | Type to set |
 | --- | --- |
@@ -64,8 +84,8 @@ Epic, Task, Bug and Feature:
 | Task split out of a Story | Task |
 | Bug | Bug |
 
-Set the type on every issue, children included. Filing a parent with a type and leaving its
-children without one is the common failure, and it is the worst one: an issue with no type
+Set the type on every item, children included. Filing a parent with a type and leaving its
+children without one is the common failure, and it is the worst one: an item with no type
 drops out of every query and rollup that filters by type, and the children are where the
 work actually sits. A label saying `bugfix` does not stand in for the Bug type — the two
 fields are read by different tools.
@@ -128,7 +148,7 @@ contradicts it is the failure this section exists to prevent.
 ## Titles
 
 The grammar says which level it is, so nobody has to open it. Keep the type out of the
-title — GitHub has a field for it.
+title — the tracker has a field for it.
 
 ```text
 Epic   [invoice] Receive invoices without asking support
@@ -250,9 +270,10 @@ its own preparatory PR.
 
 ## References between items
 
-Relationships go in native fields — parent, sub-issue, blocked-by, and `Closes` on the PR.
-GitHub numbers issues and pull requests from one sequence, so `#123` on its own says
-neither which kind it is nor which level; a native field renders the title instead, and it
+Relationships go in native fields — parent, sub-issue, blocked-by, and `Closes` on the PR
+(in Backlog.md: `-p` and `--depends-on`; see `BACKLOG.md`). GitHub numbers issues and
+pull requests from one sequence, so `#123` on its own says neither which kind it is nor
+which level; a native field renders the title instead, and it
 never goes stale.
 
 When a relationship has no field for it — a decision that rests on an earlier discussion,
@@ -261,9 +282,9 @@ invoice as PDF`.
 
 ## Steps
 
-1. **Establish the repository's premises.** Which issue types exist, whether Projects is in
-   use, what language the existing issues are written in. Do not assume them; `GITHUB.md`
-   has the commands.
+1. **Establish the repository's premises.** Which tracker (see "Which tracker"), which
+   types exist, whether Projects is in use, what language the existing items are written
+   in. Do not assume them; `BACKLOG.md` and `GITHUB.md` have the commands.
 2. **Search before writing.** Look for an item that already covers this, and for an Epic
    this belongs under. On a hit, say so and propose commenting on the existing item rather
    than filing beside it.
@@ -274,7 +295,7 @@ invoice as PDF`.
    `z-japanese-proofreading` for Japanese). Add `z-review-finding` for a Bug.
 5. **Run the checks below**, and fix what fails before showing anything.
 6. **Show the title, the body, and the findings comment, and get approval.** Do not run
-   `gh issue create` first.
+   the create command first.
 7. **File it, post the findings comment, then set the relationships in the native fields**
    — parent, type, blocked-by. Return the URL.
 

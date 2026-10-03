@@ -1,7 +1,7 @@
 # Filing on GitHub
 
-Read this at step 1 and step 7 of `SKILL.md`. Everything below was checked against
-gh 2.100.0.
+Read this at step 1 and step 7 of `SKILL.md` when the tracker is GitHub Issues (see
+"Which tracker" there). Everything below was checked against gh 2.100.0.
 
 ## Establishing the premises
 
