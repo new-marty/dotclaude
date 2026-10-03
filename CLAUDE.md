@@ -52,10 +52,11 @@ carries no prefix. Leave it that way.
    When stating what you did or what changed, write it from the output of commands you ran
    this turn. For anything you have no output for, say you did not verify it.
 
-# Editing this repository
+# Editing dotclaude (`~/.claude`)
 
-`~/.claude` is developed on more than one machine. Pull before you edit it, rebase onto
-`origin/main` before you push, and never force-push.
+The dotclaude repository (`~/.claude`, github.com/new-marty/dotclaude) is developed on
+more than one machine. Pull before you edit it, rebase onto `origin/main` before you push,
+and never force-push.
 
 # When to read a skill
 
