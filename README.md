@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Eight paths travel between machines; `settings.json` stays home
+## Nine paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -20,6 +20,7 @@ handful of files that are configuration.
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
+| `backlog/` | Tasks for this repository (Backlog.md) |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the
 machine where Orca runs, Orca writes thirteen hooks into it; the headless Mac mini runs
