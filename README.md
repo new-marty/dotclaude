@@ -75,8 +75,8 @@ context for a week, so `/clear` costs nothing that was written down.
 
 The mac-mini's `~/.claude` only pulls. The mac-mini develops this repository in a separate
 clone, `~/dev/dotclaude`, and pushes from there when asked; the `~/.claude` copy never
-holds its edits. Marty's main machine has no `SessionStart` pull hook installed yet, so it
-pulls by hand for now. Tasks for this repository live in `backlog/` (Backlog.md), not in
+holds its edits. Marty's main machine pulls with the `SessionStart` hook and pushes with
+the `SessionEnd` hook. Tasks for this repository live in `backlog/` (Backlog.md), not in
 GitHub Issues.
 
 Within one session the two scripts do this:
