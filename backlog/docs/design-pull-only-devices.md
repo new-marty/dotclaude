@@ -1,6 +1,6 @@
 # Design: pull-only devices (TASK-16)
 
-Status: proposal, revision 5, 2026-10-04. Revision 4 specified the changes file by file; an
+Status: proposal, revision 6, 2026-10-04. Revision 4 specified the changes file by file; an
 independent inspection of it (1 goal missed, 6 gaps, 3 wrong claims, 4 breaks, 4
 simplifications) is folded in here, and three of its four simplifications are taken. Evidence:
 `pull-only-research-1a.md`, `pull-only-research-1b.md`, and "Evidence" at the end.
@@ -9,7 +9,8 @@ simplifications) is folded in here, and three of its four simplifications are ta
 
 dotclaude assumes every machine both pulls and pushes. Two kinds of machine do not push:
 
-- the mac-mini, whose `~/.claude` only pulls (a cron job runs `scripts/sync-pull.sh` at 05:00)
+- the mac-mini, whose `~/.claude` only pulls (`daily-maintenance` calls `~/server/bin/dotclaude-sync.sh`,
+  which runs `scripts/sync-pull.sh`, every morning)
   and already keeps a local layer: `CLAUDE.machine.md` and five untracked skills;
 - the company Mac (and future devices like it), which cannot push, pulls by hand, and may not be
   allowed to run hooks or scripts.
@@ -56,10 +57,11 @@ Non-goals: pushing from a device; delivering dotclaude when a company blocks `~/
 # --- Device-local layer (README "Pull-only devices") ---
 # Paths a device keeps for itself. Never track or force-add anything here: a pull
 # would overwrite the device's file without a word.
-# Root files and rules/ are already ignored by "*" above; they are listed for the record.
-CLAUDE.machine.md
-statusline.local.sh
-rules/
+# The root entries are anchored with "/" so that a rules/ directory inside a skill
+# or under scripts/ stays trackable. "*" already ignores them; they are listed for the record.
+/CLAUDE.machine.md
+/statusline.local.sh
+/rules/
 skills/local-*
 output-styles/local-*
 # The mac-mini's own skills, kept under the names its agents call.
@@ -159,7 +161,7 @@ every script runs exactly as today (G5).
 
 | state | action | message |
 |---|---|---|
-| on `main` | `git pull --ff-only` | none on success. On refusal: git's own output (which contains "would be overwritten by" when it names files), then `[claude-sync] pull failed: local edits to shared files block a fast-forward; see README "Pull-only devices"` |
+| on `main` | `git fetch`; if that fails, the existing `pull failed:` block and stop. Then `git merge --ff-only origin/main` | none on success. If the merge refuses: git's own output (which contains "would be overwritten by" when it names files), then `[claude-sync] local edits to shared files block a fast-forward; see README "Pull-only devices"`. Fetching first keeps a network failure from being reported as local edits |
 | on any other branch, or detached | `git fetch` only | `[claude-sync] on <branch>, N commits behind origin/main; run: git -C ~/.claude merge origin/main` when N > 0, where N is `git rev-list --count HEAD..origin/main` |
 | fetch or pull fails for another reason | nothing more | the existing `[claude-sync] pull failed:` block |
 
@@ -172,7 +174,8 @@ no network call; on a branch other than `main` it also shows `local`. The `CONFL
 stays. `DIVERGED` never appears, because sync-push writes it and exits early here.
 
 `sync-pull.sh` and `statusline.sh` read `${CLAUDE_SYNC_DIR:-$HOME/.claude}`, as `sync-push.sh`
-already does, so tests can point them at a scratch clone.
+already does, so tests can point them at a scratch clone. In `statusline.sh` that covers the git
+checks and the `settings.json` read; the usage cache and the keychain lookup are untouched.
 
 ## 6. Setting up a device
 
@@ -221,7 +224,7 @@ deliberate choice about company policy.
 | `scripts/test-sync-push.sh` | cases: pull-only exits without committing; the device block is ignored and untracked |
 | `scripts/test-pull-only.sh` | new; the scenarios in section 9 |
 | `README.md` | new section "Pull-only devices": the concepts (3), the table in 4.3, the commands in 5.1, 5.2 and 6, and the self-check. Existing text: the sentence "A pull-only machine drops the SessionEnd hook and pulls whenever it likes" points to the new section; the conflict section says it is for writers; the paragraph on the mac-mini's six untracked skills says they are now ignored and points to the device block; the plugin paragraph's claim that the repository is private is corrected to public |
-| mac-mini, in `~/server` (separate task) | confirm `git -C ~/.claude status` is clean, then `git config dotclaude.role pull-only` in `~/.claude`; add "local edits to shared files" to the reasons `dotclaude-sync.sh` reports |
+| mac-mini, in `~/server` (separate task) | confirm `git -C ~/.claude status` is clean, then `git config dotclaude.role pull-only` in `~/.claude`. In `dotclaude-sync.sh`, test for "local edits to shared files" before the existing "would be overwritten by" test (git's own text comes first in the output) and report it as a red line, rc=1; a fast-forward refusal is not "network/auth?". Behaviour after opt-in was traced with a stubbed copy: clean updates and no-change days report as today |
 
 ## 8. Failure modes
 
@@ -250,8 +253,9 @@ temporary directory, sets `CLAUDE_SYNC_DIR` for the device, and asserts:
 4. `sync-push.sh` with the role set exits 0 and creates no commit.
 5. With the role unset, the existing `test-sync-push.sh` cases pass unchanged.
 
-`statusline.sh` is rendered with sample input on a writer, a pull-only device on `main` behind
-by two commits, and one on `local`.
+`statusline.sh` is rendered with a sample input that includes `rate_limits.five_hour` and
+`rate_limits.seven_day` (so it takes the early exit and makes no keychain or network call) on a
+writer, a pull-only device on `main` behind by two commits, and one on `local`.
 
 ## 10. Decisions for Marty
 
@@ -279,4 +283,7 @@ Experiments 2026-10-04 (git 2.50.1, Claude Code 2.1.288) on scratch repositories
   `!skills/**` without a trailing slash; `git add -A` then skips them.
 - `git diff --name-only` quotes non-ASCII paths; `-z` with `read -d ''` does not.
 - `.claude-plugin` ships tracked files only, so ignoring these paths does not change the plugin.
-Not tested: user-level `~/.claude/rules/`; the plugin fallback; a real company Mac.
+- Revision 5 was inspected again (12 of 14 fixed, 2 partly, 4 new gaps); revision 6 fixes those
+  four, checked by reading only.
+Not tested: user-level `~/.claude/rules/`; the plugin fallback; a real company Mac; the
+mac-mini's own `~/.claude` state.
