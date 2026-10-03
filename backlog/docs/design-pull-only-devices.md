@@ -1,8 +1,9 @@
 # Design: pull-only devices (TASK-16)
 
-Status: proposal, revision 2, 2026-10-04. Evidence: `pull-only-research-1a.md` (approaches),
-`pull-only-research-1b.md` (Claude Code mechanics), the experiments below, and an independent
-inspection that re-ran every command sequence (22 findings, all addressed in this revision).
+Status: proposal, revision 3, 2026-10-04. Evidence: `pull-only-research-1a.md` (approaches),
+`pull-only-research-1b.md` (Claude Code mechanics), the experiments below, and two independent
+inspections that re-ran the command sequences. Their findings are addressed in this text; the
+script and README changes under "Changes" are not implemented yet.
 
 ## Requirements
 
@@ -28,7 +29,7 @@ inspection that re-ran every command sequence (22 findings, all addressed in thi
 | Upstream deletes a file edited locally | `CONFLICT (modify/delete)`, `UD`; `git rm` accepts the deletion, `git add` keeps the file |
 | Uncommitted edit to a shared file, then merge | if upstream touched that file: "Your local changes would be overwritten by merge. Aborting", nothing lost |
 | `git switch main` on the device | the tree reverts to a stale `main`; local edits disappear from the tree until switching back |
-| `rerere` | replays a resolution only for a byte-identical conflict (after `merge --abort` or a reset and a retry); a new upstream edit to the same line asks again |
+| `rerere` | replayed a resolution in one run (reset and retry) but not in another (the documented resolve, abort, retry recorded no resolution); a new upstream edit to the same line asks again in any case. Not used |
 | Today's `pull --rebase --autostash` with an uncommitted edit on the same lines | exit 0, "Applying autostash resulted in conflicts"; unrelated edits left staged; a stash entry to drop |
 | A missing `@import` target in CLAUDE.md | the session runs; the line is not loaded |
 | `.claude/rules/*.md` at project level | loaded at launch. User level `~/.claude/rules/` is documented but not tested here (this machine's guard blocks writing there) |
@@ -72,10 +73,23 @@ rebase would replay every local commit and can stop several times. The branch is
 #### Setup, once per device (paste into a terminal)
 
 ```sh
-# 1. Get the repository. No ~/.claude yet:
+# 1a. No ~/.claude yet:
 git clone https://github.com/new-marty/dotclaude.git ~/.claude
-#    ~/.claude exists already (Claude Code has run here): follow README "A new machine needs the bootstrap script and one copy" to turn
-#    it into a clone, then commit whatever differs as the first local commit in step 3.
+
+# 1b. ~/.claude exists already (Claude Code has run here). Turn it into a clone without
+#     touching runtime files, then set aside the files that differ from the shared ones:
+cd ~/.claude
+git init -b main
+git remote add origin https://github.com/new-marty/dotclaude.git
+git fetch origin
+git reset origin/main                   # index = shared files; working files untouched
+git checkout-index -a                   # writes the shared files that do not exist here yet
+mkdir -p ~/claude-before
+git diff --name-only | while read -r f; do mkdir -p ~/claude-before/"$(dirname "$f")"; cp -p "$f" ~/claude-before/"$f"; done
+git restore .                           # take the shared version of every differing file
+#     Your previous versions are now in ~/claude-before/. Move what you want to keep into the
+#     Layer 1 places (for example old CLAUDE.md text into CLAUDE.machine.md).
+cd -
 
 # 2. Work on a local branch only, and remove main so it cannot be switched to by mistake.
 git -C ~/.claude switch -c local --track origin/main
@@ -84,15 +98,21 @@ git -C ~/.claude branch -D main
 # 3. Git settings for this repository only.
 git -C ~/.claude config pull.rebase false
 git -C ~/.claude config merge.conflictStyle zdiff3
-git -C ~/.claude config rerere.enabled true
-git -C ~/.claude config user.name  "$(id -un) (device)"     # if the Mac has no git identity
-git -C ~/.claude config user.email "device@localhost"
-git -C ~/.claude config commit.gpgsign false                # local commits are never pushed
-git -C ~/.claude add -A && git -C ~/.claude commit -m "local: initial differences" || true
+[ -n "$(git -C ~/.claude config user.name)" ] || git -C ~/.claude config user.name "$(id -un)"
+[ -n "$(git -C ~/.claude config user.email)" ] || git -C ~/.claude config user.email "$(id -un)@localhost"
+git -C ~/.claude status --short         # must print nothing. "?? skills/<name>/" is a skill of
+                                        # your own: rename it to skills/local-<name>/
+                                        # (same for output-styles/), then check again
 
-# 4. Settings: copy the example, then edit it (see "Device settings").
-cp ~/.claude/settings.example.json ~/.claude/settings.json
+# 4. Settings: start from the example only if none exists, then edit (see "Device settings").
+cp -n ~/.claude/settings.example.json ~/.claude/settings.json
 ```
+
+Local commits use the device's git identity and signing settings. If the company's git
+configuration requires signing and the device has no key, commits on `local` fail; then either
+sign with a key the device has, or set `git -C ~/.claude config commit.gpgsign false` for this
+repository. That is a choice about company policy for commits that never leave the device; make
+it deliberately.
 
 #### Daily use, by hand
 
@@ -112,8 +132,8 @@ git -C ~/.claude merge origin/main              # 4. update
   to the wanted text, then `git add <file>` and `git commit --no-edit`.
 - `CONFLICT (modify/delete)`: upstream deleted a file this device changed. `git rm <file>` accepts
   the deletion; `git add <file>` keeps the local version. Then `git commit --no-edit`.
-- To back out of the update entirely: `git merge --abort`. With rerere on, retrying the same
-  update later replays the resolution recorded before the abort, if one was recorded.
+- To back out of the update entirely: `git merge --abort`. The next merge asks the same
+  questions again.
 - "untracked working tree files would be overwritten": upstream added a path this device uses.
   Rename the local file to its reserved name (`local-` prefix) and run the merge again.
 

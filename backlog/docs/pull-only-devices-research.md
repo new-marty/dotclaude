@@ -26,7 +26,7 @@ About 4 agents (2 desk research, 1 experiment, 1 design inspection), about 600k 
 | B Claude Code mechanics | 1 desk research | done_with_concerns | pull-only-research-1b.md | subagent (Opus 5.5) | 2026-10-04 | layer works with today's .gitignore; no overlay for shared files; strictPluginOnlyCustomization is the main company risk |
 | experiments | 2 | done_with_concerns | results table in design-pull-only-devices.md | subagent (Opus 5.5) + orchestrator (X4) | 2026-10-04 | X4 blocked by this machine's guards for the subagent; orchestrator re-ran it in scratch projects (project-level rules and settings.local.json); user-level ~/.claude/rules not tested |
 | design document | 3 | done | design-pull-only-devices.md | orchestrator (Opus 5.5) | 2026-10-04 | |
-| design inspection | 4 | running | | subagent | 2026-10-04 | independent |
+| design inspection | 4 | done | revision 3 | 2 subagents (Opus 5.5) + orchestrator | 2026-10-04 | round 1: 22 findings (4 requirement, 4 unbacked, 2 failing steps, 8 uncovered, 4 repo contradictions); round 2: 14 fixed, 4 partly, 4 plan-only, 4 new defects; round 3 (https bootstrap with backup, cp -n, conditional identity, signing as an explicit choice, rerere dropped, unprefixed-skill rename) checked by the orchestrator only: setup 1b re-run on scratch with explicit paths (the guard blocks ~/.claude-shaped paths), not independently re-verified |
 
 ## Brief: Stage 1A, general approaches
 
