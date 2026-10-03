@@ -1,9 +1,11 @@
 ---
 id: TASK-1
 title: Track a general browsing-web skill in dotclaude
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-dotclaude'
 created_date: '2026-10-03 08:36'
+updated_date: '2026-10-03 12:18'
 labels: []
 dependencies: []
 references:
