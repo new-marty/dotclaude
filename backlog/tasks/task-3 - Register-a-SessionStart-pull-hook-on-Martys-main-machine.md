@@ -4,6 +4,7 @@ title: Register a SessionStart pull hook on Marty's main machine
 status: To Do
 assignee: []
 created_date: '2026-10-03 08:36'
+updated_date: '2026-10-03 12:26'
 labels: []
 dependencies: []
 priority: low
@@ -22,3 +23,9 @@ Marty's main machine has no SessionStart pull hook for ~/.claude; it pulls manua
 - [ ] #2 A new session there pulls origin/main without a manual step (checked by starting a session after a remote change)
 - [ ] #3 README no longer says the main machine pulls manually
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-03: macbook-pro offline in Tailscale; needs Marty at that machine.
+<!-- SECTION:NOTES:END -->

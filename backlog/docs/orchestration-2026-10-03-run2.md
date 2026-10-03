@@ -8,9 +8,12 @@ each brief states.
 
 | unit | stage | status | commit | last inspection (dropped AC / bugs / scope creep) | by | date | note |
 |---|---|---|---|---|---|---|---|
-| TASK-1 | implement | running | | | subagent | 2026-10-03 | dotclaude + ~/server; push and mac-mini switch done by orchestrator |
-| T-459 (~/server) | implement | running | | | subagent | 2026-10-03 | unblocks TASK-10 |
-| TASK-10 | close | untouched | | | orchestrator | | after T-459: check-upstream.sh header + README line |
+| TASK-1 | implement | done_with_concerns | dotclaude 3f51c7a; ~/server 0e882bc | | subagent | 2026-10-03 | ~/server T-466 filed for the server side |
+| TASK-1 | verify | done | +b133c08, ~/server d5ae118 | 0 / 3 / 2 minor | subagent | 2026-10-03 | YAML description invalid (fixed b133c08); mac-mini notes unreachable (AGENTS.md proposal sent); dangling symlink until switch |
+| TASK-1 | switch (AC#5) | done | pushed d66f660 | | orchestrator | 2026-10-03 | symlink removed, ~/.claude pulled, verify agent-browser green |
+| T-459 (~/server) | implement | done_with_concerns | ~/server 07db819 | | subagent | 2026-10-03 | full verify 4/42 red, none from this change (visible: proposal-cards, repo-ci) |
+| T-459 (~/server) | verify | done | +905d9b6 | 0 / 0 / 1 minor | subagent | 2026-10-03 | streak write failure was silent: now a WARN in the log; bl done T-459 |
+| TASK-10 | close | done | d66f660 | | orchestrator | 2026-10-03 | header + README; check-upstream rc=0 from ~/.claude. Not yet seen in a real morning run |
 | TASK-12 | — | held | | | | | only Marty's main machine (macbook-pro) registers sync-push; it is offline. mac-mini registers no sync-push hook |
 | TASK-3 | — | held | | | | | needs macbook-pro (offline) |
 | TASK-7 AC#3 | — | held | | | | | Marty picked the handbook rewrite (~/server T-446, another session) as the real use |
@@ -50,3 +53,9 @@ Read the task: `bl show T-459` (run from any directory except ~/server; do not `
 - Do NOT edit dotclaude (`/Users/gary/dev/dotclaude` or `~/.claude`); the orchestrator closes TASK-10 there.
 - Observable acceptance: run the new step in isolation for exit 0, 1 and 2 (simulate 1 and 2, e.g. with a temporary upstream.tsv copy or a stub via an env override), showing what would be sent and what verify shows after the streak; `bash -n`; ~/server's `./verify` / `bin/verify` state for what you touched; run the code-review skill on your diff and address findings (T-459 DoD). Do not send real Telegram test messages unless the script's own test mode exists.
 - Output: per AC and DoD item, the evidence; commit hash; whether you ran `bl done` (only if every AC is evidenced — AC#3 "notify dotclaude" is satisfied by your report to the orchestrator); status.
+
+## What to change next time
+
+- A cross-repo move needs an order in the brief: the ~/server commit that deleted `skills/browsing-web` landed before the dotclaude push, so the live symlink dangled for about 20 minutes. Tell the implementer which side waits for the switch.
+- Ask implementers to parse SKILL.md frontmatter with a YAML loader. The unquoted `: ` passed review by eye and was caught only by the verifier.
+- Moving a skill out of a repo can strand its pointers in canonical files. Have the brief name `grep` over canonical files and require the proposal in the same unit.

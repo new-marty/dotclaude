@@ -4,6 +4,7 @@ title: Add the SessionEnd timeout to each machine's settings.json
 status: To Do
 assignee: []
 created_date: '2026-10-03 12:09'
+updated_date: '2026-10-03 12:26'
 labels: []
 dependencies: []
 priority: medium
@@ -20,3 +21,9 @@ settings.example.json now gives the sync-push SessionEnd hook "timeout": 30 (Ses
 <!-- AC:BEGIN -->
 - [ ] #1 Every machine whose settings.json registers sync-push.sh on SessionEnd has timeout 30 on that hook
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-03: the mac-mini registers no sync-push hook (checked ~/.claude/settings.json), so only the main machine (macbook-pro) needs it; it was offline in Tailscale. Waiting for Marty.
+<!-- SECTION:NOTES:END -->

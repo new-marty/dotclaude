@@ -1,11 +1,11 @@
 ---
 id: TASK-10
 title: Notice upstream changes to the skills we adopted
-status: In Progress
+status: Done
 assignee:
   - '@claude-dotclaude'
 created_date: '2026-10-03 10:08'
-updated_date: '2026-10-03 11:31'
+updated_date: '2026-10-03 12:26'
 labels: []
 dependencies: []
 priority: medium
@@ -21,7 +21,7 @@ On 2026-10-03 the inventory found japanese-tech-writing had changed on 2026-09-0
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [x] #1 An on-demand script reports, for each adopted upstream, whether it moved since the recorded revision
-- [ ] #2 Marty decided where it runs on a schedule (or that it stays manual), and that is set up
+- [x] #2 Marty decided where it runs on a schedule (or that it stays manual), and that is set up
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -30,4 +30,6 @@ On 2026-10-03 the inventory found japanese-tech-writing had changed on 2026-09-0
 2026-10-03: scripts/check-upstream.sh and scripts/upstream.tsv added (on demand, not scheduled). First run: yomiyasu, the japanese-tech-writing gist and natural-japanese current; z-humanizer changed upstream (9862685 -> 225a6f3), not yet reviewed. Open: where it runs on a schedule (SessionStart hook, each machine's sync job, or by hand monthly) — Marty's call.
 
 2026-10-03 Marty decided: run it every morning on the mac-mini in daily-maintenance, after the dotclaude sync; a change goes to Telegram each morning until upstream.tsv is updated. Wiring is ~/server work, filed there as T-459. Close this when T-459 reports done (then drop 'Run by hand; nothing schedules it.' from check-upstream.sh).
+
+2026-10-03: T-459 done (~/server 07db819, 905d9b6). daily-maintenance step [4.6/6] runs check-upstream.sh; CHANGED goes to Telegram each morning, 3 failed nights turn verify red. Header and README updated (d66f660). ~/.claude pulled; check-upstream rc=0, verify dotclaude-upstream green. Not yet observed in a real morning run.
 <!-- SECTION:NOTES:END -->
