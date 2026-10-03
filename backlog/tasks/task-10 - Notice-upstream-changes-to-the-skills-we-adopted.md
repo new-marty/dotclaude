@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude-server'
 created_date: '2026-10-03 10:08'
-updated_date: '2026-10-03 10:24'
+updated_date: '2026-10-03 10:27'
 labels: []
 dependencies: []
 priority: medium
@@ -17,6 +17,12 @@ ordinal: 10000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 On 2026-10-03 the inventory found japanese-tech-writing had changed on 2026-09-09 and nobody noticed. ADOPTIONS.md now records the upstream revision for yomiyasu, japanese-tech-writing and natural-japanese. Decide how a change upstream gets noticed on every machine (a script that compares recorded revisions with upstream heads, run on a schedule or on demand).
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [x] #1 An on-demand script reports, for each adopted upstream, whether it moved since the recorded revision
+- [ ] #2 Marty decided where it runs on a schedule (or that it stays manual), and that is set up
+<!-- AC:END -->
 
 ## Implementation Notes
 
