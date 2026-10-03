@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Compares the upstream revisions recorded in scripts/upstream.tsv with each
 # upstream's current head, so a change in something we adopted gets noticed.
-# Run by hand; nothing schedules it.
+# The mac-mini runs it every morning in daily-maintenance (~/server T-459);
+# any machine can also run it by hand.
 #
 # Exit status: 0 all current, 1 something changed, 2 a fetch failed
 # (2 wins over 1 when both happen).

@@ -71,7 +71,7 @@ The same file registers `scripts/handoff-inject.py` on `SessionStart`: when `z-w
 ended the previous session in this directory, the handoff it wrote comes back into
 context for a week, so `/clear` costs nothing that was written down.
 
-`scripts/check-upstream.sh` tells you when something we adopted has changed upstream. It reads the revisions we adopted from `scripts/upstream.tsv`, asks each upstream for its current head with `git ls-remote`, and prints `current` or `CHANGED` with a compare link. It exits 0 when all are current, 1 when any changed, 2 when a fetch failed. Run it by hand; nothing schedules it. After re-reading a changed upstream, update its revision in the list.
+`scripts/check-upstream.sh` tells you when something we adopted has changed upstream. It reads the revisions we adopted from `scripts/upstream.tsv`, asks each upstream for its current head with `git ls-remote`, and prints `current` or `CHANGED` with a compare link. It exits 0 when all are current, 1 when any changed, 2 when a fetch failed. The mac-mini runs it every morning after its dotclaude pull and sends any `CHANGED` line to Telegram, again each morning until the list is updated; elsewhere, run it by hand. After re-reading a changed upstream, update its revision in the list.
 
 The mac-mini's `~/.claude` only pulls. The mac-mini develops this repository in a separate
 clone, `~/dev/dotclaude`, and pushes from there when asked; the `~/.claude` copy never
