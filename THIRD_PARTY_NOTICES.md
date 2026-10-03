@@ -467,11 +467,33 @@ SOFTWARE.
 ## k16shikano: japanese-tech-writing
 
 - Source: https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d
-- License: The Unlicense, https://unlicense.org/ (as the gist states)
+- License: The Unlicense, https://unlicense.org/ (declared in the gist's frontmatter, which
+  points to a licence gist: https://gist.github.com/k16shikano/67625f2a7d96e3bbdfae8d571a936063)
 - Files in this repository:
   - `skills/z-japanese-proofreading/SKILL.md`
   - `skills/z-natural-japanese/references/forbidden-patterns.md` (by way of
     coji/natural-japanese)
+
+## nanaism: yomiyasu
+
+- Source: https://github.com/nanaism/yomiyasu (at 8d5abee, 2026-10-02)
+- Copyright (c) 2026 nanaism
+- License: MIT. `skills/z-japanese-proofreading/SKILL.md` takes the idea of the meaning check
+  ("意味を変えない") and rewrites it; no text or examples are copied.
+
+## obra/superpowers
+
+- Source: https://github.com/obra/superpowers
+- Copyright (c) 2025 Jesse Vincent
+- License: MIT. `skills/z-orchestrate/SKILL.md` takes ideas from `dispatching-parallel-agents`
+  and `subagent-driven-development`; no text is copied.
+
+## stablyai/orca: orchestration skill
+
+- Source: https://github.com/stablyai/orca (the skill ships with the Orca app; `orca skills get
+  orchestration`)
+- Copyright (c) 2026 Lovecast Inc.
+- License: MIT. `skills/z-orchestrate/SKILL.md` takes ideas only; no text is copied.
 
 ## VarYUvrc: predictable-reading-japanese
 
