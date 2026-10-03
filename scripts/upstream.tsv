@@ -1,0 +1,6 @@
+# skill	upstream	recorded revision
+# Revisions we adopted from. ADOPTIONS.md says what was taken; update the revision here after re-reading upstream.
+z-japanese-proofreading	https://github.com/nanaism/yomiyasu	8d5abee
+z-japanese-proofreading	https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d	8f2d576
+z-natural-japanese	https://github.com/coji/natural-japanese	9a78a42
+z-humanizer	https://github.com/blader/humanizer	9862685
