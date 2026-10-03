@@ -61,7 +61,7 @@ the header; a child gets a dotted ID such as `task-1.1`. Then post the findings,
 The CLI stamps each comment with its date and time, so the heading needs no date:
 
 ```sh
-backlog task edit task-12 --comment $'## Findings at filing \n...' --plain
+backlog task edit task-12 --comment $'## Findings at filing\n...' --plain
 ```
 
 Standalone `---` lines are reserved in comments; do not use them.
