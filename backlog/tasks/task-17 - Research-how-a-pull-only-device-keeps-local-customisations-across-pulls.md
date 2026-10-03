@@ -1,11 +1,11 @@
 ---
 id: TASK-17
 title: Research how a pull-only device keeps local customisations across pulls
-status: In Progress
+status: Done
 assignee:
   - '@claude-dotclaude'
 created_date: '2026-10-03 15:46'
-updated_date: '2026-10-03 15:47'
+updated_date: '2026-10-03 17:40'
 labels: []
 dependencies: []
 priority: high
@@ -20,7 +20,13 @@ Feeds TASK-16. Facts from Marty (2026-10-04): the company PC is a Mac, can pull 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Options compared in a written table with sources, judged on the criteria in the description
-- [ ] #2 Top 2-3 candidates tried on a scratch clone with a real upstream change, results recorded
-- [ ] #3 A design document for TASK-16 written from the results and shown to Marty
+- [x] #1 Options compared in a written table with sources, judged on the criteria in the description
+- [x] #2 Top 2-3 candidates tried on a scratch clone with a real upstream change, results recorded
+- [x] #3 A design document for TASK-16 written from the results and shown to Marty
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-04: options compared (pull-only-research-1a.md, -1b.md), experiments run, design written and inspected twice (design-pull-only-devices.md rev 6), explained to Marty with a page; Marty agreed with all three recommendations.
+<!-- SECTION:NOTES:END -->

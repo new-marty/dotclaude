@@ -1,10 +1,11 @@
 ---
 id: TASK-16
 title: Support pull-only devices with local customisations
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude-dotclaude'
 created_date: '2026-10-03 15:01'
-updated_date: '2026-10-03 15:46'
+updated_date: '2026-10-03 17:40'
 labels: []
 dependencies:
   - TASK-17
@@ -24,3 +25,9 @@ Marty, 2026-10-04: wants to use dotclaude on the company PC, which can basically
 - [ ] #2 Implemented and documented in README (a 'pull-only device' section)
 - [ ] #3 Tested on a scratch clone: local customisations plus an upstream change to the same area, pulled by the manual command, end with no conflict and both changes in effect
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-04: design agreed (backlog/docs/design-pull-only-devices.md rev 6). mac-mini side filed in ~/server.
+<!-- SECTION:NOTES:END -->

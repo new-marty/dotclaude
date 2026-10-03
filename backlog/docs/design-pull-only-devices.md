@@ -1,6 +1,6 @@
 # Design: pull-only devices (TASK-16)
 
-Status: proposal, revision 6, 2026-10-04. Revision 4 specified the changes file by file; an
+Status: agreed with Marty 2026-10-04 (revision 6; decisions in section 10). Revision 4 specified the changes file by file; an
 independent inspection of it (1 goal missed, 6 gaps, 3 wrong claims, 4 breaks, 4
 simplifications) is folded in here, and three of its four simplifications are taken. Evidence:
 `pull-only-research-1a.md`, `pull-only-research-1b.md`, and "Evidence" at the end.
@@ -257,7 +257,7 @@ temporary directory, sets `CLAUDE_SYNC_DIR` for the device, and asserts:
 `rate_limits.seven_day` (so it takes the early exit and makes no keychain or network call) on a
 writer, a pull-only device on `main` behind by two commits, and one on `local`.
 
-## 10. Decisions for Marty
+## 10. Decisions (Marty, 2026-10-04: all three as recommended)
 
 1. Mark devices with `git config dotclaude.role pull-only` (recommended: one line that survives
    pulls and lets the scripts adapt) or keep scripts unaware and tell each device which hooks to
