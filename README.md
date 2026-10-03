@@ -50,14 +50,16 @@ flowchart LR
     subgraph gh["github.com/new-marty/dotclaude"]
         main["main"]
     end
-    subgraph mini["mac-mini (pull only)"]
+    subgraph mini["mac-mini (~/.claude pull only)"]
         n_cfg["~/.claude<br/>same tracked files"]
         n_set["settings.json<br/>(ignored, its own hooks)"]
         n_own["skills/&lt;own&gt; symlinks<br/>(untracked)"]
+        n_dev["~/dev/dotclaude<br/>separate clone for development"]
     end
     m_cfg -- "SessionEnd: sync-push.sh<br/>add · commit · push" --> main
     main -- "SessionStart: sync-pull.sh<br/>pull --rebase --autostash" --> m_cfg
     main -- "05:00 cron: git pull" --> n_cfg
+    n_dev -- "push, on request" --> main
 ```
 
 `settings.example.json` registers `scripts/sync-pull.sh` on `SessionStart` and
@@ -66,6 +68,12 @@ session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it l
 The same file registers `scripts/handoff-inject.py` on `SessionStart`: when `z-wrap-up`
 ended the previous session in this directory, the handoff it wrote comes back into
 context for a week, so `/clear` costs nothing that was written down.
+
+The mac-mini's `~/.claude` only pulls. The mac-mini develops this repository in a separate
+clone, `~/dev/dotclaude`, and pushes from there when asked; the `~/.claude` copy never
+holds its edits. Marty's main machine has no `SessionStart` pull hook installed yet, so it
+pulls by hand for now. Tasks for this repository live in `backlog/` (Backlog.md), not in
+GitHub Issues.
 
 Within one session the two scripts do this:
 
