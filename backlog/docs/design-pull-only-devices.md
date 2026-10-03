@@ -74,7 +74,7 @@ rebase would replay every local commit and can stop several times. The branch is
 ```sh
 # 1. Get the repository. No ~/.claude yet:
 git clone https://github.com/new-marty/dotclaude.git ~/.claude
-#    ~/.claude exists already (Claude Code has run here): follow README "New machine" to turn
+#    ~/.claude exists already (Claude Code has run here): follow README "A new machine needs the bootstrap script and one copy" to turn
 #    it into a clone, then commit whatever differs as the first local commit in step 3.
 
 # 2. Work on a local branch only, and remove main so it cannot be switched to by mistake.
