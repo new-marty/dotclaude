@@ -30,8 +30,10 @@ Settle this once, before step 1, with the first rule that matches:
 
 1. **The project says.** `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md` names a tracker or a
    filing procedure. That rule wins over everything below. Follow it, and where it names
-   a CLI or a document, use that in place of the commands in this skill.
-2. **Backlog.md.** `backlog/config.yml` exists and the `backlog` command runs. Use
+   a CLI or a document, use that in place of the commands in this skill. If it names a
+   tracker but gives no usable commands, ask (rule 4).
+2. **Backlog.md.** A Backlog.md config exists (`backlog/config.yml`, `.backlog/config.yml`,
+   or one at the repository root) and `backlog task list --plain` succeeds. Use
    `BACKLOG.md` for the commands.
 3. **GitHub Issues.** Neither of the above, and `gh repo view` succeeds. Use `GITHUB.md`.
 4. **None of these.** Ask where the item should go. Do not guess.
@@ -297,7 +299,9 @@ invoice as PDF`.
 6. **Show the title, the body, and the findings comment, and get approval.** Do not run
    the create command first.
 7. **File it, post the findings comment, then set the relationships in the native fields**
-   — parent, type, blocked-by. Return the URL.
+   — parent, type, blocked-by. Return the URL. Where the tracker fixes the parent at
+   creation (Backlog.md: `-p`), file the parent first and pass it when creating the child;
+   see `BACKLOG.md`.
 
 ## Before filing
 

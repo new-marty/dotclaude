@@ -1,9 +1,8 @@
 # Filing in Backlog.md
 
-Read this at step 1 and step 7 of `SKILL.md` when the tracker is Backlog.md. The flags
-below were checked against `backlog task create --help` and `backlog task edit --help`
-of the installed CLI (`backlog --version` to see which). Re-check them when the CLI
-is upgraded.
+Read this at step 1 and step 7 of `SKILL.md` when the tracker is Backlog.md. Re-check
+the flags against `backlog task create --help` and `backlog task edit --help` when the
+CLI is upgraded.
 
 Go through the `backlog` CLI. Do not create or edit the task `.md` files by hand: the CLI
 keeps IDs, ordering and the structured sections consistent.
@@ -13,10 +12,10 @@ keeps IDs, ordering and the structured sections consistent.
 ```sh
 backlog task list --plain                  # what exists, grouped by status
 backlog task create --help                 # the configured types and priorities
-sed -n 1,40p backlog/config.yml            # statuses, labels, task_prefix
 ```
 
-`config.yml` lists the statuses and labels. The types and priorities appear in the
+Read the project's `config.yml` (in `backlog/`, `.backlog/` or the root) for the statuses,
+labels and `task_prefix`. The types and priorities appear in the
 `--help` output of `create`. Use only those values.
 
 ## Searching before writing
@@ -57,11 +56,12 @@ backlog task create "[invoice] Download a single invoice as PDF" \
   --plain
 ```
 
-`--plain` prints the new ID. Then post the findings, if any, headed with today's date
-(the CLI is not known to stamp one):
+`--plain` prints the whole new task block and its file path. The ID is the `TASK-n` in
+the header; a child gets a dotted ID such as `task-1.1`. Then post the findings, if any.
+The CLI stamps each comment with its date and time, so the heading needs no date:
 
 ```sh
-backlog task edit task-12 --comment $'## Findings at filing (2026-10-03)\n...' --plain
+backlog task edit task-12 --comment $'## Findings at filing \n...' --plain
 ```
 
 Standalone `---` lines are reserved in comments; do not use them.
@@ -84,6 +84,5 @@ backlog task list -p task-10 --plain       # the children of an Epic
 
 ## References
 
-A task is named by its ID, `task-12`, which no other kind of object shares, so the
-ambiguity `#123` has on GitHub does not arise. Write the ID and the title when the
-reference is from another repository.
+A task is named by its ID, `task-12`. Write the ID and the title when the reference is
+from another repository.

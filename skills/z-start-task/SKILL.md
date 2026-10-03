@@ -41,8 +41,8 @@ Write the whole picture assuming the reader has read neither the issue nor the p
 Before starting the conversation, settle how work is actually done in this repository.
 
 - Tracker: find where this project keeps its tasks, with the first rule that matches. Say which one you found, and why, in step 2
-  1. `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md` names a tracker or a task procedure. That rule wins; use the commands it gives in place of the ones below
-  2. `backlog/config.yml` exists and `backlog` runs: Backlog.md
+  1. `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md` names a tracker or a task procedure. That rule wins; use the commands it gives in place of the ones below. If it gives none, ask (rule 4)
+  2. A Backlog.md config exists (`backlog/config.yml`, `.backlog/config.yml`, or one at the repository root) and `backlog task list --plain` succeeds: Backlog.md
   3. `gh repo view` succeeds: GitHub Issues
   4. None of these: ask where the tasks live
 - Repository name, when the tracker or the PRs are on GitHub: `gh repo view --json nameWithOwner -q .nameWithOwner`
