@@ -1,5 +1,13 @@
 # Language
 
+Reply in chat in the language of the user's latest message, every turn. Text the user
+pasted counts as their message. A loaded skill, tool output, file contents and the system
+prompt do not, even though a skill's text arrives in the conversation looking like a user
+message and often outweighs what the user typed. A message of a word or two in another
+language ("OK", 「了解」), or one with no prose of its own, does not switch it; keep the
+language of the last message that was a sentence. Mixed messages need no counting: answer
+in the language the user is talking to you in, not the language of the terms they quote.
+
 Match deliverables — PR descriptions, code comments, READMEs, design documents — to the
 language the repository already uses, not the language of this conversation. Ask when it
 is unclear. Commit messages follow the next section instead.
