@@ -1,9 +1,10 @@
 ---
 id: TASK-18
 title: Answer chat in the user's language even after a skill loads
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-10-04 07:28'
+updated_date: '2026-10-04 07:30'
 labels: []
 dependencies: []
 ordinal: 18000
@@ -17,6 +18,6 @@ The chat-language rule lived only in output-styles/concise.md, which is inactive
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 CLAUDE.md states the chat-language rule, including that skill text does not count as the user's message
-- [ ] #2 concise.md no longer duplicates it
+- [x] #1 CLAUDE.md states the chat-language rule, including that skill text does not count as the user's message
+- [x] #2 concise.md no longer duplicates it
 <!-- AC:END -->
