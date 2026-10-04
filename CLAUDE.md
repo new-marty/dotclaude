@@ -52,6 +52,12 @@ carries no prefix. Leave it that way.
    When stating what you did or what changed, write it from the output of commands you ran
    this turn. For anything you have no output for, say you did not verify it.
 
+# Explaining
+
+When asked to explain a whole picture (a structure, a flow, a before and after), answer
+with an artifact unasked (`z-eli5` for a new topic, `z-show-me` for the current one): the
+user grasps those faster by seeing them. Narrow facts stay plain text.
+
 # Editing dotclaude (`~/.claude`)
 
 The dotclaude repository (`~/.claude`, github.com/new-marty/dotclaude) is developed on
