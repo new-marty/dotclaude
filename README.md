@@ -15,7 +15,7 @@ handful of files that are configuration.
 | `CLAUDE.md` | Instructions applied to every project |
 | `skills/` | Skills, prefixed `z-` except `browsing-web` |
 | `output-styles/` | How answers are written |
-| `scripts/` | What the hooks run |
+| `scripts/` | What the hooks run, and the new-machine bootstrap |
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
@@ -301,23 +301,37 @@ statusline makes no network call). On a branch other than `main` it also says `l
 | The company blocks `~/.claude/skills` (`strictPluginOnlyCustomization`) | `/skills` lacks the shared skills, with no warning | out of scope; the plugin route (`claude plugin install dotclaude@dotclaude`) is untested, and carries no `CLAUDE.md` |
 | A company `CLAUDE.md` contradicts the device's | Claude may follow either | nothing in dotclaude ranks them |
 
-## A new machine needs the bootstrap script and one copy
+## Set up on a new machine
 
-`chezmoi init --apply` on the (private) dotfiles repository runs its
-`run_once_before_bootstrap-dotclaude.sh`, which turns the
-existing `~/.claude` into this repository in place. A plain `git clone` fails because the
-Claude Code installer has already created `~/.claude/downloads/` and friends. Files that
-already exist are left alone; where they differ from the remote they show up in
-`git status` for you to pick.
-
-Then give the machine its `settings.json`:
+Install Claude Code first, then run:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/new-marty/dotclaude/main/scripts/bootstrap.sh | bash
 cp -n ~/.claude/settings.example.json ~/.claude/settings.json
 ```
 
-Skip this and no hook is registered, so the machine never syncs. By hand, the whole
-bootstrap is:
+The repository is public, so the script downloads without signing in. The script
+([`scripts/bootstrap.sh`](scripts/bootstrap.sh)) turns the existing `~/.claude` into this
+repository in place. A plain `git clone` fails because the Claude Code installer has
+already created `~/.claude/downloads/` and friends. Files that already exist are left
+alone; where they differ from the remote they show up in `git status` for you to pick.
+Running the script again does nothing once `origin/main` has been fetched, and a run whose
+fetch failed can simply be repeated.
+
+The script sets `origin` to the SSH URL, which a writer needs to push, so the machine must
+already reach GitHub over SSH. On a machine without a GitHub SSH key, pass the HTTPS URL
+instead:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/new-marty/dotclaude/main/scripts/bootstrap.sh \
+  | DOTCLAUDE_REMOTE=https://github.com/new-marty/dotclaude.git bash
+```
+
+The `cp` line gives the machine its `settings.json`. Skip it and no hook is registered,
+so the machine never syncs. A pull-only device follows
+[Setting up a device](#setting-up-a-device) instead.
+
+By hand, the whole bootstrap is:
 
 ```bash
 mkdir -p ~/.claude && cd ~/.claude
