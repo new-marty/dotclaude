@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-10-06 09:41'
+updated_date: '2026-10-06 10:47'
 labels: []
 dependencies: []
 priority: medium
@@ -23,3 +24,9 @@ mattpocock/skills v1.3 added /retro: it reads a past coding session and proposes
 - [ ] #1 Upstream SKILL.md read; overlap with existing skills and ~/server checks noted
 - [ ] #2 Decision (adopt, adapt, decline) recorded in ADOPTIONS.md
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-06 Marty: also weigh the option of aligning with the existing upstream skill as is (install or copy mattpocock's version) instead of folding parts into ours.
+<!-- SECTION:NOTES:END -->

@@ -4,6 +4,7 @@ title: Consider adding Evidence and Merge Danger sections to z-create-pr
 status: To Do
 assignee: []
 created_date: '2026-10-06 09:41'
+updated_date: '2026-10-06 10:47'
 labels: []
 dependencies: []
 priority: medium
@@ -21,3 +22,9 @@ mattpocock/skills v1.3 added /pr, a PR body template in three parts: Summary as 
 - [ ] #1 Each of the three sections is compared with what z-create-pr already asks for, with a keep/adopt/decline call
 - [ ] #2 Adopted parts are in z-create-pr and recorded in ADOPTIONS.md; declined ones are listed there too
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-06 Marty: also weigh the option of aligning with the existing upstream skill as is (install or copy mattpocock's version) instead of folding parts into ours.
+<!-- SECTION:NOTES:END -->
