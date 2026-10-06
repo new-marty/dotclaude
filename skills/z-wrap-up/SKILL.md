@@ -2,7 +2,6 @@
 name: z-wrap-up
 description: End the session properly. Write down what this session was doing, what it settled, what is half-done, and the first thing to do next, so a fresh session starts informed; then clear the conversation. Use when the user says "wrap up", "wrap it up", "let's stop here", "end the session", 「wrap up して」「ここで終わり」「一旦区切る」「セッション終わらせて」「コンテキスト整理して clear」. Not for saving a durable fact (that is memory), not for a standup note, and not for coming back after days away (`z-catch-up`).
 argument-hint: "[what to emphasise in the handoff](optional)"
-disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(cmux *), Bash(ls *), Read, Write, Edit
 ---
 
