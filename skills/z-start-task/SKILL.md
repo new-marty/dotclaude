@@ -2,7 +2,7 @@
 name: z-start-task
 description: Start from "which task are we doing?" by reading the plan documents against the tracked tasks, agree on scope and design through back-and-forth, then go on to create the branch, review the design, implement, and self-review. Use it whenever the intent is to pick up work — "what should I work on next", "let us start a task", "pick up that issue", 「次何やる?」「タスク始めたい」「Issue に着手したい」「リファクタリングの続きをやろう」
 argument-hint: "[plan directory or task or issue number] [extra instructions](optional)"
-allowed-tools: Bash(git *), Bash(backlog *), Bash(gh issue *), Bash(gh pr *), Bash(gh repo *), Read, Edit, Write, Glob, Grep
+allowed-tools: Bash(git *), Bash(lin *), Bash(backlog *), Bash(gh issue *), Bash(gh pr *), Bash(gh repo *), Read, Edit, Write, Glob, Grep
 ---
 
 Go from choosing the task to finished, self-reviewed work, building agreement at each step.
@@ -41,7 +41,7 @@ Write the whole picture assuming the reader has read neither the issue nor the p
 Before starting the conversation, settle how work is actually done in this repository.
 
 - Tracker: find where this project keeps its tasks, with the first rule that matches. Say which one you found, and why, in step 2
-  1. `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md` names a tracker or a task procedure. That rule wins; use the commands it gives in place of the ones below. If it gives none, ask (rule 4)
+  1. `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md` names a tracker or a task procedure. That rule wins; use the commands it gives in place of the ones below. If it names Linear and the `lin` CLI, use the Linear commands below. If it gives none, ask (rule 4)
   2. A Backlog.md config exists (`backlog/config.yml`, `.backlog/config.yml`, or one at the repository root) and `backlog task list --plain` succeeds: Backlog.md
   3. `gh repo view` succeeds: GitHub Issues
   4. None of these: ask where the tasks live
@@ -59,6 +59,9 @@ Where a premise you established might differ from what the user believes — the
 - Read the plan documents and grasp what the plan is trying to do
 - Fetch what has been filed and what is in flight. List the tasks with the command for the tracker found in step 0, then the PRs and branches:
   ```
+  # Linear (`lin`): list the current repository's issues, then read one
+  lin list
+  lin show <ID>
   # Backlog.md: list, then read one (description, criteria, comments)
   backlog task list --plain
   backlog task view <id> --plain
@@ -89,11 +92,11 @@ This is where agreement is won. Do not skip this stage and start working. Do not
    - How the current code or operation works, and where the problem is
    - What will be different when it is done (from the user's side, and from the code's side)
 
-   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user. Read the task's comments too (`gh issue view <n> --comments`, or `backlog task view <id> --plain`, which includes them): a findings comment left at filing records what was already investigated. Use it as leads to verify against the code, not as a decision
+   If you do not have the material to explain it, research the current code and the related documents first. Look it up yourself before asking the user. Read the task's comments too (`gh issue view <n> --comments`, `lin show <ID>`, or `backlog task view <id> --plain`, which include them): a findings comment left at filing records what was already investigated. Use it as leads to verify against the code, not as a decision
 2. Give "what we are doing" and "what we are not doing", two or three lines each
 3. Call `z-grilling`. Ask at least one question on each of five things: the boundary of the scope, consistency with existing behavior, whether data migration is needed, how errors are handled, and how far the tests go. Anything not asked here comes back as rework after implementation
 4. Where the grilling exposed a mismatch, rewrite "what we are doing / what we are not doing" and agree again
-5. Mark the work started when the tracker or a flow document found in step 0 calls for it. In Backlog.md: `backlog task edit <id> -s "In Progress"`, and `-a @name` when the project assigns owners. On GitHub, only where a flow document defines a status to set. A document that defines its own status handling wins
+5. Mark the work started when the tracker or a flow document found in step 0 calls for it. In Linear: `lin start <ID> --owner <session name>` (it refuses when someone has already started the issue). In Backlog.md: `backlog task edit <id> -s "In Progress"`, and `-a @name` when the project assigns owners. On GitHub, only where a flow document defines a status to set. A document that defines its own status handling wins
 
 ### 4. Create the branch in a worktree
 

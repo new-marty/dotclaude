@@ -1,7 +1,7 @@
 ---
 name: z-write-task
-description: Write an Epic, Story, Bug, or Task and file it in the project's own tracker (Backlog.md, a tracker its CLAUDE.md names, or GitHub Issues), so that a person can follow the work from the title alone and whoever picks it up later still decides the design from the code. Use it whenever the intent is to create or reshape work items — "file an issue", "turn this into a ticket", "break this story down", "write this up as an epic", 「Issue にして」「チケット切って」「タスクに分解して」「Epic を作りたい」. Use it as well when someone hands over a rough request and expects work items out of it, even if they never say the word issue. Not for writing the code, not for picking up work that already exists (`z-start-task`), and not for the pull request description (`z-create-pr`).
-allowed-tools: Bash(backlog *), Bash(gh issue *), Bash(gh search *), Bash(gh api *), Bash(git *), Read, Glob, Grep
+description: Write an Epic, Story, Bug, or Task and file it in the project's own tracker (Linear through `lin`, Backlog.md, a tracker its CLAUDE.md names, or GitHub Issues), so that a person can follow the work from the title alone and whoever picks it up later still decides the design from the code. Use it whenever the intent is to create or reshape work items — "file an issue", "turn this into a ticket", "break this story down", "write this up as an epic", 「Issue にして」「チケット切って」「タスクに分解して」「Epic を作りたい」. Use it as well when someone hands over a rough request and expects work items out of it, even if they never say the word issue. Not for writing the code, not for picking up work that already exists (`z-start-task`), and not for the pull request description (`z-create-pr`).
+allowed-tools: Bash(lin *), Bash(backlog *), Bash(gh issue *), Bash(gh search *), Bash(gh api *), Bash(git *), Read, Glob, Grep
 ---
 
 # Write a work item
@@ -31,10 +31,12 @@ Settle this once, before step 1, with the first rule that matches:
 1. **The project says.** `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md` names a tracker or a
    filing procedure. That rule wins over everything below. Follow it, and where it names
    a CLI or a document, use that in place of the commands in this skill. If it names a
-   tracker but gives no usable commands, ask (rule 4).
+   tracker but gives no usable commands, ask (rule 4). Where it names Linear and the `lin`
+   CLI, use `LINEAR.md` for the commands.
 2. **Backlog.md.** A Backlog.md config exists (`backlog/config.yml`, `.backlog/config.yml`,
    or one at the repository root) and `backlog task list --plain` succeeds. Use
-   `BACKLOG.md` for the commands.
+   `BACKLOG.md` for the commands. (A project that has moved to Linear says so in rule 1 and
+   may still have a `backlog/` directory for a while; rule 1 wins.)
 3. **GitHub Issues.** Neither of the above, and `gh repo view` succeeds. Use `GITHUB.md`.
 4. **None of these.** Ask where the item should go. Do not guess.
 
@@ -273,7 +275,7 @@ its own preparatory PR.
 ## References between items
 
 Relationships go in native fields — parent, sub-issue, blocked-by, and `Closes` on the PR
-(in Backlog.md: `-p` and `--depends-on`; see `BACKLOG.md`). GitHub numbers issues and
+(in Backlog.md: `-p` and `--depends-on`; see `BACKLOG.md`. In Linear: `--parent` and `--after`; see `LINEAR.md`). GitHub numbers issues and
 pull requests from one sequence, so `#123` on its own says neither which kind it is nor
 which level; a native field renders the title instead, and it
 never goes stale.
@@ -286,7 +288,7 @@ invoice as PDF`.
 
 1. **Establish the repository's premises.** Which tracker (see "Which tracker"), which
    types exist, whether Projects is in use, what language the existing items are written
-   in. Do not assume them; `BACKLOG.md` and `GITHUB.md` have the commands.
+   in. Do not assume them; `LINEAR.md`, `BACKLOG.md` and `GITHUB.md` have the commands.
 2. **Search before writing.** Look for an item that already covers this, and for an Epic
    this belongs under. On a hit, say so and propose commenting on the existing item rather
    than filing beside it.
