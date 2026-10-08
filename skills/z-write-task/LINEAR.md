@@ -28,14 +28,14 @@ lin show LAB-12                  # body, relations, comments
 
 | In `SKILL.md` | In Linear |
 | --- | --- |
-| Issue type | `--type Research|Decision|Feature|Fix|Chore`. Bug is `Fix`, a Story that changes what someone can do is `Feature`, upkeep is `Chore`. Optional |
+| Issue type | `--type Research` / `Decision` / `Feature` / `Fix` / `Chore`. Bug is `Fix`, a Story that changes what someone can do is `Feature`, upkeep is `Chore`. Optional |
 | Epic | An issue that produces no PR. Its children name it with `--parent <ID>` |
 | Parent / sub-issue | `--parent <ID>` at creation |
 | Blocked-by | `--after <ID>[,<ID>]` |
 | Acceptance criteria | One `--ac` per criterion. With at least one, the issue starts in Todo; without, in Triage. They are a checklist, so do not repeat them in the body |
 | Body | `--detail`: Problem and Desired outcome only |
 | Findings comment | `lin comment <ID> -m "..."` |
-| Priority | `--priority urgent|high|normal|low` (default normal). Leave it out unless the person asked |
+| Priority | `--priority` urgent / high / normal / low (default normal). Leave it out unless the person asked |
 | Repo label | Automatic from the current repository; `--repo <name>` to override. A leaf issue stays inside one repository; work across repositories is a parent with one child per repository |
 | `Closes #n` on the PR | Not applicable. Close with `lin done <ID> -m "..."` when the work lands |
 

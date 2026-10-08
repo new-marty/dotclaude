@@ -130,6 +130,7 @@ This is where agreement is won. Do not skip this stage and start working. Do not
 - Run the verification commands identified in step 0. In a repository where the formatter is a separate job from lint, run the formatter before pushing too
 - Commit and push. Write the commit message by the Commit messages section of `~/.claude/CLAUDE.md`, not by the recent commit log
 - If a flow document found in step 0 defines pre-PR work such as a QA checklist, say here that it will be needed
+- Where the tracker is Linear, check each acceptance criterion with `lin check <ID> <N>`, then close with `lin done <ID> -m "..."` (it refuses while any criterion is unchecked). When the user has to decide something first, `lin wait <ID> --kind Decide -m "..."` instead
 - Do not create the PR. Just say that `z-create-pr` can create it
 
 ## Cautions
