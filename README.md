@@ -121,6 +121,33 @@ moment. The second one to arrive exits without committing; its changes wait for 
 session's push. A lock older than five minutes is treated as left over from a killed
 session and taken over.
 
+## Keeping conversation logs is opt-in per machine
+
+Claude Code deletes a session's transcript under `~/.claude/projects/` once it is older
+than `cleanupPeriodDays`, and `settings.example.json` keeps that at 14 days. A machine that
+wants its history for later analysis turns on two things in its own `settings.json`:
+
+```json
+"cleanupPeriodDays": 36500,
+"env": { "DOTCLAUDE_ARCHIVE_DIR": "/Volumes/media/backups/claude-history" }
+```
+
+The first stops local deletion; the setting accepts any positive integer. The second
+switches on `scripts/archive-transcripts.sh`, which `settings.example.json` registers on
+`SessionEnd` and which exits at once while the variable is unset. When it is set, each
+session end copies every `*.jsonl` under `projects/`, plus `history.jsonl` (every prompt
+typed), to `<DOTCLAUDE_ARCHIVE_DIR>/<LocalHostName>/`. Machines can therefore share one
+archive directory, and each gets its own subdirectory. The copy only adds and updates
+files, so a transcript deleted locally stays in the archive. It runs detached, so a slow
+share does not hold up the session's exit.
+
+The directory must already exist. On Marty it is the Unraid `media` share mounted over
+SMB; when the share is not mounted the run is skipped rather than writing into an empty
+local `/Volumes/media`, and the next session copies whatever was missed. Each machine
+sets its own path, since the share is mounted in different places. The logs hold
+whatever was typed or pasted into a session, tokens included, so the archive needs the
+same care as `~/.claude` itself.
+
 ## The statusline is where you notice a stuck sync
 
 `statusline.sh` draws up to four lines: account, model, directory and git on the first;

@@ -39,6 +39,14 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/archive-transcripts.sh"
+          }
+        ]
       }
     ]
   },
