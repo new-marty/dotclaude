@@ -20,7 +20,8 @@ handful of files that are configuration.
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
-| `backlog/` | Tasks for this repository (Backlog.md) |
+| `AGENTS.md` | Where this repository's tasks live, for agents |
+| `backlog/` | Tasks closed before the move to Linear, and their design notes |
 | `.claude-plugin/` | The manifests claude.ai reads to install `skills/` as a plugin |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the
@@ -79,8 +80,8 @@ context for a week, so `/clear` costs nothing that was written down.
 The mac-mini's `~/.claude` only pulls. The mac-mini develops this repository in a separate
 clone, `~/dev/dotclaude`, and pushes from there when asked; the `~/.claude` copy never
 holds its edits. Marty's main machine pulls with the `SessionStart` hook and pushes with
-the `SessionEnd` hook. Tasks for this repository live in `backlog/` (Backlog.md), not in
-GitHub Issues.
+the `SessionEnd` hook. Tasks for this repository are Linear issues (team LAB, Repo label
+`dotclaude`), not GitHub Issues; `backlog/` keeps only the ones closed before 2026-10-13.
 
 Within one session the two scripts do this:
 

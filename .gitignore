@@ -11,6 +11,7 @@
 !ADOPTIONS.md
 !THIRD_PARTY_NOTICES.md
 !CLAUDE.md
+!AGENTS.md
 # settings.json itself is per machine: Orca and other tools inject hooks into it,
 # and a headless machine runs its own. Only the starting point is tracked.
 !settings.example.json
@@ -41,7 +42,7 @@ skills/recovering-gateway
 skills/restoring-media-mount
 skills/tracking-tasks
 
-# The task list for this repository (Backlog.md), one markdown file per task.
+# Tasks closed before the move to Linear (2026-10-13), and their design notes.
 !backlog/
 !backlog/**
 
