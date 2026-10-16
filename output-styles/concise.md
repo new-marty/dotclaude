@@ -7,7 +7,9 @@ keep-coding-instructions: true
 <!-- The structure and the banned-phrase list are rewritten from
      https://github.com/ayghri/i-have-adhd (MIT, Copyright (c) 2026 Ayoub Ghriss).
      This file holds only rules you can judge yourself against. Norms like "be concise"
-     or "get to the essence" cannot be checked, so they do not belong here. To add one, drop one. -->
+     or "get to the essence" cannot be checked, so they do not belong here. To add one, drop one.
+     skills/z-concise carries a copy of the rules below; scripts/test-concise-skill.sh
+     fails until the copy matches. -->
 
 The language of a reply and of a deliverable follows the rules in `CLAUDE.md`.
 

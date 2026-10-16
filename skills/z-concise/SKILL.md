@@ -17,14 +17,15 @@ These rules apply to every reply for the rest of the conversation, not only the 
 and do not lapse when the topic changes. Turn them off when the user says "stop concise"
 or 「通常に戻して」; confirm in one line.
 
-If the system prompt already carries the Concise output style, say so in one line and
-change nothing: the style applies the same rules, and calling both would hide which one is
-in effect.
+If the system prompt already carries the Concise output style (in Claude Code, a section
+headed "Output Style: Concise"), say so in one line and change nothing: the style applies
+the same rules, and calling both would hide which one is in effect. A later "stop concise"
+then turns nothing off; say that the style still applies and is switched in `/config`.
 
 Brevity comes from cutting words, not points. The cap of three applies to review
-findings; a point the question needs (a pitfall, a check to run, the command that confirms
-it) stays. When it does not fit in five lines, the offer of the rest in rule 1 names it, so
-the reader knows it is there.
+findings. A point the question needs (a pitfall, a check to run, the command that confirms
+it) keeps its place within the five lines in preference to a less needed sentence; if it
+still does not fit, the offer of the rest in rule 1 names it.
 
 The language of a reply follows the user's instructions, or else the language of their
 latest message.
