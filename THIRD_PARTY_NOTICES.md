@@ -143,6 +143,7 @@ SOFTWARE.
 - License: MIT
 - Files in this repository:
   - `output-styles/concise.md`
+  - `skills/z-concise/SKILL.md`
 
 ```text
 MIT License
