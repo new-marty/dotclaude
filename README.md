@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Ten paths travel between machines; `settings.json` stays home
+## Eleven paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -22,6 +22,7 @@ handful of files that are configuration.
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
 | `AGENTS.md` | Where this repository's tasks live, for agents |
 | `backlog/` | Tasks closed before the move to Linear, and their design notes |
+| `research/` | Research behind a skill, kept for reference; skills do not read it |
 | `.claude-plugin/` | The manifests claude.ai reads to install `skills/` as a plugin |
 
 `settings.json` is the file Claude Code actually reads, and it is not tracked. On the

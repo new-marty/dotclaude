@@ -1,0 +1,321 @@
+<title>UX設計スキルの設計案</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDMincho:wght@700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column of ~44rem; tables and diagrams break out to a wider track, like annotated blueprint sheets */
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#18222d; --muted:#5a6878; --line:#d5dde5;
+  --accent:#1f5fa8; --accent-soft:#e3edf8; --warn:#a4561a; --warn-soft:#fbeee2; --ok:#2f7a4f; --ok-soft:#e4f3ea;
+  --f-display:"BIZ UDMincho","Hiragino Mincho ProN",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10161d; --paper:#17202a; --ink:#e4eaf0; --muted:#9aa8b6; --line:#2b3846;
+  --accent:#7fb2ec; --accent-soft:#1c2c3f; --warn:#e7a46b; --warn-soft:#33251a; --ok:#7fcf9f; --ok-soft:#18301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161d; --paper:#17202a; --ink:#e4eaf0; --muted:#9aa8b6; --line:#2b3846;
+  --accent:#7fb2ec; --accent-soft:#1c2c3f; --warn:#e7a46b; --warn-soft:#33251a; --ok:#7fcf9f; --ok-soft:#18301f; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.85}
+.wrap{max-width:60rem;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:44px}
+.prose{max-width:44rem}
+h1,h2{font-family:var(--f-display);text-wrap:balance;line-height:1.4;margin:0}
+h1{font-size:1.9rem}
+h2{font-size:1.35rem;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3{font-size:1.02rem;margin:0 0 6px}
+p{margin:8px 0}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+section{display:grid;gap:12px;min-width:0}
+.lead{font-size:1.05rem}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.callout{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0}
+.scroll{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;background:var(--paper);font-size:.88rem;line-height:1.6}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:700;white-space:nowrap}
+td.id{font-family:var(--f-mono);white-space:nowrap;color:var(--accent);font-weight:600}
+code,pre{font-family:var(--f-mono);font-size:.82rem}
+pre.tree{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;line-height:1.6;margin:0}
+.k{display:inline-block;font-size:.78rem;font-weight:700;padding:0 6px;border-radius:4px;margin-right:4px;white-space:nowrap}
+.k.ask{background:var(--warn-soft);color:var(--warn)}
+.k.res{background:var(--accent-soft);color:var(--accent)}
+.k.think{border:1px solid var(--line);color:var(--muted)}
+ul,ol{margin:6px 0;padding-left:1.3em}
+li{margin:4px 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:14px}
+.grid2>*{min-width:0}
+.vs{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:14px}
+.vs>*{min-width:0}
+.vs .bad{border-top:3px solid var(--line)}
+.vs .good{border-top:3px solid var(--ok)}
+.reply{font-size:.92rem;line-height:1.8}
+.reply dt{font-weight:700;color:var(--ok);font-size:.82rem;margin-top:8px}
+.reply dd{margin:0}
+.walk{display:grid;gap:10px}
+.step{display:grid;grid-template-columns:4.2rem 1fr;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.step>*{min-width:0}
+.step .sid{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:.85rem;line-height:1.5}
+.step .sid span{display:block;font-family:var(--f-body);color:var(--muted);font-weight:400;font-size:.78rem}
+.step p{margin:2px 0}
+.found{background:var(--ok-soft);border-radius:4px;padding:2px 6px}
+.decide li{margin:14px 0}
+.ab{display:grid;gap:4px;margin-top:4px;font-size:.92rem}
+.small{font-size:.85rem;color:var(--muted)}
+dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0}
+dl.gloss dt{font-weight:700}
+dl.gloss dd{margin:0}
+@media (max-width:480px){.step{grid-template-columns:1fr;gap:4px} dl.gloss{grid-template-columns:1fr} dl.gloss dd{margin-bottom:6px}}
+</style>
+
+<div class="wrap">
+
+<header class="prose" style="display:grid;gap:10px">
+  <div class="eyebrow">LAB-769 · 設計案 第3版 · 2026-10-22</div>
+  <h1>UI実装前のUX設計スキル(z-design-ux)の設計案</h1>
+  <p class="lead">「アプリを作りたい」と頼まれたとき、経験を積んだUXデザイナーとして振る舞うスキルです。依頼をそのまま受けず、捉え直して、具体的な案を出しながら聞き返します。画面を描く前に、誰の何を解くか、何を作るか、どんな画面と状態が要るか、どんな体験にするかを決めます。色や書体などの見た目は扱わず、実装する側に任せます。</p>
+  <div class="box prose">
+    <p style="margin-top:0"><b>できあがるもの</b>:作るアプリのリポジトリに置く設計資料(小さな案件なら <code>docs/ux/&lt;名前&gt;/UX.md</code> の1枚)。</p>
+    <ul style="margin-bottom:0">
+      <li>問題と、やること・やらないこと</li>
+      <li>扱うもの、役割と権限、操作の流れ(図と表)</li>
+      <li>画面の一覧と、画面ごとの目的、載せる内容の重要度順、状態</li>
+      <li>体験の方針(トーン、優先する原則、避けたい体験)</li>
+      <li>見た目を実装する担当(frontend-design というスキルや、エンジニア)への1ページの依頼書</li>
+    </ul>
+  </div>
+</header>
+
+<section>
+  <h2>最初の返事で違いが出る</h2>
+  <p class="prose">依頼は「家計簿アプリを作りたい」の一言だけ、という想定です。左は、いまの Claude やエンジニアが返しがちな返事です。右が、このスキルが目指す返事です。</p>
+  <div class="vs">
+    <div class="box bad">
+      <h3>よくある返事</h3>
+      <div class="reply">
+        <p>家計簿アプリですね。次の機能を考えました。</p>
+        <ul>
+          <li>支出と収入の登録</li>
+          <li>カテゴリ別のグラフ</li>
+          <li>月ごとの予算</li>
+          <li>口座連携</li>
+          <li>ユーザー登録とログイン</li>
+        </ul>
+        <p>ターゲットユーザーは「30代の会社員、田中さん(仮)」です。技術スタックは何にしますか?</p>
+      </div>
+      <p class="small">機能の一覧にすぐ飛ぶ。架空の利用者を作る。聞いているのは作り方だけ。</p>
+    </div>
+    <div class="box good">
+      <h3>このスキルの返事</h3>
+      <dl class="reply">
+        <dt>観察</dt><dd>家計簿は、作る人は多いのに続く人が少ない領域です。調べると、記録は「やめる」より「途切れて、また戻る」のが普通だという研究があります。</dd>
+        <dt>捉え直し</dt><dd>作るのは記録帳ではなく、「今月使いすぎているか」が最小の入力で分かる道具、と捉えてはどうでしょう。</dd>
+        <dt>たたき台</dt><dd>最初の画面は「今月あといくら使えるか」の数字1つ。1件入れるとその数字が動く。2週間空けて戻っても責めない。</dd>
+        <dt>やらないこと</dt><dd>口座連携、グラフの種類を増やすこと。最初の離脱の原因になりやすいため。</dd>
+        <dt>この案が外れる条件</dt><dd>3日続けて記録されないなら、入力の仕組みから考え直します。</dd>
+        <dt>質問</dt><dd>最後に家計簿をやめたとき、何がきっかけでしたか。誰と一緒に使うものですか(一人か、夫婦か)。</dd>
+      </dl>
+      <p class="small">捉え直し、たたき台を出してから聞く。質問は「最後に〜したとき」と、過去の具体的な出来事を聞く。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>デザイナーとして振る舞うための3つの層</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>① 構え(どう考え、どう話すか)</h3>
+      <p>熟練デザイナーの研究(Schön、Cross、Dorst など)と第一線の実務家の発信から、行動の形にしたものです。</p>
+      <ul>
+        <li>依頼を「どういう問題か」と言い直し、別の捉え方を1つ並べる</li>
+        <li>聞くより先に、たたき台を出して「違うならどこか」を聞く</li>
+        <li>たたき台を作って分かったこと(新しい問題、前の決定との矛盾)を書き出す</li>
+        <li>案を2つ持ち、その案件に固有の基準で比べる。推奨は1つにし、何を犠牲にするかを書く</li>
+        <li>この案が外れる条件を書く</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>② 視点(何を見るか)</h3>
+      <p>エンジニアや素人が見落としやすいことを、問いの形で約40個持ちます。工程ごとに、その案件に関係するものを選んで使います。例を挙げます。</p>
+      <ul>
+        <li>使う場面:どこで、何を手に持って、何に邪魔されながら使うか</li>
+        <li>使われ方の型:何時間も居続ける道具か、さっと開いて閉じる道具か</li>
+        <li>時間の流れ:初日、30日後、3か月空いた後、やめるとき</li>
+        <li>画面の外:メール、電話、紙、受付スタッフの動き</li>
+        <li>感情:お金や健康の場面で、不安や恥ずかしさをどう扱うか</li>
+        <li>誰が取り残されるか:片手しか使えない人、高齢の人、代わりに予約する家族</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>③ 骨組み(順番と検査)</h3>
+      <p>工程の順番、各工程で決める問い、抜けを見つける検査です。第2版から引き継ぎます。①と②が良い問いと案を出し、③が抜けを防ぎます。</p>
+      <p class="small">答え(家計簿ならこう、予約ならこう)はスキルに書きません。案件ごとにその場で調べるか、聞くか、考えます。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>使うと何が起きるか(家計簿アプリの続き)</h2>
+  <p class="prose"><span class="k ask">聞く</span>はユーザーにしか答えられないこと、<span class="k res">調べる</span>は Web やコードで分かること、<span class="k think">考える</span>は根拠を示してスキル自身が決めることです。</p>
+  <div class="walk">
+    <div class="step"><div class="sid">S0<span>受付</span></div><div>
+      <p><span class="k res">調べる</span>リポジトリを読む。コードも資料もないので、個人向けの新規アプリで規模は小、と判定する。人が答えられる会話かどうかもここで確かめる。</p>
+      <p><span class="k ask">聞く</span>上の「このスキルの返事」を返す。</p>
+    </div></div>
+    <div class="step"><div class="sid">S1<span>問題と範囲</span></div><div>
+      <p><span class="k think">考える</span>答えを受けて、問題「月末まで使いすぎに気づけない」、成功の測り方「週1回以上の記録が1か月続く」、やらないことを決める。</p>
+      <p><span class="k ask">聞く</span>ここで一度、問題と範囲が合っているか確認する。</p>
+    </div></div>
+    <div class="step"><div class="sid">S2<span>構造</span></div><div>
+      <p><span class="k think">考える</span>扱うもの(支出、カテゴリ、予算、月)と、主な流れ「支出を記録する」を、失敗の分かれ道も含めて書く。流れの案を2つ(買ったその場で入れる型、夜にまとめて入れる型)作り、「最初の1件までの時間」「月末の手間」で比べる。</p>
+      <p><span class="found">たたき台から分かったこと:「夫婦の共有カードの支出は誰のものか」が決まっていない。未決事項に加える。</span></p>
+    </div></div>
+    <div class="step"><div class="sid">S3<span>画面と状態</span></div><div>
+      <p><span class="k think">考える</span>画面の一覧(ホーム、記録、履歴、予算設定、初回設定)と、画面ごとの状態(まだ空、予算が未設定、予算を超えた、2週間ぶりに開いた)を決める。</p>
+      <p><span class="found">検査で見つかったこと:「データを書き出す」と「アカウントを消す」の画面がない。やめる人のための画面として足す。</span></p>
+      <p><span class="k ask">聞く</span>画面の一覧ができたところで、方向が合っているかをもう一度確認する。</p>
+    </div></div>
+    <div class="step"><div class="sid">S4<span>体験の方針</span></div><div>
+      <p><span class="k think">考える</span>トーンは「使いすぎを責めない」。原則は「正確さより、続けやすさを優先する」。避けたい体験は「開くたびに叱られる感じ」。繰り返し出てくる操作の型(取り消しは確認ダイアログでなく数秒の取り消しボタン、など)をまとめる。</p>
+      <p class="small">色や書体は決めない。ユーザーから決まったロゴや色を渡されたら、それはそのまま依頼書に載せる。</p>
+    </div></div>
+    <div class="step"><div class="sid">S5<span>引き渡し</span></div><div>
+      <p><code>docs/ux/kakeibo/UX.md</code> にまとめ、冒頭に実装担当への依頼書を置く。検査の結果と未決事項を書き、「次は frontend-design にこのファイルを渡してください」とユーザーに伝える。次の工程を始めるのはユーザーです。</p>
+      <p class="small">この例でユーザーが聞かれるのは、S0 の質問、S1 の後の確認、S3 の後の確認の3回です。</p>
+    </div></div>
+  </div>
+</section>
+
+<section>
+  <h2>工程と、それぞれで決めること</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>工程</th><th>決めること</th><th>特に使う視点</th><th>出力</th></tr>
+    <tr><td class="id">S0 受付</td><td>新規か既存の改善か。規模(画面数の見込み、役割の数、規制の有無で判定)。人が答えられる会話か</td><td>依頼の捉え直し</td><td>前提、規模、最初の返事</td></tr>
+    <tr><td class="id">S1 問題と範囲</td><td>誰のどんな問題か。成功の測り方。やらないこと。最も危ない前提</td><td>使う場面、時間の流れ、画面の外、誰が取り残されるか</td><td>問題文、成功の測り方、やらないこと、前提の一覧。ユーザーに確認</td></tr>
+    <tr><td class="id">S2 構造</td><td>扱うものと関係。誰が何をできるか。主な流れと失敗の分かれ道。案を2つ比べた結果</td><td>使われ方の型、頭の中の整理と画面の整理が合っているか、関わる人全員</td><td>扱うものの一覧、役割と権限、操作の流れ</td></tr>
+    <tr><td class="id">S3 画面と状態</td><td>要る画面。各画面の目的、一番の操作、内容の重要度順、状態</td><td>今の状態が分かるか、次に何をすればいいか分かるか、取り消せるか</td><td>画面一覧、画面ごとの説明、状態表。ユーザーに確認</td></tr>
+    <tr><td class="id">S4 体験の方針</td><td>トーン、優先する原則、避けたい体験、繰り返し出てくる操作の型</td><td>感情、信頼、「Aを優先しBは譲る」の形の原則</td><td>体験の方針(色や書体は含めない)、操作の型の一覧</td></tr>
+    <tr><td class="id">S5 引き渡し</td><td>実装担当が見た目を作るだけで済むか</td><td>初見、初回、3週間後の3つの場面で自分の案を見直す</td><td>依頼書、検査結果、未決事項、次に使うもの</td></tr>
+  </table>
+  </div>
+  <p class="small prose">既存フローの改善では、S1 の前に「診断」を挟みます(どのステップで何割が離脱しているか、など)。数字がもらえなければ、測り方の計画を出し、改善案は仮説として扱います。</p>
+</section>
+
+<section>
+  <h2>聞く、調べる、考えるの決め方</h2>
+  <div class="prose box">
+    <p style="margin-top:0">分からないことが出たら、次の順で決めます。</p>
+    <ol>
+      <li>ユーザーにしか分からないこと(目的、制約、過去の出来事、やらないこと)なら聞く。</li>
+      <li>公開資料やコードで確かめられること(法令、その分野の慣習、競合のやり方)なら調べる。</li>
+      <li>どちらでもなければ、根拠を書いて考える。</li>
+    </ol>
+    <p>聞き方の決まりです。</p>
+    <ul>
+      <li>聞くのは、答えで決定が変わり、推測で進むと手戻りが大きいときだけにする。それ以外は未決事項に入れ、最後にまとめて渡す。</li>
+      <li>「最後に〜したとき、どうでしたか」と過去の出来事を聞く。「ユーザーは気に入ると思いますか」のような仮定の質問はしない(答えが当てにならないため。The Mom Test)。</li>
+      <li>確認は S1 の後(問題と範囲)と S3 の後(画面の一覧)の2回置く。人がいない実行では、質問を前提の一覧に変えて進め、資料の冒頭に「未確認」と書く。</li>
+    </ul>
+    <p>調べ方の決まりです。</p>
+    <ul>
+      <li>1つの工程で検索は5回まで。出典が2つ一致したら止める。見つからなければ「推測」の印を付けて進む。</li>
+      <li>Web が使えない環境では、すべて「推測」として扱い、資料の冒頭に「未調査」と書く。</li>
+    </ul>
+    <p style="margin-bottom:0">書いた記述には印を付けます。印は4種類で、「ユーザーの発言」「公開資料(URL付き)」「ユーザーが渡した実データ」「推測」です。ユーザーが自分の利用者について話したことは「ユーザーの発言」として扱い、利用者本人の声とは区別します。架空の利用者像(名前、年齢、セリフ)と根拠のない数字は書きません。AI が作る利用者像は、もっともらしく見えても偏っているという研究が複数あるためです。</p>
+  </div>
+</section>
+
+<section>
+  <h2>抜けを見つける3つの検査</h2>
+  <p class="prose">案件の大きさによらず、検査は省きません。小さな案件で減らすのは資料の量だけです。調べた限り、既存の Claude 向け UX スキルはどれも「エラー状態も考えること」と注意書きするだけで、抜けを見つける仕組みを持っていませんでした。</p>
+  <div class="grid2">
+    <div class="box">
+      <h3>① 画面の作り忘れ</h3>
+      <p>扱うものごとに、一覧、詳細、作成と編集の画面が要るかを1つずつ決めます。依頼に書かれにくい共通の画面(ログイン、設定、データの書き出し、退会、404 など)のリストも、すべて「要る」か「要らない、理由」で埋めます。</p>
+    </div>
+    <div class="box">
+      <h3>② 流れと画面のつながり</h3>
+      <p>操作の流れのどのステップも、どれかの画面で行われること。どの画面も、どれかのステップで使われること。両方向から確かめ、どこにもつながらない画面やステップがあれば不合格です。</p>
+    </div>
+    <div class="box">
+      <h3>③ 画面ごとの状態</h3>
+      <p>画面ごとに、空、読み込み中、エラー、権限なし、上限超え、通信切れ、同時に編集された、データが極端に多い、などの場面を「設計した」か「起きない、理由」で埋めます。空欄は不合格です。</p>
+    </div>
+  </div>
+  <div class="scroll">
+  <table>
+    <tr><th>例:予約一覧(受付の画面)</th><th>まだ空</th><th>該当なし</th><th>読み込み中</th><th>エラー</th><th>権限なし</th><th>同時に操作</th><th>極端</th></tr>
+    <tr><td>どう見せるか</td><td>「最初の予約枠を作る」へ案内</td><td>絞り込みを解除するボタン</td><td>行の形の仮表示</td><td>再試行、入力は保持</td><td>看護師は見るだけ</td><td>同じ枠を2人が確定したら、後の人に別の枠を出す</td><td>1日120件、長い名前</td></tr>
+  </table>
+  </div>
+  <div class="prose box">
+    <p style="margin-top:0">検査をすり抜けないための決まりです。</p>
+    <ul style="margin-bottom:0">
+      <li>表の列と ID の付け方を固定します(画面は <code>SC-01</code>、流れのステップは <code>F1-03</code> など)。スクリプトはこの表だけを読みます。</li>
+      <li>「起きない」の理由に「不要」「該当なし」とだけ書いた場合は、不合格にします。</li>
+      <li>「起きない」が全体の4割を超えたら、人の確認に回します。</li>
+      <li>記述に付けた印もスクリプトで数え、「推測」が多ければ資料の冒頭に警告を出します。</li>
+      <li>中身が妥当かは、作業の経緯を知らない別の AI がレビューします。方針の良し悪しは人が見ます。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>ファイル構成</h2>
+<pre class="tree">skills/z-design-ux/
+├── SKILL.md                    # 構えの要点、工程と各工程の問い、聞く・調べる・考えるの決め方、いつどの参照を読むか
+├── EVALS.md                    # 試験用の依頼文と判定項目(家計簿、予約SaaS、会員登録)
+├── references/
+│   ├── designer-stance.md      # 熟練者の動き方、提案の型(観察→捉え直し→たたき台→やらないこと→外れる条件→質問)、聞き方
+│   ├── lenses.md               # 見落としやすい視点 約40個。問いの形で、工程ごとに整理
+│   ├── question-bank.md        # プロが聞く質問 約45個。誰に聞くか、何の見落としを防ぐか付き
+│   ├── stages.md               # 各工程の詳しい問い、出力の書き方、既存フロー改善の診断
+│   ├── research-and-evidence.md# 調べ方と上限、印の付け方
+│   ├── coverage.md             # 3つの検査、共通画面のリスト、状態の種類、表の書式
+│   └── handoff.md              # 依頼書の形、次に使うもの
+└── scripts/
+    └── check_package.py        # 表の空欄、ID、つながり、印を検査</pre>
+  <p class="small prose">中規模以上の案件では、工程ごとの途中経過を <code>docs/ux/&lt;名前&gt;/</code> に書き出し、進み具合を <code>STATE.md</code> に残します。途中で会話が切れても再開できるようにするためです。SKILL.md は英語で書き、起動の言葉に日本語を入れます。出力はユーザーの言語で出します。</p>
+</section>
+
+<section>
+  <h2>決まったこと</h2>
+  <ol class="prose decide">
+    <li><b>別の捉え方</b>:毎回、捉え直しを1行は出す。作るものが変わるほどの捉え直しのときだけ、別案として詳しく比べる。</li>
+    <li><b>途中の確認</b>:S1 の後(問題と範囲)と S3 の後(画面の一覧)の2回。</li>
+    <li><b>見た目</b>:扱わない。S4 は体験の方針だけにする。</li>
+    <li><b>frontend-design との起動の順番</b>:対策しない。説明文は普通に書き、起動のテストは「このスキルが起動すべき依頼で起動するか」だけを見る。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>第2版から変えたこと</h2>
+  <div class="prose box">
+    <ul style="margin:0">
+      <li>S4 を「見た目の方針」から「体験の方針」に変えた。色や書体は方針も含めて扱わず、実装側に任せる(Marty の判断)。</li>
+      <li>デザイナーとしての「構え」と「視点」の層を足した(Marty の指摘)。そのために、熟練デザイナーの研究、プロの質問、見落としやすい視点、第一線の実務家の発信を追加で調べた。</li>
+      <li>聞く、調べる、考えるの決め方に順番と上限を付けた。人がいない実行と、Web が使えない環境での扱いを決めた(レビューの指摘)。</li>
+      <li>検査の表の書式と、「起きない」で逃げられないための決まりを足した(レビューの指摘)。</li>
+      <li>評価を公式の手順に合わせた。起動のテストを約20件、Sonnet と Opus の両方で試す。判定項目は、スキルなしで1回走らせた結果を見てから足す。</li>
+      <li>家計簿、予約、会員登録で外せない点は、引き続きスキルに入れず、試験側(EVALS.md)に置く。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>用語</h2>
+  <div class="prose box">
+    <dl class="gloss">
+      <dt>frontend-design</dt><dd>Anthropic が出している、画面の見た目を実装するスキル。このスキルの次に使う想定。</dd>
+      <dt>z-prototype</dt><dd>見た目の案を試作して並べるスキル。ユーザーが自分で起動する。</dd>
+      <dt>依頼書</dt><dd>実装担当に渡す1ページ。何を作るか、画面ごとの要素、状態、体験の方針。見た目は実装担当が決める。</dd>
+      <dt>状態</dt><dd>同じ画面でも場面によって変わる見え方。データがまだ空、読み込み中、エラーなど。</dd>
+      <dt>EVALS.md</dt><dd>スキルを試すための依頼文と判定項目を書いたファイル。</dd>
+      <dt>ADOPTIONS.md</dt><dd>dotclaude で、参考にした他のスキルを記録するファイル。</dd>
+    </dl>
+  </div>
+  <p class="small prose">このページが設計案の正本です。調査ノートは <code>/Users/gary/tmp/ux-design-skill/research_notes/UI実装前のUX設計工程/</code> にあります(17本)。</p>
+</section>
+
+</div>

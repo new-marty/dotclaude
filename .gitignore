@@ -20,10 +20,12 @@
 !skills/
 !scripts/
 !output-styles/
+!research/
 
 !skills/**
 !scripts/**
 !output-styles/**
+!research/**
 
 # --- Device-local layer (README "Pull-only devices") ---
 # Paths a device keeps for itself. Never track or force-add anything here: a pull
