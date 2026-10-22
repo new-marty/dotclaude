@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: signup-dropoff
+expected_outcome: |
+  An improvement plan for an existing sign-up flow that starts by diagnosing where and why people drop off (or a plan to measure it when no data is given), compares current and proposed flows, keeps failure paths and Japanese form issues in view, and states which changes are hypotheses to test.

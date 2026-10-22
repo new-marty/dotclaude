@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: clinic-booking-saas
+expected_outcome: |
+  A UX design package for a small-clinic booking SaaS covering patient and staff roles, permissions, booking rules researched at run time, flows with failure branches, a screen list with per-screen states, and open questions for the requester, with no visual styling decided.

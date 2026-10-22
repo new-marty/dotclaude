@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: household-budget-vague
+expected_outcome: |
+  A UX design package for a personal budgeting app produced before any UI code: the request is reframed, questions or stated assumptions cover who uses it and why, screens and their states are derived and checked for gaps, and a brief for UI implementation is handed off. No colours or fonts are decided.
