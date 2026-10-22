@@ -9,6 +9,8 @@ references/coverage.md) and the evidence labels, skipping fenced code blocks.
 Exits 0 when all checks pass, 1 otherwise. Standard library only.
 """
 
+from __future__ import annotations
+
 import re
 import sys
 import unicodedata
