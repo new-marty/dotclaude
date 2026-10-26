@@ -66,6 +66,9 @@ skills/find-skills
 skills/orca-cli
 skills/orchestration
 
+# A symlink `sentry cli setup` creates per machine, pointing at ~/.agents/skills.
+skills/sentry-cli
+
 # --- Backstop ---
 # Last line of defense against pulling in credentials when the allow list
 # above grows later.
