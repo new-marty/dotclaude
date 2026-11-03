@@ -180,7 +180,11 @@ bg_fetch_usage() {
     date "+%s" > "$FETCH_LOCK"
 
     (
-        token=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -w 2>/dev/null || true)
+        # Claude Code files the credential under the login name. Other entries
+        # with the same service name can exist (one with acct "unknown" and
+        # empty tokens did), and a lookup by service alone may return those.
+        token=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$(id -un)" -w 2>/dev/null ||
+            security find-generic-password -s "$KEYCHAIN_SERVICE" -w 2>/dev/null || true)
         if [ -z "$token" ]; then rm -f "$FETCH_LOCK"; exit 1; fi
         access_token=$(echo "$token" | jq -r '.claudeAiOauth.accessToken // .accessToken // .access_token // empty' 2>/dev/null || true)
         if [ -z "$access_token" ]; then rm -f "$FETCH_LOCK"; exit 1; fi
@@ -196,7 +200,7 @@ bg_fetch_usage() {
             body=$(echo "$result" | sed '$d')
 
             if [ "$http_code" = "200" ]; then
-                echo "$body" | jq -e '.five_hour' > /dev/null 2>&1 && \
+                echo "$body" | jq -e '.five_hour // .seven_day' > /dev/null 2>&1 && \
                     jq -n --arg d "$body" --argjson t "$(date '+%s')" \
                         '{cached_at: $t, data: ($d | fromjson)}' > "$CACHE_FILE" 2>/dev/null
                 break
@@ -249,29 +253,24 @@ if [ "$BILLING" != "subscription" ]; then
 fi
 
 # Subscription: Claude Code sends the limits itself after the first API
-# response. Before that, fall back to the usage endpoint.
-five_hour_util=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty' | awk '{printf "%d", $1}')
-if [ -n "$five_hour_util" ]; then
-    five_hour_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
-    seven_day_util=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // 0' | awk '{printf "%d", $1}')
-    seven_day_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
-    print_usage_line " 5h" "$five_hour_util" "$(format_reset_time "${five_hour_reset:-?}")" "$C_MAUVE"
-    print_usage_line " 7d" "$seven_day_util" "$(format_reset_time "${seven_day_reset:-?}")" "$C_PEACH"
-    exit 0
+# response. Before that, fall back to the usage endpoint. A plan without a
+# five-hour limit (Ultra, since 2026-10-30) gets no five_hour at all, so each
+# line is drawn only when its limit exists.
+# Prints "<percent> <resets_at>" for one limit, or nothing when it is absent.
+limit_of() { echo "$1" | jq -r "$2 | select(. != null) | \"\(($3) // 0 | floor) \(.resets_at // \"?\")\"" 2>/dev/null; }
+
+if echo "$input" | jq -e '.rate_limits.five_hour // .rate_limits.seven_day' >/dev/null 2>&1; then
+    five_hour=$(limit_of "$input" '.rate_limits.five_hour' '.used_percentage')
+    seven_day=$(limit_of "$input" '.rate_limits.seven_day' '.used_percentage')
+else
+    usage_data=$(get_usage_data 2>/dev/null)
+    five_hour=$(limit_of "$usage_data" '.five_hour' '.utilization')
+    seven_day=$(limit_of "$usage_data" '.seven_day' '.utilization')
 fi
 
-usage_data=$(get_usage_data 2>/dev/null)
-if [ -n "$usage_data" ]; then
-    five_hour_util=$(echo "$usage_data" | jq -r '.five_hour.utilization // 0' | awk '{printf "%d", $1}')
-    five_hour_reset=$(echo "$usage_data" | jq -r '.five_hour.resets_at // empty')
-    seven_day_util=$(echo "$usage_data" | jq -r '.seven_day.utilization // 0' | awk '{printf "%d", $1}')
-    seven_day_reset=$(echo "$usage_data" | jq -r '.seven_day.resets_at // empty')
-
-    five_hour_reset_display="?"
-    [ -n "$five_hour_reset" ] && [ "$five_hour_reset" != "null" ] && five_hour_reset_display=$(format_reset_time "$five_hour_reset")
-    seven_day_reset_display="?"
-    [ -n "$seven_day_reset" ] && [ "$seven_day_reset" != "null" ] && seven_day_reset_display=$(format_reset_time "$seven_day_reset")
-
-    print_usage_line " 5h" "$five_hour_util" "$five_hour_reset_display" "$C_MAUVE"
-    print_usage_line " 7d" "$seven_day_util" "$seven_day_reset_display" "$C_PEACH"
+if [ -n "$five_hour" ]; then
+    print_usage_line " 5h" "${five_hour%% *}" "$(format_reset_time "${five_hour#* }")" "$C_MAUVE"
+fi
+if [ -n "$seven_day" ]; then
+    print_usage_line " 7d" "${seven_day%% *}" "$(format_reset_time "${seven_day#* }")" "$C_PEACH"
 fi
