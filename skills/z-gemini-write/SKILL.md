@@ -77,7 +77,9 @@ name. On any other answer, stop.
 Setting up OpenRouter is also the user's to do in a terminal: create a key with a spending
 limit on openrouter.ai, then run
 `~/.claude/skills/z-gemini-write/scripts/gemini-write.sh --setup-openrouter` and paste the
-key. It goes into the macOS Keychain under the service `openrouter`. `--status` shows the
+key. It goes into the macOS Keychain under the service `openrouter`. A machine that renders
+its secrets into `~/.config/secrets/gemini-write.env` (the Mac mini, from 1Password) reads the
+key from that file instead, and `--setup-openrouter` refuses there. `--status` shows the
 state of both routes without spending anything.
 
 ### 3. Check for drift against the outline

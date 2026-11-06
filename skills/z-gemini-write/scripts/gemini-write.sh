@@ -8,6 +8,10 @@
 #   gemini-write.sh --status               what each route can do right now
 #   gemini-write.sh --setup-openrouter     paste an OpenRouter key into the Keychain
 #
+# The OpenRouter key comes from the Keychain, unless the machine renders it into a key file
+# (GEMINI_WRITE_KEY_FILE, default ~/.config/secrets/gemini-write.env, as the Mac mini does from
+# 1Password). The file then wins, so a key changed at its source reaches this script too.
+#
 # BRIEF holds the reader, the purpose, and any revision notes.
 # Exit codes: 0 done, 2 usage, 3 agy quota used up, 4 agy signed out, 5 other agy error,
 # 6 OpenRouter not usable (no key, or a key without a spending limit), 7 OpenRouter error.
@@ -18,6 +22,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 agy_model=${GEMINI_WRITE_AGY_MODEL:-gemini-3.8-flash-high}
 or_model=${GEMINI_WRITE_OPENROUTER_MODEL:-google/gemini-3.8-flash}
 keychain_service=openrouter
+key_file=${GEMINI_WRITE_KEY_FILE:-$HOME/.config/secrets/gemini-write.env}
 self=$0
 
 die() { echo "$2" >&2; exit "$1"; }
@@ -70,7 +75,13 @@ agy_write() {
 
 # --- OpenRouter -----------------------------------------------------------------------
 
-or_key() { security find-generic-password -a "$USER" -s "$keychain_service" -w 2>/dev/null; }
+or_key() {
+  if [[ -r $key_file ]]; then
+    (set +u; . "$key_file" && [[ -n ${OPENROUTER_API_KEY:-} ]] && printf '%s' "$OPENROUTER_API_KEY")
+  else
+    security find-generic-password -a "$USER" -s "$keychain_service" -w 2>/dev/null
+  fi
+}
 
 # Prints the key's limit line. Exits 6 when there is no key or the key has no limit,
 # so a runaway loop can never spend more than the cap set on openrouter.ai.
@@ -109,6 +120,7 @@ or_write() {
 
 setup_openrouter() {
   local key
+  [[ ! -e $key_file ]] || die 2 "このマシンはキーを $key_file から読みます。キーはそのファイルの元で替えてください。"
   printf 'OpenRouter の API キーを貼り付けて Enter (画面には表示されません): ' >&2
   IFS= read -rs key
   echo >&2
