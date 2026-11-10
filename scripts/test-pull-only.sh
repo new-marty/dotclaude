@@ -3,6 +3,7 @@
 # upstream, a writer clone and a device clone in a scratch directory; never touches
 # ~/.claude. Needs git and jq.
 set -euo pipefail
+export CLAUDE_SYNC_NO_INSTALL=1   # never run the real claude CLI from a test
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT

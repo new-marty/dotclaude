@@ -14,12 +14,15 @@ Merge rules, so nothing a machine added is lost:
 
 The file is written only when something changed, through a temporary file and
 a rename, after copying the previous version to settings.json.bak-shared.
+It also starts `claude plugin install` in the background for enabled plugins this
+machine has no install record for (CLAUDE_SYNC_NO_INSTALL=1 turns that off, for tests).
 Usage: apply-shared-settings.py [claude_dir]   (default: $CLAUDE_SYNC_DIR or ~/.claude)
 Exit status is always 0; problems are reported on stderr.
 """
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -48,6 +51,32 @@ def merge(current, shared):
     return changed
 
 
+def record_installs(claude_dir, shared):
+    """Install, in the background, each enabled plugin this machine has no install record for.
+
+    A session downloads an enabled plugin on its own, but without an entry in
+    installed_plugins.json, and `claude plugin update` (which auto-update runs)
+    then reports it as not installed. `claude plugin install` writes the entry.
+    """
+    wanted = [p for p, on in shared.get("enabledPlugins", {}).items() if on is True]
+    try:
+        with open(os.path.join(claude_dir, "plugins", "installed_plugins.json")) as f:
+            have = set(json.load(f).get("plugins", {}))
+    except (OSError, ValueError):
+        have = set()
+    missing = [p for p in wanted if p not in have]
+    claude = None if os.environ.get("CLAUDE_SYNC_NO_INSTALL") else shutil.which("claude")
+    if not missing or not claude:
+        return
+    log_path = os.path.join(claude_dir, "plugins", "shared-install.log")
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    script = "; ".join(f'"$0" plugin install {p} --scope user' for p in missing)
+    with open(log_path, "a") as log_file:
+        subprocess.Popen(["/bin/sh", "-c", script, claude], stdout=log_file, stderr=log_file,
+                         stdin=subprocess.DEVNULL, start_new_session=True)
+    log("installing in the background: " + ", ".join(missing) + f" (log: {log_path})")
+
+
 def main():
     claude_dir = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
         "CLAUDE_SYNC_DIR", os.path.expanduser("~/.claude"))
@@ -70,6 +99,7 @@ def main():
             log(f"settings.json is not valid JSON ({e}); fix it by hand, nothing was merged")
             return
     changed = merge(current, shared)
+    record_installs(claude_dir, shared)
     if not changed:
         return
     if os.path.exists(settings_path):

@@ -137,7 +137,11 @@ keeps the previous file as `settings.json.bak-shared`. The mac-mini gets the sam
 because its morning `dotclaude-sync.sh` calls `sync-pull.sh`.
 
 Claude Code fetches a newly declared marketplace and its enabled plugins in the background
-after a session starts; run `/reload-plugins` or start another session to load them.
+after a session starts; run `/reload-plugins` or start another session to load them. A
+plugin fetched that way has no entry in `plugins/installed_plugins.json`, and
+`claude plugin update`, which auto-update runs, then calls it not installed. So the same
+script starts `claude plugin install <plugin> --scope user` in the background for each
+enabled plugin without an entry, logging to `plugins/shared-install.log`.
 
 To stop using a plugin everywhere, set it to `false` in `settings.shared.json` rather than
 deleting the line: the merge never removes a key, so a deleted line stays `true` on every
