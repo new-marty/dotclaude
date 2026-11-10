@@ -147,6 +147,11 @@ To stop using a plugin everywhere, set it to `false` in `settings.shared.json` r
 deleting the line: the merge never removes a key, so a deleted line stays `true` on every
 machine that already had it.
 
+`scripts/check-plugins.py` watches that auto-update keeps up. For each shared plugin it
+compares the installed version with the one upstream publishes, and reports a plugin still
+behind after two days as a `CHANGED` line; `check-upstream.sh` runs it, so the mac-mini's
+morning check files it in Linear like any other upstream change.
+
 pstack has no Claude Code marketplace of its own, so `settings.shared.json` declares an
 inline one, `pstack-mirror`, whose single plugin is the whole
 [backnotprop/pstack](https://github.com/backnotprop/pstack) mirror. Its skills call one

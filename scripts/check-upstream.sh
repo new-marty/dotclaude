@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Compares the upstream revisions recorded in scripts/upstream.tsv with each
 # upstream's current head, so a change in something we adopted gets noticed.
+# It then runs check-plugins.py, which reports a shared plugin that
+# auto-update has left behind its upstream for more than two days.
 # The mac-mini runs it every morning in daily-maintenance (~/server T-459);
 # any machine can also run it by hand.
 #
@@ -45,6 +47,13 @@ while IFS=$'\t' read -r skill url rev; do
     echo "CHANGED  $skill  $url  $rev -> $short"
     echo "         $hint"
 done < "$LIST"
+
+PLUGINS="$(dirname "$LIST")/check-plugins.py"
+if [ -f "$PLUGINS" ] && command -v python3 >/dev/null 2>&1; then
+    prc=0
+    python3 -I "$PLUGINS" || prc=$?
+    case "$prc" in 0) ;; 1) changed=1 ;; *) failed=1 ;; esac
+fi
 
 [ "$failed" -eq 1 ] && exit 2
 exit "$changed"
