@@ -2,7 +2,7 @@
 name: z-gemini-write
 description: Turn content Claude has already organised (bullet points, an outline, a rough draft) into Japanese prose written by Gemini, then check that nothing drifted. Gemini writes through the Antigravity CLI on the signed-in Google account; OpenRouter, which bills per token, is used only after the user approves it for that call. Use at the step where organised Japanese content becomes prose - 「Gemini で書いて」「Gemini で文章にして」「箇条書きを Gemini で文章に」"write this up with Gemini". Not for polishing prose that is already written, not for short chat replies, not for English, not for code.
 argument-hint: "[what to write up]"
-allowed-tools: Bash(~/.claude/skills/z-gemini-write/scripts/*), Bash(uv run *), Read, Write, Edit
+allowed-tools: Bash(~/.claude/skills/z-gemini-write/scripts/*), Read, Write, Edit
 ---
 
 <!-- The division of labour (Gemini writes, Claude checks for meaning drift) follows
@@ -42,9 +42,9 @@ loop stops at the cap set on openrouter.ai.
 
 ### 1. Settle the content
 
-First decide what the reader needs for their purpose (`z-writing-for-readers`); leave
-the rest out or link to it, and turn internal record numbers into words as that skill
-says. Then put every fact, number, condition, and conclusion that remains into bullet
+First decide what the reader needs for their purpose (the "Writing for someone outside
+this session" section of `CLAUDE.md`); leave the rest out or link to it, and turn internal
+record numbers into words. Then put every fact, number, condition, and conclusion that remains into bullet
 points or an outline, in the order the reader should meet them. Gemini is told not to add anything, so what is
 missing here stays missing. Save it to a file in the scratchpad directory.
 
@@ -99,11 +99,10 @@ spot by hand and leave the rest of Gemini's wording alone. A paid rerun needs it
 
 ### 4. Lint
 
-```bash
-uv run ~/.claude/skills/z-natural-japanese/scripts/lint.py <out>
-```
+Load `yomiyasu` and run only its lint on `<out>`: `yomiyasu_lint.py`, called the way its
+「実行するコマンド」 section shows.
 
-Judge each finding in context, as `z-natural-japanese` says. Fix small ones by hand. When
+Judge each finding in context, as `yomiyasu` says. Fix small ones by hand. When
 a finding needs a paragraph rewritten, put it in the brief and send it back to Gemini
 instead, because rewriting by hand brings back the phrasing this skill exists to avoid;
 the same rerun limits as step 3 apply.
