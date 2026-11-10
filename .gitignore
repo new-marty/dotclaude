@@ -15,6 +15,10 @@
 # settings.json itself is per machine: Orca and other tools inject hooks into it,
 # and a headless machine runs its own. Only the starting point is tracked.
 !settings.example.json
+# Keys every machine must have, merged into settings.json after each pull.
+!settings.shared.json
+# Turns on i-have-adhd's always-on mode on every machine (the plugin's SessionStart hook reads it).
+!.i-have-adhd-always
 !statusline.sh
 
 !skills/

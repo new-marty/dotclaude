@@ -63,7 +63,7 @@ carries no prefix. Leave it that way.
 # Explaining
 
 When asked to explain a whole picture (a structure, a flow, a before and after), answer
-with an artifact unasked (`z-eli5` for a new topic, `z-show-me` for the current one): the
+with an artifact unasked (`eli5` for a new topic, `show-me` for the current one): the
 user grasps those faster by seeing them. Narrow facts stay plain text.
 
 # Editing dotclaude (`~/.claude`)
@@ -74,11 +74,9 @@ and never force-push.
 
 # When to read a skill
 
-- Read `z-writing-for-readers` before writing anything a reader outside this session will
-  see: documentation, READMEs, design documents, PR descriptions, commit messages, issues.
-  Its "Text for agents" section also covers what agents read: CLAUDE.md, SKILL.md, memory.
-- After the draft, run the pass for its language. English: `z-humanizer`. Japanese:
-  `z-natural-japanese` (the constitution before writing, its `lint.py` on the draft) and
-  then `z-japanese-proofreading`. Neither pass applies to the other language.
+- Before writing anything an agent will read (CLAUDE.md, AGENTS.md, SKILL.md, memory),
+  read `mattpocock-skills:writing-for-agents`.
+- After drafting prose a reader outside this session will see, run the pass for its
+  language. English: `humanizer`. Japanese: `yomiyasu`.
 
 @~/.claude/CLAUDE.machine.md

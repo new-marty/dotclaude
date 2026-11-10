@@ -13,6 +13,14 @@ set -uo pipefail
 DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 [ -d "$DIR/.git" ] || exit 0
 
+# After a pull, merge the keys every machine shares into settings.json
+# (README "Settings every machine shares"). It never fails the hook.
+apply_shared() {
+    [ -f "$DIR/scripts/apply-shared-settings.py" ] && [ -f "$DIR/settings.shared.json" ] || return 0
+    command -v python3 >/dev/null 2>&1 || { echo "[claude-sync] python3 not found; settings.shared.json not applied" >&2; return; }
+    python3 -I "$DIR/scripts/apply-shared-settings.py" "$DIR"
+}
+
 # A rebase already in progress means an earlier sync stopped on a conflict.
 # Touching the repository again would only bury it.
 if [ -n "$(git -C "$DIR" ls-files --unmerged 2>/dev/null | head -1)" ] \
@@ -48,6 +56,7 @@ if [ "$role" = pull-only ]; then
             echo "[claude-sync] on ${branch:-a detached HEAD}, $behind commits behind origin/main; run: git -C ~/.claude merge origin/main" >&2
         fi
     fi
+    apply_shared
     exit 0
 fi
 
@@ -66,5 +75,7 @@ if [ -n "$(git -C "$DIR" ls-files --unmerged 2>/dev/null | head -1)" ]; then
     echo "[claude-sync] could not be replayed on top. Resolve the conflict:" >&2
     git -C "$DIR" diff --name-only --diff-filter=U | sed 's/^/[claude-sync]   /' >&2
     echo "[claude-sync] Your pre-pull state is also kept in 'git -C ~/.claude stash list'." >&2
+    exit 0
 fi
+apply_shared
 exit 0

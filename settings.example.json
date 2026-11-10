@@ -59,7 +59,7 @@
     "frontend-design@claude-plugins-official": true,
     "dotclaude@synced": false
   },
-  "outputStyle": "Concise",
+  "outputStyle": "default",
   "effortLevel": "high",
   "autoUpdatesChannel": "stable",
   "tui": "fullscreen",

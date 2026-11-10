@@ -8,16 +8,17 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Eleven paths travel between machines; `settings.json` stays home
+## Thirteen paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
 | `CLAUDE.md` | Instructions applied to every project |
-| `skills/` | Skills, prefixed `z-` except `browsing-web` |
-| `output-styles/` | How answers are written |
+| `skills/` | The skills this repository writes itself, prefixed `z-`. Skills taken from elsewhere come in as plugins instead |
 | `scripts/` | What the hooks run, and the new-machine bootstrap |
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
+| `settings.shared.json` | The settings keys every machine must have: the plugins and their marketplaces |
+| `.i-have-adhd-always` | An empty file that turns on the i-have-adhd plugin's always-on mode |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
 | `AGENTS.md` | Where this repository's tasks live, for agents |
@@ -31,7 +32,7 @@ hooks of its own and pulls on a cron schedule instead of a session hook. A month
 syncing the file produced conflicts and nothing else, so since 2026-09-26 each machine
 keeps its own copy and a new machine copies `settings.example.json` once. A hook or
 permission that every machine should have goes into the example file and is copied over
-by hand.
+by hand. The plugins are the exception; see [Settings every machine shares](#settings-every-machine-shares).
 
 Two more things live under `skills/` without being tracked. Orca symlinks four of its own
 skills there (`computer-use`, `find-skills`, `orca-cli`, `orchestration`), and claude.ai
@@ -50,7 +51,7 @@ To start tracking a new file, add a `!name` line to `.gitignore`; a directory ne
 ```mermaid
 flowchart LR
     subgraph marty["Marty (edits here)"]
-        m_cfg["~/.claude<br/>CLAUDE.md · skills/ · scripts/ · output-styles/"]
+        m_cfg["~/.claude<br/>CLAUDE.md · skills/ · scripts/ · settings.shared.json"]
         m_set["settings.json<br/>(ignored, Orca hooks inside)"]
     end
     subgraph gh["github.com/new-marty/dotclaude"]
@@ -72,9 +73,9 @@ flowchart LR
 `scripts/sync-push.sh` on `SessionEnd`, so a machine set up from it syncs from its first
 session. A pull-only machine drops the `SessionEnd` hook and pulls whenever it likes;
 see [Pull-only devices](#pull-only-devices).
-The same file registers `scripts/handoff-inject.py` on `SessionStart`: when `z-wrap-up`
-ended the previous session in this directory, the handoff it wrote comes back into
-context for a week, so `/clear` costs nothing that was written down.
+The same file registers `scripts/handoff-inject.py` on `SessionStart`. It brought back the
+handoff that the retired `z-wrap-up` skill wrote; with that skill gone it finds nothing and
+exits, and it stays only because existing machines still call it from their hooks.
 
 `scripts/check-upstream.sh` tells you when something we adopted has changed upstream. It reads the revisions we adopted from `scripts/upstream.tsv`, asks each upstream for its current head with `git ls-remote`, and prints `current` or `CHANGED` with a compare link. It exits 0 when all are current, 1 when any changed, 2 when a fetch failed. The mac-mini runs it every morning after its dotclaude pull and sends any `CHANGED` line to Telegram, again each morning until the list is updated; elsewhere, run it by hand. After re-reading a changed upstream, update its revision in the list.
 
@@ -121,6 +122,32 @@ The push takes a lock by creating a directory, because two sessions can end at t
 moment. The second one to arrive exits without committing; its changes wait for the next
 session's push. A lock older than five minutes is treated as left over from a killed
 session and taken over.
+
+## Settings every machine shares
+
+Skills taken from other repositories are installed as Claude Code plugins, unmodified, so
+they update with their upstream. `settings.shared.json` declares them: each marketplace
+under `extraKnownMarketplaces` with `autoUpdate: true`, and each plugin under
+`enabledPlugins`. After every pull, `scripts/sync-pull.sh` runs
+`scripts/apply-shared-settings.py`, which merges those keys into the machine's own
+`settings.json`. An object key merges entry by entry, each entry replaced whole; any other
+key is set outright; keys the shared file does not name are left alone, so Orca's hooks
+and a machine's own plugins survive. The script writes only when something changed and
+keeps the previous file as `settings.json.bak-shared`. The mac-mini gets the same merge,
+because its morning `dotclaude-sync.sh` calls `sync-pull.sh`.
+
+Claude Code fetches a newly declared marketplace and its enabled plugins in the background
+after a session starts; run `/reload-plugins` or start another session to load them.
+
+To stop using a plugin everywhere, set it to `false` in `settings.shared.json` rather than
+deleting the line: the merge never removes a key, so a deleted line stays `true` on every
+machine that already had it.
+
+pstack has no Claude Code marketplace of its own, so `settings.shared.json` declares an
+inline one, `pstack-mirror`, whose single plugin is the whole
+[backnotprop/pstack](https://github.com/backnotprop/pstack) mirror. Its skills call one
+another by path, so taking a subset would break them; every skill in it is manual-only and
+it ships no hook.
 
 ## Keeping conversation logs is opt-in per machine
 

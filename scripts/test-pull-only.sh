@@ -153,3 +153,21 @@ g "$T/f" config dotclaude.role bogus
 rc=0; CLAUDE_SYNC_DIR="$T/f" "$HERE/sync-pull.sh" 2>"$T/err" || rc=$?
 has "unknown dotclaude.role 'bogus'; treating this machine as a writer" || fail "7: no unknown-role warning"
 echo "ok 7: diverged main prints no git hints; unknown role warns"
+
+# 8. A pull merges settings.shared.json into the device's own settings.json and keeps its other keys.
+mkdir -p "$T/w/scripts"
+cp "$ROOT/scripts/apply-shared-settings.py" "$T/w/scripts/"
+printf '{"_c":"x","enabledPlugins":{"a@m":true},"extraKnownMarketplaces":{"m":{"source":{"source":"github","repo":"o/r"}}}}\n' > "$T/w/settings.shared.json"
+printf '!settings.shared.json\n' >> "$T/w/.gitignore"
+commit_push shared
+git clone -q "$T/up.git" "$T/s"; g "$T/s" config dotclaude.role pull-only
+g "$T/s" reset -q --hard HEAD~1
+printf '{"hooks":{"Stop":[1]},"enabledPlugins":{"own@x":true}}\n' > "$T/s/settings.json"
+rc=0; CLAUDE_SYNC_DIR="$T/s" "$HERE/sync-pull.sh" 2>"$T/err" || rc=$?
+[ "$rc" = 0 ] || fail "8: exit $rc"
+[ "$(jq -c .hooks "$T/s/settings.json")" = '{"Stop":[1]}' ] || fail "8: hooks lost"
+[ "$(jq -c .enabledPlugins "$T/s/settings.json")" = '{"own@x":true,"a@m":true}' ] || fail "8: plugins not merged: $(cat "$T/s/settings.json")"
+jq -e 'has("_c")|not' "$T/s/settings.json" >/dev/null || fail "8: comment key copied"
+CLAUDE_SYNC_DIR="$T/s" "$HERE/sync-pull.sh" 2>"$T/err"
+[ ! -s "$T/err" ] || fail "8: an unchanged merge printed something: $(cat "$T/err")"
+echo "ok 8: shared settings merged, own keys kept, quiet when unchanged"

@@ -11,8 +11,7 @@ description: >-
   app", "design the UX", "our sign-up has a high drop-off",
   「アプリを作りたい」「画面を考えて」「UXを設計して」「画面遷移を考えて」「離脱が多い」「完了率が低い」,
   even if the user never says UX. Not for colours, fonts or styling, not for coding a finished
-  design, not for resuming a task (z-start-task), stress-testing a plan (z-grilling) or filing
-  tickets (z-write-task).
+  design, not for resuming a task, stress-testing a plan (grilling) or filing tickets.
 allowed-tools: Read, Glob, Grep, Write, Edit, WebSearch, WebFetch, Agent, Bash(python3 *check_package.py*)
 ---
 
@@ -168,4 +167,4 @@ Finish with the brief described in `references/handoff.md`, the check results, t
 questions, and one line telling the user what to do next, for example: "Next, give
 `docs/ux/<slug>/UX.md` to frontend-design." The user starts the next step; this skill does
 not call the UI skill itself. If the user wants to see visual options side by side, suggest
-they run `/z-prototype`, which only the user can start.
+they run `/mattpocock-skills:prototype`, which only the user can start.

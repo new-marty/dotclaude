@@ -34,7 +34,7 @@ implementation skills follow the brief's wording closely.
 
 End with one line to the user naming the next step and the file, for example:
 "Next, give `docs/ux/<slug>/UX.md` to frontend-design." The user starts that step. If they
-want to compare visual options, suggest `/z-prototype`, which only the user can start.
+want to compare visual options, suggest `/mattpocock-skills:prototype`, which only the user can start.
 
 ## Review before hand-off
 

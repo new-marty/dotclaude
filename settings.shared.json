@@ -1,0 +1,63 @@
+{
+  "_comment": "Keys every machine must have. scripts/apply-shared-settings.py merges them into ~/.claude/settings.json after each pull (README \"Settings every machine shares\"). Objects merge key by key; a marketplace entry is replaced whole; nothing else in settings.json is touched.",
+  "extraKnownMarketplaces": {
+    "mattpocock": {
+      "source": { "source": "github", "repo": "mattpocock/skills" },
+      "autoUpdate": true
+    },
+    "yomiyasu": {
+      "source": { "source": "github", "repo": "nanaism/yomiyasu" },
+      "autoUpdate": true
+    },
+    "i-have-adhd": {
+      "source": { "source": "github", "repo": "ayghri/i-have-adhd" },
+      "autoUpdate": true
+    },
+    "humanizer": {
+      "source": { "source": "github", "repo": "blader/humanizer" },
+      "autoUpdate": true
+    },
+    "agent-browser": {
+      "source": { "source": "github", "repo": "vercel-labs/agent-browser" },
+      "autoUpdate": true
+    },
+    "skills": {
+      "source": { "source": "github", "repo": "humanlayer/skills" },
+      "autoUpdate": true
+    },
+    "oi-owarasero": {
+      "source": { "source": "github", "repo": "nwiizo/oi-owarasero" },
+      "autoUpdate": true
+    },
+    "claude-community": {
+      "source": { "source": "github", "repo": "anthropics/claude-plugins-community" },
+      "autoUpdate": true
+    },
+    "pstack-mirror": {
+      "source": {
+        "source": "settings",
+        "name": "pstack-mirror",
+        "plugins": [
+          {
+            "name": "pstack",
+            "description": "Poteto's pstack (cursor/plugins), from the backnotprop/pstack mirror. Every skill is manual-only; no hook.",
+            "source": { "source": "github", "repo": "backnotprop/pstack" }
+          }
+        ]
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "mattpocock-skills@mattpocock": true,
+    "yomiyasu@yomiyasu": true,
+    "i-have-adhd@i-have-adhd": true,
+    "humanizer@humanizer": true,
+    "agent-browser@agent-browser": true,
+    "show-me@skills": true,
+    "oi-owarasero@oi-owarasero": true,
+    "eli5@claude-community": true,
+    "pstack@pstack-mirror": true
+  },
+  "outputStyle": "default"
+}
