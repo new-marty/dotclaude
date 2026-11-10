@@ -37,8 +37,8 @@ Orca brings its own `orchestration` skill on the machines that run it, which rep
 
 | Name | Source | License | What was changed |
 | --- | --- | --- | --- |
-| `z-design-ux` | Research for LAB-769 (2026-10): Garrett's *Elements of User Experience*, Basecamp *Shape Up*, GOV.UK Service Manual, NN/g, OOUX (Sophia Prater), Scott Hurff's UI stack, design-cognition research (Schön, Cross, Dorst), Kim Goodwin's stakeholder questions, *The Mom Test*; skills read for comparison: [pbakaus/impeccable](https://github.com/pbakaus/impeccable) at dad8dbb, [julianoczkowski/designer-skills](https://github.com/julianoczkowski/designer-skills) at c259656, [borghei/claude-skills](https://github.com/borghei/claude-skills) at 4a698e8 | impeccable, designer-skills: Apache-2.0; borghei: MIT with Commons Clause (nothing taken) | Ideas only, text written from scratch. From impeccable, few questions per round with a stated guess; from designer-skills, files that the next step reads; from borghei, listing assumptions when the user leaves it to Claude. Own additions: the designer stance and lenses, the three coverage checks with `check_package.py`, evidence labels, and the ask/research/reason order |
-| `z-gemini-write` | the workflow in [this note article](https://note.com/genkaijokyo/n/n8562c2500420) | none taken | Only the idea (Gemini rewrites, Claude checks for meaning drift). Script, prompt and procedure written from scratch; OpenRouter added as a paid route used only on the user's approval |
+| `design-ux` | Research for LAB-769 (2026-10): Garrett's *Elements of User Experience*, Basecamp *Shape Up*, GOV.UK Service Manual, NN/g, OOUX (Sophia Prater), Scott Hurff's UI stack, design-cognition research (Schön, Cross, Dorst), Kim Goodwin's stakeholder questions, *The Mom Test*; skills read for comparison: [pbakaus/impeccable](https://github.com/pbakaus/impeccable) at dad8dbb, [julianoczkowski/designer-skills](https://github.com/julianoczkowski/designer-skills) at c259656, [borghei/claude-skills](https://github.com/borghei/claude-skills) at 4a698e8 | impeccable, designer-skills: Apache-2.0; borghei: MIT with Commons Clause (nothing taken) | Ideas only, text written from scratch. From impeccable, few questions per round with a stated guess; from designer-skills, files that the next step reads; from borghei, listing assumptions when the user leaves it to Claude. Own additions: the designer stance and lenses, the three coverage checks with `check_package.py`, evidence labels, and the ask/research/reason order |
+| `gemini-write` | the workflow in [this note article](https://note.com/genkaijokyo/n/n8562c2500420) | none taken | Only the idea (Gemini rewrites, Claude checks for meaning drift). Script, prompt and procedure written from scratch; OpenRouter added as a paid route used only on the user's approval |
 
 ## Declined
 
@@ -56,8 +56,9 @@ Orca brings its own `orchestration` skill on the machines that run it, which rep
 
 ## Hand-written
 
-Only `z-design-ux` and `z-gemini-write` remain. `z-create-pr`, `z-start-task`, `z-write-task` and
-`z-review-finding` moved to Startup's own skills on the MacBook (LAB-1361). Retired on
+Only `design-ux` and `gemini-write` remain; until 2026-11-10 they were `z-design-ux` and
+`z-gemini-write`. `z-create-pr`, `z-start-task`, `z-write-task` and `z-review-finding` moved
+to Startup's own skills on the MacBook (LAB-1361), where they dropped the `z-` too. Retired on
 2026-11-10: `z-cognitive-rhythm-writing`, `z-writing-for-readers`, `z-catch-up`,
 `z-wrap-up`; their text stays in git history.
 

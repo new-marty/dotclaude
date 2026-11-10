@@ -1,5 +1,5 @@
 ---
-name: z-design-ux
+name: design-ux
 description: >-
   Designs the UX of an app, feature or flow before any UI is built, the way a senior product
   designer would: reframes the request, finds who has what problem, decides what to build,
@@ -151,7 +151,7 @@ reviewer finds first and a model misses most:
 Write these tables in the formats in `references/coverage.md`, then run:
 
 ```sh
-python3 ~/.claude/skills/z-design-ux/scripts/check_package.py docs/ux/<slug>/
+python3 ~/.claude/skills/design-ux/scripts/check_package.py docs/ux/<slug>/
 ```
 
 Fix what it reports and run it again until it passes. If Python cannot run, go through the

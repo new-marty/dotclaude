@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check a z-design-ux package for forgotten screens, broken flow links and missing states.
+"""Check a design-ux package for forgotten screens, broken flow links and missing states.
 
 Usage: check_package.py <directory-or-markdown-file>
 

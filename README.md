@@ -13,7 +13,7 @@ handful of files that are configuration.
 | Path | Contents |
 | --- | --- |
 | `CLAUDE.md` | Instructions applied to every project |
-| `skills/` | The skills this repository writes itself, prefixed `z-`. Skills taken from elsewhere come in as plugins instead |
+| `skills/` | The skills this repository writes itself. Skills taken from elsewhere come in as plugins instead |
 | `scripts/` | What the hooks run, and the new-machine bootstrap |
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |

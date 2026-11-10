@@ -1,8 +1,8 @@
 ---
-name: z-gemini-write
+name: gemini-write
 description: Turn content Claude has already organised (bullet points, an outline, a rough draft) into Japanese prose written by Gemini, then check that nothing drifted. Gemini writes through the Antigravity CLI on the signed-in Google account; OpenRouter, which bills per token, is used only after the user approves it for that call. Use at the step where organised Japanese content becomes prose - 「Gemini で書いて」「Gemini で文章にして」「箇条書きを Gemini で文章に」"write this up with Gemini". Not for polishing prose that is already written, not for short chat replies, not for English, not for code.
 argument-hint: "[what to write up]"
-allowed-tools: Bash(~/.claude/skills/z-gemini-write/scripts/*), Read, Write, Edit
+allowed-tools: Bash(~/.claude/skills/gemini-write/scripts/*), Read, Write, Edit
 ---
 
 <!-- The division of labour (Gemini writes, Claude checks for meaning drift) follows
@@ -54,7 +54,7 @@ section, Slack post, design document), and the tone if that matters. A few lines
 ### 2. Call Gemini
 
 ```bash
-~/.claude/skills/z-gemini-write/scripts/gemini-write.sh <outline> <brief> > <out>
+~/.claude/skills/gemini-write/scripts/gemini-write.sh <outline> <brief> > <out>
 ```
 
 It takes 10-30 seconds. The exit code says what happened:
@@ -76,7 +76,7 @@ name. On any other answer, stop.
 
 Setting up OpenRouter is also the user's to do in a terminal: create a key with a spending
 limit on openrouter.ai, then run
-`~/.claude/skills/z-gemini-write/scripts/gemini-write.sh --setup-openrouter` and paste the
+`~/.claude/skills/gemini-write/scripts/gemini-write.sh --setup-openrouter` and paste the
 key. It goes into the macOS Keychain under the service `openrouter`. A machine that renders
 its secrets into `~/.config/secrets/gemini-write.env` (the Mac mini, from 1Password) reads the
 key from that file instead, and `--setup-openrouter` refuses there. `--status` shows the

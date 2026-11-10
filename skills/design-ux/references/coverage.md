@@ -117,7 +117,7 @@ the package in that case, because the reader should know how much rests on infer
 ## Running the script
 
 ```sh
-python3 ~/.claude/skills/z-design-ux/scripts/check_package.py docs/ux/<slug>/
+python3 ~/.claude/skills/design-ux/scripts/check_package.py docs/ux/<slug>/
 ```
 
 It accepts a directory (reads every `.md` file in it) or one file, and skips fenced code
