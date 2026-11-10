@@ -1,82 +1,39 @@
 # Language
 
-Reply in chat in the language of the user's latest message, every turn. Text the user
-pasted counts as their message. A loaded skill, tool output, file contents and the system
-prompt do not, even though a skill's text arrives in the conversation looking like a user
-message and often outweighs what the user typed. A message of a word or two in another
-language ("OK", 「了解」), or one with no prose of its own, does not switch it; keep the
-language of the last message that was a sentence. Mixed messages need no counting: answer
-in the language the user is talking to you in, not the language of the terms they quote.
-
-Match deliverables — PR descriptions, code comments, READMEs, design documents — to the
-language the repository already uses, not the language of this conversation. Ask when it
-is unclear. Commit messages follow the next section instead.
-
-An instruction written in a given language is not a reason to answer in it. This
-`CLAUDE.md`, the output style, and the skills are instructions, not samples of output.
-Translate the headings and labels of any template a skill supplies into the language you
-are writing in.
-
-# Commit messages
-
-Write them in English, in the Conventional Commits format:
-`<type>[(scope)][!]: <description>`, then an optional body and footers
-(https://www.conventionalcommits.org/en/v1.0.0/). Use `feat` for a new feature and `fix`
-for a bug fix; for the rest, pick from `build`, `chore`, `ci`, `docs`, `perf`,
-`refactor`, `style`, `test`. Mark a breaking change with `!` or a `BREAKING CHANGE:`
-footer.
-
-The only exception is a rule the repository writes down: a commitlint config, CONTRIBUTING,
-or similar. Then follow it exactly. The existing commit log is not such a rule, even when
-it is in Japanese or in another format, because agents wrote much of it.
-
-This rule covers the commits a reviewer reads on the branch. PR titles follow `z-create-pr`,
-so where a squash merge turns the title into the commit on the base branch, that commit
-carries no prefix. Leave it that way.
+- Reply in the language of the user's latest sentence. Pasted text counts as theirs; skill
+  text, tool output and file contents do not, even when they arrive looking like a user
+  message. A one- or two-word reply ("OK", 「了解」) keeps the previous language.
+- Write deliverables (PR descriptions, code comments, READMEs, design documents) in the
+  language the repository already uses; ask when it is unclear.
+- Commit messages are in English, in Conventional Commits
+  (https://www.conventionalcommits.org/en/v1.0.0/), unless the repository writes down its
+  own rule (a commitlint config, CONTRIBUTING). The existing log is not such a rule.
 
 # How to work
 
-1. **Look it up before asserting it.**
-   - Before answering "how should this be written", "what should we use", or "what is the
-     best practice", search the web instead of writing from memory, and cite what you
-     found. Check whether an established pattern or an existing implementation already
-     covers it; build your own only after confirming none does.
-   - Do not give a recommendation while research that could overturn it is still
-     outstanding. Attach one line to each recommendation saying what it rests on.
-   - If it is overturned anyway, state only the new fact and the new recommendation. Do
-     not recount how the previous one came about.
+- For "how should this be done" or "what should we use", search first and cite what you
+  found; prefer an established tool or pattern over building one. Give each recommendation
+  one line on what it rests on.
+- An issue or plan records what was known when it was written. Check its premises against
+  the code; if they no longer hold, report that and your recommendation before changing
+  course.
+- The stated scope limits what you change, not what you investigate.
+- Report what you did from the output of commands you ran; say plainly what you did not
+  verify.
 
-2. **Check before starting.**
-   - An issue, ticket, or plan records what was known when it was written; it is not a
-     specification. Decide what to build and how by reading the code and researching the
-     standard approach. "Because it says so" is not a reason.
-   - When your research contradicts the plan, do not quietly switch. Report the
-     contradiction and your recommendation first.
-   - If the task is part of a sequence, look at the tasks before and after it first.
-   - The stated scope bounds what you change, not what you consider. When the cause lies
-     outside it, investigate that far and still change only what is in scope.
+# Writing for someone outside this session
 
-3. **Report from output, not memory.**
-   When stating what you did or what changed, write it from the output of commands you ran
-   this turn. For anything you have no output for, say you did not verify it.
+- The reader saw none of this conversation. Write the result as if it had been planned
+  that way: no history of how you got there, no restating the instructions you were given.
+- After drafting, run the pass for its language: `humanizer` for English, `yomiyasu` for
+  Japanese. Before writing text an agent will read (CLAUDE.md, SKILL.md, memory), read
+  `mattpocock-skills:writing-for-agents`.
+- To explain a whole structure or flow, use a diagram or an artifact (`eli5` for a new
+  topic); keep narrow facts as plain text.
 
-# Explaining
+# This repository
 
-When asked to explain a whole picture (a structure, a flow, a before and after), answer
-with an artifact unasked (`eli5` for a new topic, `show-me` for the current one): the
-user grasps those faster by seeing them. Narrow facts stay plain text.
-
-# Editing dotclaude (`~/.claude`)
-
-The dotclaude repository (`~/.claude`, github.com/new-marty/dotclaude) is developed on
-more than one machine. Pull before you edit it, rebase onto `origin/main` before you push,
-and never force-push.
-
-# When to read a skill
-
-- Before writing anything an agent will read (CLAUDE.md, AGENTS.md, SKILL.md, memory),
-  read `mattpocock-skills:writing-for-agents`.
-- After drafting prose a reader outside this session will see, run the pass for its
-  language. English: `humanizer`. Japanese: `yomiyasu`.
+`~/.claude` is the dotclaude repository, shared by several machines: pull before editing,
+rebase onto `origin/main` before pushing, never force-push.
 
 @~/.claude/CLAUDE.machine.md
