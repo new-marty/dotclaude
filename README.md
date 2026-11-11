@@ -187,10 +187,18 @@ same care as `~/.claude` itself.
 
 ## The statusline is where you notice a stuck sync
 
-`statusline.sh` draws up to four lines: account, model, directory and git on the first;
-context usage on the second; the five-hour and seven-day usage limits on the third and
-fourth. When usage cannot be fetched, on first launch or while the keychain is locked,
+`statusline.sh` draws up to four lines: machine, account, model, directory and git on the
+first; context usage on the second; the five-hour and seven-day usage limits on the third
+and fourth. When usage cannot be fetched, on first launch or while the keychain is locked,
 the last two lines are simply absent.
+
+The model is followed by the session's effort level and, while it is on, `ultracode`.
+Claude Code does not send the ultracode switch to the statusline, so the script starts
+from the `ultracode` setting and then takes the last `/effort` result recorded in the
+transcript ("Ultracode on …" or "Ultracode off …"). It remembers how far it has read in
+`/tmp/claude-ultracode-<session id>` and reads only what was appended since, so a long
+transcript costs one full read per session. A session started with
+`claude --effort ultracode` shows nothing until `/effort` runs in it.
 
 The usage limits belong to a claude.ai subscription, so they appear only there. A session
 billed per token (Bedrock, Vertex, Foundry, an API key or an `apiKeyHelper`) starts the

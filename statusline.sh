@@ -4,6 +4,9 @@ input=$(cat)
 MODEL=$(echo "$input" | jq -r '.model.display_name')
 DIR=$(echo "$input" | jq -r '.workspace.current_dir')
 PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
+EFFORT=$(echo "$input" | jq -r '.effort.level // empty')
+SESSION_ID=$(echo "$input" | jq -r '.session_id // empty')
+TRANSCRIPT=$(echo "$input" | jq -r '.transcript_path // empty')
 
 # Colors — Catppuccin Mocha
 C_BLUE='\033[38;2;137;180;250m'      # blue
@@ -82,9 +85,44 @@ fi
 echo "$input" | jq -e '.rate_limits.five_hour // .rate_limits.seven_day // empty' >/dev/null 2>&1 &&
     BILLING="subscription"
 
-# --- Line 1: Account | Model | Dir | Git | ~/.claude sync ---
+# Ultracode is a per-session switch that the JSON does not carry. /effort
+# writes its result into the transcript ("Ultracode on (this session only)..."
+# or "Ultracode off..."), so the last such line wins over the "ultracode"
+# setting that sessions start from. Transcripts grow to tens of megabytes, so
+# each render reads only what was appended since the previous one.
+ultracode_state() {
+    local state=off f v
+    for f in "$SYNC_DIR/settings.json" "$DIR/.claude/settings.json" "$DIR/.claude/settings.local.json"; do
+        v=$([ -f "$f" ] && jq -r '.ultracode | select(. != null)' "$f" 2>/dev/null)
+        case "$v" in true) state=on;; false) state=off;; esac
+    done
+    if [ -z "$SESSION_ID" ] || [ ! -f "$TRANSCRIPT" ]; then echo "$state"; return; fi
+
+    local cache="/tmp/claude-ultracode-${SESSION_ID}" offset=0 found="" size last
+    [ -f "$cache" ] && read -r offset found < "$cache"
+    size=$(wc -c < "$TRANSCRIPT" | tr -d ' ')
+    [ "${offset:-0}" -le "$size" ] 2>/dev/null || { offset=0; found=""; }
+    if [ "$size" -gt "$offset" ]; then
+        # Anchored on the "content" key, so the same words quoted inside a tool
+        # result (where the quotes are escaped) do not count. Each scan rereads
+        # the last 256 bytes, in case the previous one stopped inside a line that
+        # was still being written. macOS tail seeks to an offset but copies a
+        # whole file slowly, so the first scan uses cat.
+        last=$(if [ "$offset" -gt 256 ]; then tail -c +"$((offset - 255))" "$TRANSCRIPT"; else cat "$TRANSCRIPT"; fi |
+            grep -a -o -E '"content":"<local-command-stdout>Ultracode o(n \(|ff\.)' | tail -1)
+        case "$last" in *"Ultracode on"*) found=on;; *"Ultracode off"*) found=off;; esac
+        printf '%s %s\n' "$size" "$found" > "$cache"
+    fi
+    echo "${found:-$state}"
+}
+
+# --- Line 1: Host | Account | Model effort | Dir | Git | ~/.claude sync ---
 sep="${C_OVERLAY}|${R}"
+# The machine, since the same sessions are reached over SSH and Remote Control.
+host_s="${C_SUBTEXT}$(hostname -s 2>/dev/null)${R} ${sep} "
 model_s="${C_BLUE}${MODEL}${R}"
+[ -n "$EFFORT" ] && model_s="${model_s} ${C_SUBTEXT}${EFFORT}${R}"
+[ "$(ultracode_state)" = on ] && model_s="${model_s} ${BOLD}${C_PEACH}ultracode${R}"
 dir_s="${C_YELLOW}${DIR}${R}"
 
 # Which account this session is signed in as. Work directories select a
@@ -140,7 +178,7 @@ if git -C "$DIR" rev-parse --git-dir > /dev/null 2>&1; then
     GIT_INFO=" ${sep} ${C_BLUE}${BRANCH}${R} ${git_detail}"
 fi
 
-printf '%b\n' "${BILLING_S}${ACCOUNT_S}${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
+printf '%b\n' "${host_s}${BILLING_S}${ACCOUNT_S}${model_s} ${sep} ${dir_s}${GIT_INFO}${CLAUDE_SYNC}"
 
 # --- Line 2: Context bar ---
 ctx_bar=$(build_bar "$PCT" 25)
