@@ -46,6 +46,20 @@
         ]
       },
       "autoUpdate": true
+    },
+    "emilkowalski": {
+      "source": {
+        "source": "settings",
+        "name": "emilkowalski",
+        "plugins": [
+          {
+            "name": "learn-taste",
+            "description": "Emil Kowalski's /learn-taste, the one skill from emilkowalski/skills. Manual-only; no hook.",
+            "source": { "source": "git-subdir", "url": "emilkowalski/skills", "path": "skills/learn-taste" }
+          }
+        ]
+      },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -58,6 +72,8 @@
     "oi-owarasero@oi-owarasero": true,
     "eli5@claude-community": true,
     "pstack@pstack-mirror": true,
+    "learn-taste@emilkowalski": true,
+    "modern-web-guidance@claude-plugins-official": true,
     "cowork-plugin-management@synced": false
   },
   "outputStyle": "default",

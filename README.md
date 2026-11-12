@@ -166,6 +166,12 @@ inline one, `pstack-mirror`, whose single plugin is the whole
 another by path, so taking a subset would break them; every skill in it is manual-only and
 it ships no hook.
 
+[emilkowalski/skills](https://github.com/emilkowalski/skills) has no marketplace either, and
+only its `learn-taste` skill is wanted. The inline marketplace `emilkowalski` fetches that one
+directory with a `git-subdir` source; a plugin root holding just a `SKILL.md` loads as a
+single skill, so the repository's other skills stay out. `modern-web-guidance` comes from
+claude-plugins-official, which every machine knows without a declaration.
+
 ## Keeping conversation logs is opt-in per machine
 
 Claude Code deletes a session's transcript under `~/.claude/projects/` once it is older
