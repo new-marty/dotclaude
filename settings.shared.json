@@ -57,7 +57,8 @@
     "show-me@skills": true,
     "oi-owarasero@oi-owarasero": true,
     "eli5@claude-community": true,
-    "pstack@pstack-mirror": true
+    "pstack@pstack-mirror": true,
+    "cowork-plugin-management@synced": false
   },
   "outputStyle": "default",
   "env": { "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000" }

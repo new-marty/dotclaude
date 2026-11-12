@@ -273,7 +273,7 @@ so a device may keep anything there:
 | add rules for some files only | `~/.claude/rules/<name>.md` with `paths:` frontmatter |
 | add a skill | `~/.claude/skills/local-<name>/SKILL.md`, or a symlink at that path |
 | add an output style | `~/.claude/output-styles/local-<name>.md` |
-| hide a shared skill | `"skillOverrides": {"<name>": "off"}` in `~/.claude/settings.json`; only this string form works |
+| hide a shared skill | `"skillOverrides": {"<name>": "off"}` in `~/.claude/settings.json`; only this string form works. `"name-only"` keeps it listed without its description, `"user-invocable-only"` keeps only `/<name>`. A plugin's skills ignore it; turn the plugin off in `enabledPlugins` instead |
 | use its own statusline | `~/.claude/statusline.local.sh`, set as `statusLine` in `settings.json` |
 
 Keep device files at these paths only. A root-level file with any other name is ignored too,
