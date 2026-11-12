@@ -59,5 +59,6 @@
     "eli5@claude-community": true,
     "pstack@pstack-mirror": true
   },
-  "outputStyle": "default"
+  "outputStyle": "default",
+  "env": { "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000" }
 }

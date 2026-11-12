@@ -77,6 +77,12 @@ The same file registers `scripts/handoff-inject.py` on `SessionStart`. It brough
 handoff that the retired `z-wrap-up` skill wrote; with that skill gone it finds nothing and
 exits, and it stays only because existing machines still call it from their hooks.
 
+It also registers `scripts/ja-reply-gate.py` on `Stop`. When the user's last prompt is
+Japanese and the reply is mostly English, the hook blocks the stop once and asks for the
+reply again in Japanese; headless runs, JSON replies and API errors pass. Run
+`scripts/ja-reply-gate.py --scan ~/.claude/projects/<dir>` to replay transcripts and list
+what it would block. A machine set up before 2026-11-12 adds the hook by hand.
+
 `scripts/check-upstream.sh` tells you when something we adopted has changed upstream. It reads the revisions we adopted from `scripts/upstream.tsv`, asks each upstream for its current head with `git ls-remote`, and prints `current` or `CHANGED` with a compare link. It exits 0 when all are current, 1 when any changed, 2 when a fetch failed. The mac-mini runs it every morning after its dotclaude pull and sends any `CHANGED` line to Telegram, again each morning until the list is updated; elsewhere, run it by hand. After re-reading a changed upstream, update its revision in the list.
 
 The mac-mini's `~/.claude` only pulls. The mac-mini develops this repository in a separate
@@ -133,7 +139,9 @@ under `extraKnownMarketplaces` with `autoUpdate: true`, and each plugin under
 `settings.json`. An object key merges entry by entry, each entry replaced whole; any other
 key is set outright; keys the shared file does not name are left alone, so Orca's hooks
 and a machine's own plugins survive. The script writes only when something changed and
-keeps the previous file as `settings.json.bak-shared`. The mac-mini gets the same merge,
+keeps the previous file as `settings.json.bak-shared`. The shared `env` sets
+`CLAUDE_CODE_AUTO_COMPACT_WINDOW` to 500000, so sessions compact at 500k tokens instead of
+near the 1M limit. The mac-mini gets the same merge,
 because its morning `dotclaude-sync.sh` calls `sync-pull.sh`.
 
 Claude Code fetches a newly declared marketplace and its enabled plugins in the background

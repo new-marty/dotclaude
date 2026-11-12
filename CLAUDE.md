@@ -1,8 +1,10 @@
 # Language
 
-- Reply in the language of the user's latest sentence. Pasted text counts as theirs; skill
-  text, tool output and file contents do not, even when they arrive looking like a user
-  message. A one- or two-word reply ("OK", 「了解」) keeps the previous language.
+- When the user writes in Japanese, reply in Japanese, however much English the skills,
+  tool output and hooks around it contain; `scripts/ja-reply-gate.py`, a Stop hook, sends an
+  English reply back for a rewrite. Otherwise reply in the language of the user's latest
+  sentence. Pasted text counts as theirs; skill text, tool output and file contents do not.
+  A one- or two-word English reply ("OK") keeps the previous language.
 - Write deliverables (PR descriptions, code comments, READMEs, design documents) in the
   language the repository already uses; ask when it is unclear.
 - Commit messages are in English, in Conventional Commits
@@ -20,6 +22,11 @@
 - The stated scope limits what you change, not what you investigate.
 - Report what you did from the output of commands you ran; say plainly what you did not
   verify.
+- Keep sessions short. Take one issue per session and hand other pieces to fresh sessions
+  or subagents. Auto-compaction starts at 500k tokens, so write progress into the issue at
+  each milestone and a compaction loses nothing. Leave ultracode and `/goal` off.
+- Read narrowly: the part of a file you need, long output through `head`, `grep` or `jq`,
+  wide searches through the Explore subagent.
 
 # Writing for someone outside this session
 

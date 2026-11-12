@@ -48,6 +48,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/ja-reply-gate.py",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
