@@ -172,6 +172,19 @@ directory with a `git-subdir` source; a plugin root holding just a `SKILL.md` lo
 single skill, so the repository's other skills stay out. `modern-web-guidance` comes from
 claude-plugins-official, which every machine knows without a declaration.
 
+## Other agents see the same skills
+
+Codex and pi read user skills from `~/.agents/skills`, and so does agy once
+`~/.gemini/config/skills.json` lists that directory by absolute path. After each pull,
+`sync-pull.sh` runs `scripts/link-agent-skills.py`, which gives every skill Claude Code
+loads a symlink there: each entry of `~/.claude/skills` (the local ones included) and each
+skill of an enabled, installed plugin, named by the skill's frontmatter `name`. Links into
+the plugin cache move to the new version directory on the next pull after an update, and a
+disabled plugin's links go. The script touches only symlinks that point into `~/.claude`,
+so Orca's skills and anything else placed there stay, and it adds the agy entry when
+`~/.gemini/config` exists. pstack is left out: its 59 manual-only skills lean on Claude
+Code's tools.
+
 ## Keeping conversation logs is opt-in per machine
 
 Claude Code deletes a session's transcript under `~/.claude/projects/` once it is older
