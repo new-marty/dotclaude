@@ -55,7 +55,7 @@
           {
             "name": "learn-taste",
             "description": "Emil Kowalski's /learn-taste, the one skill from emilkowalski/skills. Manual-only; no hook.",
-            "source": { "source": "git-subdir", "url": "emilkowalski/skills", "path": "skills/learn-taste" }
+            "source": { "source": "git-subdir", "url": "https://github.com/emilkowalski/skills.git", "path": "skills/learn-taste" }
           }
         ]
       },
