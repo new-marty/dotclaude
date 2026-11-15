@@ -60,6 +60,20 @@
         ]
       },
       "autoUpdate": true
+    },
+    "gitsukrit": {
+      "source": {
+        "source": "settings",
+        "name": "gitsukrit",
+        "plugins": [
+          {
+            "name": "explain-like-im-10",
+            "description": "gitsukrit's explain-like-im-10, the one skill from gitsukrit/claude-skills. Model-invoked on explanations; no hook.",
+            "source": { "source": "git-subdir", "url": "https://github.com/gitsukrit/claude-skills.git", "path": "explain-like-im-10" }
+          }
+        ]
+      },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -73,6 +87,7 @@
     "eli5@claude-community": true,
     "pstack@pstack-mirror": true,
     "learn-taste@emilkowalski": true,
+    "explain-like-im-10@gitsukrit": true,
     "modern-web-guidance@claude-plugins-official": true,
     "cowork-plugin-management@synced": false
   },

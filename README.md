@@ -172,6 +172,9 @@ directory with a `git-subdir` source; a plugin root holding just a `SKILL.md` lo
 single skill, so the repository's other skills stay out. `modern-web-guidance` comes from
 claude-plugins-official, which every machine knows without a declaration.
 
+[gitsukrit/claude-skills](https://github.com/gitsukrit/claude-skills) is the same case: the
+inline marketplace `gitsukrit` fetches only its `explain-like-im-10` directory.
+
 ## Other agents see the same skills
 
 Codex and pi read user skills from `~/.agents/skills`, and so does agy once

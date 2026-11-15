@@ -19,6 +19,7 @@ Declared in `settings.shared.json`, updated from upstream automatically (LAB-136
 
 | Plugin | Source | License | Replaced |
 | --- | --- | --- | --- |
+| `explain-like-im-10` | [gitsukrit/claude-skills](https://github.com/gitsukrit/claude-skills), only `explain-like-im-10` | MIT | nothing; added for everyday replies that assume context, stay abstract, bury the point or say too much (LAB-1582). It defines terms on first use, puts the concrete case before the rule and the whole shape before the parts. Model-invoked, no hook. `eli5` stays for on-demand picture explainers. The repository's other skills were not taken |
 | `learn-taste` | [emilkowalski/skills](https://github.com/emilkowalski/skills), only `skills/learn-taste` | MIT | nothing; added for `/learn-taste`, which turns a session's design corrections into rules in the project's `DESIGN.md`. Manual-only, no hook. The repository's other skills were not taken |
 | `modern-web-guidance` | [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance), through claude-plugins-official | Apache-2.0 | nothing; added for web UI work. It runs `npx -y modern-web-guidance@latest` on HTML, CSS and client-side JS tasks, and that CLI sends Google anonymous usage events, the search phrase among them, unless `DISABLE_TELEMETRY=1` |
 | `mattpocock-skills` | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT | `z-teach`, `z-to-questionnaire`, `z-prototype`, `z-grilling`, `z-wait-what`, and `z-catch-up` / `z-wrap-up` (by `handoff`) |
