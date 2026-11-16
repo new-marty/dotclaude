@@ -7,18 +7,18 @@
 # Each machine writes under <DOTCLAUDE_ARCHIVE_DIR>/<host>/, so several machines
 # can share one archive. The directory must already exist: when it is a network
 # share that is not mounted, the run is skipped instead of filling a local
-# directory of the same name, and the next session catches up.
+# directory of the same name, and the next cli session catches up.
 #
 # The whole projects/ tree is mirrored, not only the ending session, so a
-# session killed without a SessionEnd is picked up by the next one. Nothing is
+# session killed without a SessionEnd is picked up by the next cli one. Nothing is
 # ever deleted from the archive.
 #
-# Only terminal sessions (CLAUDE_CODE_ENTRYPOINT=cli) copy. A headless
-# `claude -p` started from another tool (uv, for one) makes that tool the
-# responsible process for the copy, and macOS asks it for network-volume access
-# on a screen nobody watches: the copy hangs and holds tccd, which then stalls
-# every other process reaching the share. The next terminal session mirrors
-# what the other sessions wrote.
+# Only interactive sessions (CLAUDE_CODE_ENTRYPOINT=cli, Remote Control
+# included) copy. A `claude -p` started by a program without network-volume
+# access (such as uv) makes macOS ask that program, on a screen nobody watches:
+# the copy hangs and holds tccd, which then stalls every other process reaching
+# the share. The entrypoint stands in for "started where access was granted".
+# The next cli session copies what the skipped ones wrote.
 set -uo pipefail
 
 [ "${CLAUDE_CODE_ENTRYPOINT:-}" = cli ] || exit 0

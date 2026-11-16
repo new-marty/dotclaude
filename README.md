@@ -202,19 +202,22 @@ wants its history for later analysis turns on two things in its own `settings.js
 The first stops local deletion; the setting accepts any positive integer. The second
 switches on `scripts/archive-transcripts.sh`, which `settings.example.json` registers on
 `SessionEnd` and which exits at once while the variable is unset. When it is set, each
-end of a terminal (`cli`) session copies every `*.jsonl` under `projects/`, plus
-`history.jsonl` (every prompt typed), to `<DOTCLAUDE_ARCHIVE_DIR>/<LocalHostName>/`.
-Machines can therefore share one archive directory, and each gets its own subdirectory.
-The copy only adds and updates files, so a transcript deleted locally stays in the
-archive. It runs detached, so a slow share does not hold up the session's exit.
+end of an interactive (`cli`) session, Remote Control included, copies every `*.jsonl`
+under `projects/`, plus `history.jsonl` (every prompt typed), to
+`<DOTCLAUDE_ARCHIVE_DIR>/<LocalHostName>/`. Machines can therefore share one archive
+directory, and each gets its own subdirectory. The copy only adds and updates files, so a
+transcript deleted locally stays in the archive. It runs detached, so a slow share does
+not hold up the session's exit.
 
-Other sessions, such as `claude -p`, never copy. On a headless Mac, a `claude -p` started
-by another program makes macOS ask that program for network-volume access on a screen
-nobody sees, and the copy hangs. The next terminal session copies what they wrote.
+Other sessions, such as `claude -p`, never copy. When a program without network-volume
+access starts `claude -p` (uv, on Marty), macOS asks that program for access; on a
+headless Mac nobody answers, the copy hangs, and the waiting request in `tccd` stalls every
+other process that reaches the share, backups included. The next `cli` session copies what
+the skipped sessions wrote.
 
 The directory must already exist. On Marty it is the Unraid `media` share mounted over
 SMB; when the share is not mounted the run is skipped rather than writing into an empty
-local `/Volumes/media`, and the next session copies whatever was missed. Each machine
+local `/Volumes/media`, and the next `cli` session copies whatever was missed. Each machine
 sets its own path, since the share is mounted in different places. The logs hold
 whatever was typed or pasted into a session, tokens included, so the archive needs the
 same care as `~/.claude` itself.
