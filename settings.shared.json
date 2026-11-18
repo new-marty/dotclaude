@@ -74,6 +74,10 @@
         ]
       },
       "autoUpdate": true
+    },
+    "unslop-ui": {
+      "source": { "source": "github", "repo": "felipebasurto/unslop-ui" },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -88,6 +92,7 @@
     "pstack@pstack-mirror": true,
     "learn-taste@emilkowalski": true,
     "explain-like-im-10@gitsukrit": true,
+    "unslop-ui@unslop-ui": true,
     "modern-web-guidance@claude-plugins-official": true,
     "cowork-plugin-management@synced": false
   },
