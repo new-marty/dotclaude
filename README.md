@@ -12,7 +12,7 @@ handful of files that are configuration.
 
 | Path | Contents |
 | --- | --- |
-| `CLAUDE.md` | Instructions applied to every project |
+| `CLAUDE.md` | Claude Code's entry: imports `AGENTS.md` and the machine's rules, plus what only Claude Code needs |
 | `skills/` | The skills this repository writes itself. Skills taken from elsewhere come in as plugins instead |
 | `scripts/` | What the hooks run, and the new-machine bootstrap |
 | `statusline.sh` | The statusline |
@@ -21,7 +21,7 @@ handful of files that are configuration.
 | `.i-have-adhd-always` | An empty file that turns on the i-have-adhd plugin's always-on mode |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
-| `AGENTS.md` | Where this repository's tasks live, for agents |
+| `AGENTS.md` | The rules for every agent (Claude Code, agy, Codex, pi), applied to every project |
 | `backlog/` | Tasks closed before the move to Linear, and their design notes |
 | `research/` | Research behind a skill, kept for reference; skills do not read it |
 | `.claude-plugin/` | The manifests claude.ai reads to install `skills/` as a plugin |
@@ -175,7 +175,20 @@ claude-plugins-official, which every machine knows without a declaration.
 [gitsukrit/claude-skills](https://github.com/gitsukrit/claude-skills) is the same case: the
 inline marketplace `gitsukrit` fetches only its `explain-like-im-10` directory.
 
-## Other agents see the same skills
+## Other agents see the same rules and skills
+
+The rules for every agent live in `AGENTS.md`. Claude Code reaches them through
+`CLAUDE.md`, which imports `AGENTS.md`, then `CLAUDE.machine.md` (the machine's own rules,
+which may import more), and adds the few lines only Claude Code needs. agy, Codex and pi
+read one global file each and cannot follow Claude's `@path` imports, so after each pull
+`sync-pull.sh` runs `scripts/link-agent-rules.py`. It expands every file `CLAUDE.md`
+imports, in order, and writes the result to `~/.gemini/AGENTS.md`, `~/.codex/AGENTS.md`
+and `~/.pi/agent/AGENTS.md` for the agents whose directory exists. Every agent therefore
+reads what Claude Code reads, minus `CLAUDE.md`'s own lines. An edit to the machine's rules
+reaches the copies on the next sync. The script replaces only symlinks and its own copies
+(they start with a comment naming it), reports any other file it finds there, and removes a
+`~/.gemini/GEMINI.md` symlink, which agy would otherwise load besides `AGENTS.md`.
+
 
 Codex and pi read user skills from `~/.agents/skills`, and so does agy once
 `~/.gemini/config/skills.json` lists that directory by absolute path. After each pull,
