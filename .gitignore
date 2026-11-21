@@ -25,11 +25,13 @@
 
 !skills/
 !scripts/
+!agy-plugin/
 !output-styles/
 !research/
 
 !skills/**
 !scripts/**
+!agy-plugin/**
 !output-styles/**
 !research/**
 

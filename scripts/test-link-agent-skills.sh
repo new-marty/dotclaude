@@ -67,3 +67,16 @@ grep -q '"inherits"' "$T/agy/skills.json" || fail "5: another key in skills.json
 printf 'not json' > "$T/agy/skills.json"; run
 [ "$(cat "$T/agy/skills.json")" = "not json" ] || fail "5: an unreadable skills.json was overwritten"
 echo "ok 5: agy's skills.json gains the agents dir once, keeps the rest, and is left alone when unreadable"
+
+mkdir -p "$C/agy-plugin"; run
+[ "$(readlink "$T/agy/plugins/dotclaude")" = "$C/agy-plugin" ] || fail "6: agy plugin not linked"
+grep -q 'agent hooks: linked' "$T/err" || fail "6: link not reported"
+run
+! grep -q 'agent hooks' "$T/err" || fail "6: a second run reported a change: $(cat "$T/err")"
+rm "$T/agy/plugins/dotclaude"; ln -s "$T/orca" "$T/agy/plugins/dotclaude"; run
+[ "$(readlink "$T/agy/plugins/dotclaude")" = "$T/orca" ] || fail "6: another tool's link was replaced"
+grep -q 'dotclaude is not ours' "$T/err" || fail "6: another tool's link was not reported"
+rm "$T/agy/plugins/dotclaude"; mkdir "$T/agy/plugins/dotclaude"; run
+[ -d "$T/agy/plugins/dotclaude" ] && [ ! -L "$T/agy/plugins/dotclaude" ] || fail "6: a real directory was replaced"
+grep -q 'dotclaude is not ours' "$T/err" || fail "6: a real directory was not reported"
+echo "ok 6: the dotclaude agy plugin is linked once and another entry at its path is left alone"

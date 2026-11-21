@@ -19,6 +19,9 @@ Rules, so nothing another tool put there is lost:
 agy reads ~/.agents/skills only when its ~/.gemini/config/skills.json lists it
 by absolute path, so that entry is added when agy's config directory exists;
 the file's other entries are kept.
+The dotclaude agy plugin (agy-plugin/, the hooks agy shares with Claude Code) is
+linked as <agy_config_dir>/plugins/dotclaude, which agy discovers on its own;
+anything else already at that path is reported and left alone.
 Usage: link-agent-skills.py [claude_dir] [agents_skills_dir] [agy_config_dir]
        (defaults: $CLAUDE_SYNC_DIR or ~/.claude, ~/.agents/skills, ~/.gemini/config)
 Exit status is always 0; problems are reported on stderr.
@@ -159,6 +162,26 @@ def register_agy(agy_dir, agents_dir):
     log(f"agent skills: added {target} to {path}")
 
 
+def link_agy_plugin(claude_dir, agy_dir):
+    """Link claude_dir/agy-plugin to agy_dir/plugins/dotclaude; agy loads every plugin there."""
+    src = os.path.join(claude_dir, "agy-plugin")
+    if not os.path.isdir(agy_dir) or not os.path.isdir(src):
+        return
+    link = os.path.join(agy_dir, "plugins", "dotclaude")
+    if os.path.islink(link) and os.readlink(link) == src:
+        return
+    if os.path.lexists(link) and not ours(link, claude_dir):
+        log(f"agent hooks: {link} is not ours; the dotclaude agy plugin left out")
+        return
+    os.makedirs(os.path.dirname(link), exist_ok=True)
+    tmp = link + ".tmp-link"
+    if os.path.lexists(tmp):
+        os.unlink(tmp)
+    os.symlink(src, tmp)
+    os.replace(tmp, link)
+    log(f"agent hooks: linked {link} -> {src}")
+
+
 def main():
     claude_dir = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
         "CLAUDE_SYNC_DIR", os.path.expanduser("~/.claude"))
@@ -193,6 +216,7 @@ def main():
         log(f"agent skills in {agents_dir}: linked {', '.join(added) or 'none'}; "
             f"removed {', '.join(removed) or 'none'}")
     register_agy(agy_dir, agents_dir)
+    link_agy_plugin(claude_dir, agy_dir)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Fourteen paths travel between machines; `settings.json` stays home
+## Fifteen paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -19,6 +19,7 @@ handful of files that are configuration.
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `settings.shared.json` | The settings keys every machine must have: the plugins and their marketplaces |
 | `agy.shared.json` | The keys agy's `settings.json` must have on every machine |
+| `agy-plugin/` | The agy plugin that gives agy the hooks it shares with Claude Code |
 | `.i-have-adhd-always` | An empty file that turns on the i-have-adhd plugin's always-on mode |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
@@ -207,6 +208,17 @@ disabled plugin's links go. The script touches only symlinks that point into `~/
 so Orca's skills and anything else placed there stay, and it adds the agy entry when
 `~/.gemini/config` exists. pstack is left out: its 59 manual-only skills lean on Claude
 Code's tools.
+
+agy gets the hooks every machine needs through `agy-plugin/`, an agy plugin.
+`link-agent-skills.py` links it as `~/.gemini/config/plugins/dotclaude`, where agy finds
+plugins on its own, so the `hooks.json` that Orca writes in `~/.gemini/config` is never
+touched. The plugin runs `ja-reply-gate.py --agy` on `Stop`: agy's interactive sessions
+get the same Japanese-reply check as Claude Code, and `agy -p` runs are skipped like
+headless Claude runs. The other hooks in `settings.example.json` stay Claude-only:
+`sync-pull.sh` and `sync-push.sh` sync `~/.claude`, which Claude sessions or the mac-mini
+cron already do; `handoff-inject.py` finds nothing since `z-wrap-up` was retired; and
+`archive-transcripts.sh` copies Claude's transcripts, and agy has no `SessionEnd` event to
+run it on.
 
 ## Keeping conversation logs is opt-in per machine
 

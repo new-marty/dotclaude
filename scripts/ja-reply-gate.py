@@ -10,12 +10,22 @@ Skipped: headless runs (CLAUDE_CODE_ENTRYPOINT sdk-*), a stop that a hook alread
 blocked (stop_hook_active), replies that are JSON or an API error, and short replies.
 The block goes out as JSON on stdout with exit 0, so a `|| :` wrapper does not swallow it.
 
+agy runs the same check through the dotclaude agy plugin (agy-plugin/hooks.json), which
+calls this script with --agy. agy's Stop input carries the prompt as lastUserInput but not
+the reply, so the reply is the last PLANNER_RESPONSE of the turn in its transcript.
+Skipped there: a stop a hook already continued (continuationActive, or executionNum above
+0), a turn that ended for any reason but NO_TOOL_CALL, a turn whose last response is
+empty, and `agy -p` runs. agy wants a JSON answer every time, so a pass, or input it
+cannot read, prints {"decision":""}.
+
 Usage: as a Stop hook, reads the hook input on stdin.
+       ja-reply-gate.py --agy            the same, as an agy Stop hook.
        ja-reply-gate.py --scan DIR...   replays transcripts and prints the replies it would block.
 """
 import json
 import os
 import re
+import subprocess
 import sys
 
 JA = re.compile(r"[぀-ヿ㐀-鿿ｦ-ﾟ]")
@@ -106,6 +116,72 @@ def hook():
         print(json.dumps({"decision": "block", "reason": REASON}, ensure_ascii=False))
 
 
+def agy_reply(transcript_path, tail=4 << 20):
+    """The text of the current turn's last PLANNER_RESPONSE with content, or ""."""
+    try:
+        with open(transcript_path, "rb") as f:
+            size = f.seek(0, os.SEEK_END)
+            f.seek(max(0, size - tail))
+            lines = f.read().decode("utf-8", "ignore").splitlines()
+    except OSError:
+        return ""
+    for line in reversed(lines):
+        try:
+            step = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(step, dict):
+            continue
+        if step.get("type") == "USER_INPUT":
+            return ""
+        content = step.get("content")
+        if step.get("type") == "PLANNER_RESPONSE" and isinstance(content, str) and content:
+            return content
+    return ""
+
+
+def agy_print_mode():
+    """True when an ancestor agy process was started with -p/--print/--prompt."""
+    pid = os.getppid()
+    for _ in range(5):
+        try:
+            out = subprocess.run(["ps", "-o", "ppid=,args=", "-p", str(pid)],
+                                 capture_output=True, text=True, timeout=2).stdout.split()
+        except (OSError, subprocess.SubprocessError):
+            return False
+        if len(out) < 2:
+            return False
+        ppid, args = out[0], out[1:]
+        if os.path.basename(args[0]) == "agy":
+            return any(a in ("-p", "--print", "--prompt")
+                       or a.startswith(("-p=", "--print=", "--prompt=")) for a in args[1:])
+        pid = ppid
+    return False
+
+
+def agy_blocks(inp):
+    # agy 1.5.14 reports continuationActive false on the stop after a continue;
+    # executionNum is 1 there.
+    prompt = inp.get("lastUserInput")
+    return (not inp.get("continuationActive") and not inp.get("executionNum")
+            and inp.get("terminationReason") == "NO_TOOL_CALL"
+            and isinstance(prompt, str) and is_japanese_prompt(prompt)
+            and is_english_reply(agy_reply(str(inp.get("transcriptPath") or "")))
+            and not agy_print_mode())
+
+
+def agy_hook():
+    try:
+        inp = json.load(sys.stdin)
+        block = isinstance(inp, dict) and agy_blocks(inp)
+    except Exception:
+        block = False
+    if block:
+        print(json.dumps({"decision": "continue", "reason": REASON}, ensure_ascii=False))
+    else:
+        print(json.dumps({"decision": ""}))
+
+
 def scan(dirs):
     checked = blocked = 0
     for d in dirs:
@@ -143,5 +219,7 @@ def scan(dirs):
 if __name__ == "__main__":
     if sys.argv[1:2] == ["--scan"]:
         scan(sys.argv[2:])
+    elif sys.argv[1:2] == ["--agy"]:
+        agy_hook()
     else:
         hook()

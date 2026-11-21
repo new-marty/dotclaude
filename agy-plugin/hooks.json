@@ -1,0 +1,11 @@
+{
+  "ja-reply-gate": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 -I ~/.claude/scripts/ja-reply-gate.py --agy",
+        "timeout": 10
+      }
+    ]
+  }
+}
