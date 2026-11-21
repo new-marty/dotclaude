@@ -1,0 +1,4 @@
+{
+  "_comment": "Keys agy must have on every machine. scripts/apply-shared-settings.py merges them into ~/.gemini/antigravity-cli/settings.json after each pull, like settings.shared.json for Claude Code. toolPermission always-proceed runs every tool without asking, the same as --dangerously-skip-permissions.",
+  "toolPermission": "always-proceed"
+}

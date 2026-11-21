@@ -16,7 +16,10 @@ The file is written only when something changed, through a temporary file and
 a rename, after copying the previous version to settings.json.bak-shared.
 It also starts `claude plugin install` in the background for enabled plugins this
 machine has no install record for (CLAUDE_SYNC_NO_INSTALL=1 turns that off, for tests).
-Usage: apply-shared-settings.py [claude_dir]   (default: $CLAUDE_SYNC_DIR or ~/.claude)
+agy.shared.json is merged the same way into agy's settings.json
+(~/.gemini/antigravity-cli/settings.json) when that directory exists.
+Usage: apply-shared-settings.py [claude_dir] [agy_dir]
+       (defaults: $CLAUDE_SYNC_DIR or ~/.claude, ~/.gemini/antigravity-cli)
 Exit status is always 0; problems are reported on stderr.
 """
 import json
@@ -77,31 +80,26 @@ def record_installs(claude_dir, shared):
     log("installing in the background: " + ", ".join(missing) + f" (log: {log_path})")
 
 
-def main():
-    claude_dir = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
-        "CLAUDE_SYNC_DIR", os.path.expanduser("~/.claude"))
-    shared_path = os.path.join(claude_dir, "settings.shared.json")
-    settings_path = os.path.realpath(os.path.join(claude_dir, "settings.json"))
-    if not os.path.exists(shared_path):
-        return
+def apply(shared_path, settings_path, label):
+    """Merge shared_path into settings_path; return the parsed shared file, or None."""
+    name = os.path.basename(shared_path)
     try:
         with open(shared_path) as f:
             shared = json.load(f)
     except ValueError as e:
-        log(f"settings.shared.json is not valid JSON ({e}); settings.json left as it was")
-        return
+        log(f"{name} is not valid JSON ({e}); {label} left as it was")
+        return None
     current = {}
     if os.path.exists(settings_path):
         try:
             with open(settings_path) as f:
                 current = json.load(f)
         except ValueError as e:
-            log(f"settings.json is not valid JSON ({e}); fix it by hand, nothing was merged")
-            return
+            log(f"{label} is not valid JSON ({e}); fix it by hand, nothing was merged")
+            return None
     changed = merge(current, shared)
-    record_installs(claude_dir, shared)
     if not changed:
-        return
+        return shared
     if os.path.exists(settings_path):
         shutil.copy2(settings_path, settings_path + ".bak-shared")
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(settings_path), prefix=".settings.")
@@ -115,7 +113,27 @@ def main():
     except BaseException:
         os.unlink(tmp)
         raise
-    log("settings.json updated from settings.shared.json: " + ", ".join(changed))
+    log(f"{label} updated from {name}: " + ", ".join(changed))
+    return shared
+
+
+def main():
+    claude_dir = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
+        "CLAUDE_SYNC_DIR", os.path.expanduser("~/.claude"))
+    # A scratch claude dir under test never touches the real agy settings
+    home_claude = os.path.realpath(claude_dir) == os.path.realpath(os.path.expanduser("~/.claude"))
+    agy_dir = sys.argv[2] if len(sys.argv) > 2 else (
+        os.path.expanduser("~/.gemini/antigravity-cli") if home_claude else "")
+    shared_path = os.path.join(claude_dir, "settings.shared.json")
+    if os.path.exists(shared_path):
+        settings_path = os.path.realpath(os.path.join(claude_dir, "settings.json"))
+        shared = apply(shared_path, settings_path, "settings.json")
+        if shared is not None:
+            record_installs(claude_dir, shared)
+    # agy.shared.json does the same for agy, on machines where agy has run once
+    agy_shared = os.path.join(claude_dir, "agy.shared.json")
+    if os.path.exists(agy_shared) and os.path.isdir(agy_dir):
+        apply(agy_shared, os.path.realpath(os.path.join(agy_dir, "settings.json")), "agy's settings.json")
 
 
 if __name__ == "__main__":

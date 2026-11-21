@@ -8,7 +8,7 @@ The same directory is also where Claude Code dumps conversation logs, caches and
 tokens. Those never enter the repository: `.gitignore` starts with `*` and then names the
 handful of files that are configuration.
 
-## Thirteen paths travel between machines; `settings.json` stays home
+## Fourteen paths travel between machines; `settings.json` stays home
 
 | Path | Contents |
 | --- | --- |
@@ -18,6 +18,7 @@ handful of files that are configuration.
 | `statusline.sh` | The statusline |
 | `settings.example.json` | Where a new machine's `settings.json` starts from |
 | `settings.shared.json` | The settings keys every machine must have: the plugins and their marketplaces |
+| `agy.shared.json` | The keys agy's `settings.json` must have on every machine |
 | `.i-have-adhd-always` | An empty file that turns on the i-have-adhd plugin's always-on mode |
 | `ADOPTIONS.md` | What was taken from other repositories, and what was declined |
 | `THIRD_PARTY_NOTICES.md` | Upstream licenses for the adopted files |
@@ -150,6 +151,12 @@ plugin fetched that way has no entry in `plugins/installed_plugins.json`, and
 `claude plugin update`, which auto-update runs, then calls it not installed. So the same
 script starts `claude plugin install <plugin> --scope user` in the background for each
 enabled plugin without an entry, logging to `plugins/shared-install.log`.
+
+The same script merges `agy.shared.json` into agy's own
+`~/.gemini/antigravity-cli/settings.json`, on machines where that directory exists. It
+sets `toolPermission` to `always-proceed`, so agy runs every tool without asking, as if
+started with `--dangerously-skip-permissions`; that includes agy started by Orca, which
+reads the same file.
 
 To stop using a plugin everywhere, set it to `false` in `settings.shared.json` rather than
 deleting the line: the merge never removes a key, so a deleted line stays `true` on every

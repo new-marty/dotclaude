@@ -17,6 +17,8 @@
 !settings.example.json
 # Keys every machine must have, merged into settings.json after each pull.
 !settings.shared.json
+# The same for agy's settings.json.
+!agy.shared.json
 # Turns on i-have-adhd's always-on mode on every machine (the plugin's SessionStart hook reads it).
 !.i-have-adhd-always
 !statusline.sh

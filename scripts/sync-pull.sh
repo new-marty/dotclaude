@@ -19,7 +19,7 @@ DIR="${CLAUDE_SYNC_DIR:-$HOME/.claude}"
 # agents (README "Other agents see the same rules and skills"); a scratch clone
 # under test links nothing. It never fails the hook.
 apply_shared() {
-    [ -f "$DIR/scripts/apply-shared-settings.py" ] && [ -f "$DIR/settings.shared.json" ] || return 0
+    [ -f "$DIR/scripts/apply-shared-settings.py" ] || return 0
     command -v python3 >/dev/null 2>&1 || { echo "[claude-sync] python3 not found; settings.shared.json not applied" >&2; return; }
     python3 -I "$DIR/scripts/apply-shared-settings.py" "$DIR"
     if [ "$DIR" = "$HOME/.claude" ] && [ -f "$DIR/scripts/link-agent-skills.py" ]; then
