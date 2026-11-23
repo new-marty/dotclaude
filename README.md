@@ -182,6 +182,10 @@ claude-plugins-official, which every machine knows without a declaration.
 
 [gitsukrit/claude-skills](https://github.com/gitsukrit/claude-skills) is the same case: the
 inline marketplace `gitsukrit` fetches only its `explain-like-im-10` directory.
+The inline marketplaces `pritamux` and `nicobailon` do the same for
+[pritamux/gridlines](https://github.com/pritamux/gridlines) (`skills/gridlines`) and
+[nicobailon/skill-diet](https://github.com/nicobailon/skill-diet) (`skills/skill-diet`,
+leaving out its `skill-model-gap`).
 
 ## Other agents see the same rules and skills
 

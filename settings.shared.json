@@ -78,6 +78,38 @@
     "unslop-ui": {
       "source": { "source": "github", "repo": "felipebasurto/unslop-ui" },
       "autoUpdate": true
+    },
+    "heydamir": {
+      "source": { "source": "github", "repo": "heydamir/unslop" },
+      "autoUpdate": true
+    },
+    "pritamux": {
+      "source": {
+        "source": "settings",
+        "name": "pritamux",
+        "plugins": [
+          {
+            "name": "gridlines",
+            "description": "pritamux's gridlines, the one skill from pritamux/gridlines. Alignment pass with guide lines; no hook.",
+            "source": { "source": "git-subdir", "url": "https://github.com/pritamux/gridlines.git", "path": "skills/gridlines" }
+          }
+        ]
+      },
+      "autoUpdate": true
+    },
+    "nicobailon": {
+      "source": {
+        "source": "settings",
+        "name": "nicobailon",
+        "plugins": [
+          {
+            "name": "skill-diet",
+            "description": "Nico Bailon's skill-diet, without its sibling skill-model-gap. Checklist before editing a skill; no hook.",
+            "source": { "source": "git-subdir", "url": "https://github.com/nicobailon/skill-diet.git", "path": "skills/skill-diet" }
+          }
+        ]
+      },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -93,6 +125,9 @@
     "learn-taste@emilkowalski": true,
     "explain-like-im-10@gitsukrit": true,
     "unslop-ui@unslop-ui": true,
+    "unslop@heydamir": true,
+    "gridlines@pritamux": true,
+    "skill-diet@nicobailon": true,
     "modern-web-guidance@claude-plugins-official": true,
     "cowork-plugin-management@synced": false
   },
