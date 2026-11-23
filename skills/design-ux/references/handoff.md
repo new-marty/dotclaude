@@ -36,6 +36,10 @@ End with one line to the user naming the next step and the file, for example:
 "Next, give `docs/ux/<slug>/UX.md` to frontend-design." The user starts that step. If they
 want to compare visual options, suggest `/mattpocock-skills:prototype`, which only the user can start.
 
+Once the screens are built, the next skill is `review-ux`, which checks them against the
+usability heuristics and this package's experience principles. Name it only when the user
+asks what comes after building.
+
 ## Review before hand-off
 
 After `scripts/check_package.py` passes, have the package read by a reviewer that did not

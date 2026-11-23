@@ -11,7 +11,8 @@ description: >-
   app", "design the UX", "our sign-up has a high drop-off",
   「アプリを作りたい」「画面を考えて」「UXを設計して」「画面遷移を考えて」「離脱が多い」「完了率が低い」,
   even if the user never says UX. Not for colours, fonts or styling, not for coding a finished
-  design, not for resuming a task, stress-testing a plan (grilling) or filing tickets.
+  design, not for reviewing screens already built (review-ux), resuming a task,
+  stress-testing a plan (grilling) or filing tickets.
 allowed-tools: Read, Glob, Grep, Write, Edit, WebSearch, WebFetch, Agent, Bash(python3 *check_package.py*)
 ---
 
