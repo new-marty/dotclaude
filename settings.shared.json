@@ -1,6 +1,10 @@
 {
   "_comment": "Keys every machine must have. scripts/apply-shared-settings.py merges them into ~/.claude/settings.json after each pull (README \"Settings every machine shares\"). Objects merge key by key; a marketplace entry is replaced whole; nothing else in settings.json is touched.",
   "extraKnownMarketplaces": {
+    "design-reference": {
+      "source": { "source": "github", "repo": "new-marty/hl-design-reference" },
+      "autoUpdate": true
+    },
     "mattpocock": {
       "source": { "source": "github", "repo": "mattpocock/skills" },
       "autoUpdate": true
@@ -113,6 +117,7 @@
     }
   },
   "enabledPlugins": {
+    "design-reference@design-reference": true,
     "mattpocock-skills@mattpocock": true,
     "yomiyasu@yomiyasu": true,
     "i-have-adhd@i-have-adhd": true,

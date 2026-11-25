@@ -182,6 +182,9 @@ claude-plugins-official, which every machine knows without a declaration.
 
 [gitsukrit/claude-skills](https://github.com/gitsukrit/claude-skills) is the same case: the
 inline marketplace `gitsukrit` fetches only its `explain-like-im-10` directory.
+The owner's own [hl-design-reference](https://github.com/new-marty/hl-design-reference), the
+design and data-visualization principles and preferences, ships as a plugin the same way, so
+every machine and every agent gets its `design-reference` skill.
 The inline marketplaces `pritamux` and `nicobailon` do the same for
 [pritamux/gridlines](https://github.com/pritamux/gridlines) (`skills/gridlines`) and
 [nicobailon/skill-diet](https://github.com/nicobailon/skill-diet) (`skills/skill-diet`,
