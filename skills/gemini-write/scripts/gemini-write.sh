@@ -19,7 +19,8 @@
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")/.." && pwd)
-agy_model=${GEMINI_WRITE_AGY_MODEL:-gemini-3.8-flash-high}
+# Tried in order; a model with no capacity hands over to the next one.
+read -ra agy_models <<<"${GEMINI_WRITE_AGY_MODEL:-gemini-3.8-flash-high gemini-4-hydrogen-medium}"
 or_model=${GEMINI_WRITE_OPENROUTER_MODEL:-google/gemini-3.8-flash}
 keychain_service=openrouter
 key_file=${GEMINI_WRITE_KEY_FILE:-$HOME/.config/secrets/gemini-write.env}
@@ -38,15 +39,34 @@ agy_run() {
   return $rc
 }
 
+# The work Google account is for ~/starup only, the same split Claude Code uses there.
+agy_profile() {
+  [[ $PWD == "$HOME/starup" || $PWD == "$HOME/starup/"* ]] && echo work || echo personal
+}
+
+# agy reads one token from the Keychain, so a profile switch applies to the whole machine.
+# Machines without ~/.gemini/switch-profile.sh have a single account and skip this.
+agy_use_profile() {
+  local switch=$HOME/.gemini/switch-profile.sh
+  [[ -x $switch ]] || return 0
+  "$switch" "$(agy_profile)"
+}
+
+agy_signed_out() {
+  local where="$HOME/starup の外"
+  [[ $(agy_profile) == work ]] && where="$HOME/starup の中"
+  die 4 "agy の $(agy_profile) のアカウントが未ログインです。${where}でターミナルから agy を起動してログインしてください。"
+}
+
 # Exits with 3/4/5 when agy cannot take a request. Spends no quota.
 agy_check() {
   command -v agy >/dev/null ||
     die 5 "agy が入っていません (brew install --cask antigravity-cli)。"
+  agy_use_profile
   local out
   out=$(agy_run --output-format json -p=/quota) || true
   if [[ $(jq -r '.status // empty' <<<"$out" 2>/dev/null) != SUCCESS ]]; then
-    grep -qi 'sign in' <<<"$out" &&
-      die 4 "agy が未ログインです。使いたい Google アカウントでターミナルから agy を起動してログインしてください。"
+    grep -qi 'sign in' <<<"$out" && agy_signed_out
     die 5 "agy の状態を取れませんでした: ${out:0:300}"
   fi
   local empty
@@ -58,19 +78,37 @@ agy_check() {
   jq -r '.response' <<<"$out" | sed '/^$/d; s/^/agy quota: /' >&2
 }
 
+# agy keeps retrying a model that has no capacity (HTTP 503) until --print-timeout runs
+# out, so watch its log and move to the next model as soon as the 503 appears.
 agy_write() {
-  local out
-  out=$(agy_run --model "$agy_model" --disable-slash-commands --output-format json \
-          --print-timeout 300s -p "$prompt") || true
-  if [[ $(jq -r '.status // empty' <<<"$out" 2>/dev/null) == SUCCESS ]]; then
-    jq -r '.response' <<<"$out"
-    echo "backend: agy ($agy_model)" >&2
-    return
-  fi
-  grep -qE 'RESOURCE_EXHAUSTED|quota reached' <<<"$out" &&
-    die 3 "agy の枠を使い切りました: $(grep -oE 'Resets in[^."]*' <<<"$out" | head -1)"
-  grep -qi 'sign in' <<<"$out" && die 4 "agy が未ログインです。"
-  die 5 "agy が失敗しました: ${out:0:300}"
+  local model work log out_file out pid
+  for model in "${agy_models[@]}"; do
+    work=$(mktemp -d); log=$(mktemp); out_file=$(mktemp)
+    (cd "$work" && exec agy --model "$model" --disable-slash-commands --output-format json \
+       --print-timeout 300s --log-file "$log" -p "$prompt") >"$out_file" 2>&1 &
+    pid=$!
+    while kill -0 "$pid" 2>/dev/null && ! grep -q 'No capacity available' "$log"; do
+      sleep 1
+    done
+    if kill -0 "$pid" 2>/dev/null; then
+      kill "$pid"; wait "$pid" 2>/dev/null || true
+      rm -rf "$work" "$log" "$out_file"
+      echo "agy: $model に空きがないので、次のモデルを試します" >&2
+      continue
+    fi
+    wait "$pid" || true
+    out=$(cat "$out_file"); rm -rf "$work" "$log" "$out_file"
+    if [[ $(jq -r '.status // empty' <<<"$out" 2>/dev/null) == SUCCESS ]]; then
+      jq -r '.response' <<<"$out"
+      echo "backend: agy ($model, $(agy_profile))" >&2
+      return
+    fi
+    grep -qE 'RESOURCE_EXHAUSTED|quota reached' <<<"$out" &&
+      die 3 "agy の枠を使い切りました: $(grep -oE 'Resets in[^."]*' <<<"$out" | head -1)"
+    grep -qi 'sign in' <<<"$out" && agy_signed_out
+    die 5 "agy が失敗しました: ${out:0:300}"
+  done
+  die 5 "agy のどのモデルにも空きがありません: ${agy_models[*]}"
 }
 
 # --- OpenRouter -----------------------------------------------------------------------
@@ -134,7 +172,7 @@ setup_openrouter() {
 }
 
 status() {
-  (agy_check 2>&1 && echo "agy: 使える ($agy_model)") || true
+  (agy_check 2>&1 && echo "agy: 使える ($(agy_profile), ${agy_models[*]})") || true
   (or_check 2>&1) || true
 }
 

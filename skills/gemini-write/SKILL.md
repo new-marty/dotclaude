@@ -23,17 +23,20 @@ it; ask first when unsure.
 
 ## Two routes, and who chooses the paid one
 
-The Antigravity CLI (`agy`) runs on the Google account signed in to it, at no extra
-charge. It is the only route the script takes by itself. Before each call it reads the
-remaining quota with `/quota`, which spends none, and stops rather than calling when the
-Gemini quota is used up. Each call carries more than ten thousand tokens of `agy`'s own
-system prompt, so the free weekly quota goes faster than the length of the text suggests.
+The Antigravity CLI (`agy`) runs at no extra charge. It is the only route the script takes
+by itself. On a machine with `~/.gemini/switch-profile.sh`, the directory the script is
+called from picks the Google account: the work account under `~/starup`, the personal one
+everywhere else, the same split Claude Code uses. So call it from the session's working
+directory, never after `cd` into the scratchpad. Before each call it reads the remaining
+quota with `/quota`, which spends none, and stops rather than calling when the Gemini quota
+is used up. Each call carries more than ten thousand tokens of `agy`'s own system prompt,
+so the free weekly quota goes faster than the length of the text suggests. When a model has
+no capacity (HTTP 503), the script moves within seconds to the next model in
+`GEMINI_WRITE_AGY_MODEL` (default: `gemini-3.8-flash-high`, then `gemini-4-hydrogen-medium`).
 
 OpenRouter bills per token, and the script uses it only with `--paid`. Pass `--paid` only
 after the user has said yes to it in this conversation for this call. A yes earlier in the
-conversation does not carry over to the next call. The user keeps both a work and a
-personal Google account on this machine, so when `agy` fails the right fix is often to
-switch accounts rather than to pay; the question has to leave room for that answer.
+conversation does not carry over to the next call.
 
 The script also refuses an OpenRouter key that has no spending limit, so even a runaway
 loop stops at the cap set on openrouter.ai.
@@ -63,16 +66,16 @@ It takes 10-30 seconds. The exit code says what happened:
 | --- | --- | --- |
 | 0 | Done | Go to step 3 |
 | 3 | `agy` quota used up; the message gives the reset time | Ask the user (below) |
-| 4 | `agy` is signed out | Ask the user (below) |
-| 5 | Any other `agy` failure | Show the message, ask the user (below) |
+| 4 | The `agy` account for this directory is signed out | Ask the user (below) |
+| 5 | Any other `agy` failure, including no capacity on every model | Show the message, ask the user (below) |
 | 6 | OpenRouter has no key, or the key has no limit | Relay the fix from the message |
 | 7 | OpenRouter failed: limit reached, rate limit, network | Relay the message; do not retry in a loop |
 
 On 3, 4, or 5, ask one question with the reason in it, for example: "agy の Gemini 枠を使い
-切っています(リセット 10/5)。OpenRouter で書きますか(1回1〜2円)?それとも agy の
-アカウントを切り替えますか?". Switching accounts or signing in means running `agy` in a
-terminal, which the user does. On yes, run the same command with `--paid` after the script
-name. On any other answer, stop.
+切っています(リセット 10/5)。OpenRouter で書きますか(1回1〜2円)?それともリセットを待ち
+ますか?". Signing in means running `agy` in a terminal in the directory the message names,
+which the user does. On yes, run the same command with `--paid` after the script name. On
+any other answer, stop.
 
 Setting up OpenRouter is also the user's to do in a terminal: create a key with a spending
 limit on openrouter.ai, then run
